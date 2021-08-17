@@ -9218,6 +9218,7 @@ tryAgain:
 
             var yieldToken = ConvertToKeyword(this.EatToken());
             SyntaxToken returnOrBreak;
+            SyntaxToken question = null;
             ExpressionSyntax arg = null;
             SyntaxKind kind;
 
@@ -9232,6 +9233,13 @@ tryAgain:
             {
                 kind = SyntaxKind.YieldReturnStatement;
                 returnOrBreak = this.EatToken(SyntaxKind.ReturnKeyword);
+                var peekedQuestion = this.PeekToken(1);
+                if (peekedQuestion.Kind == SyntaxKind.QuestionToken)
+                {
+                    question = this.EatToken(SyntaxKind.QuestionToken);
+                    kind = SyntaxKind.YieldReturnNotNullStatement;
+                }
+
                 if (this.CurrentToken.Kind == SyntaxKind.SemicolonToken)
                 {
                     returnOrBreak = this.AddError(returnOrBreak, ErrorCode.ERR_EmptyYield);
@@ -9243,7 +9251,7 @@ tryAgain:
             }
 
             var semi = this.EatToken(SyntaxKind.SemicolonToken);
-            return _syntaxFactory.YieldStatement(kind, attributes, yieldToken, returnOrBreak, arg, semi);
+            return _syntaxFactory.YieldStatement(kind, attributes, yieldToken, returnOrBreak, question, arg, semi);
         }
 
         private SwitchStatementSyntax ParseSwitchStatement(SyntaxList<AttributeListSyntax> attributes)

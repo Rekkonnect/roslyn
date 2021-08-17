@@ -4559,6 +4559,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     case SyntaxKind.ExpressionStatement:
                                     case SyntaxKind.IfStatement:
                                     case SyntaxKind.YieldReturnStatement:
+                                    case SyntaxKind.YieldReturnNotNullStatement:
                                     case SyntaxKind.ReturnStatement:
                                     case SyntaxKind.ThrowStatement:
                                     case SyntaxKind.SwitchStatement:

@@ -412,6 +412,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ThrowStatement:
                 case SyntaxKind.WhileStatement:
                 case SyntaxKind.YieldReturnStatement:
+                case SyntaxKind.YieldReturnNotNullStatement:
                     return true;
 
                 case SyntaxKind.ClassDeclaration:

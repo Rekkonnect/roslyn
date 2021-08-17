@@ -9,7 +9,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     public partial class YieldStatementSyntax
     {
         public YieldStatementSyntax Update(SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, ExpressionSyntax expression, SyntaxToken semicolonToken)
-            => Update(AttributeLists, yieldKeyword, returnOrBreakKeyword, expression, semicolonToken);
+            => Update(AttributeLists, yieldKeyword, returnOrBreakKeyword, questionToken: default, expression, semicolonToken);
+        public YieldStatementSyntax Update(SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax expression, SyntaxToken semicolonToken)
+            => Update(AttributeLists, yieldKeyword, returnOrBreakKeyword, questionToken, expression, semicolonToken);
     }
 }
 
@@ -18,6 +20,8 @@ namespace Microsoft.CodeAnalysis.CSharp
     public partial class SyntaxFactory
     {
         public static YieldStatementSyntax YieldStatement(SyntaxKind kind, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, ExpressionSyntax expression, SyntaxToken semicolonToken)
-            => YieldStatement(kind, attributeLists: default, yieldKeyword, returnOrBreakKeyword, expression, semicolonToken);
+            => YieldStatement(kind, attributeLists: default, yieldKeyword, returnOrBreakKeyword, questionToken: default, expression, semicolonToken);
+        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax expression, SyntaxToken semicolonToken)
+            => YieldStatement(kind, attributeLists: default, yieldKeyword, returnOrBreakKeyword, questionToken, expression, semicolonToken);
     }
 }

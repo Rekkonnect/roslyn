@@ -24,6 +24,8 @@ Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithCommaToken(
 Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithLine(Microsoft.CodeAnalysis.SyntaxToken line) -> Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax
 *REMOVED*Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.File.get -> Microsoft.CodeAnalysis.SyntaxToken
+Microsoft.CodeAnalysis.CSharp.Syntax.YieldStatementSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken yieldKeyword, Microsoft.CodeAnalysis.SyntaxToken returnOrBreakKeyword, Microsoft.CodeAnalysis.SyntaxToken questionToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.YieldStatementSyntax
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.YieldReturnNotNullStatement = 9072 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 override Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.File.get -> Microsoft.CodeAnalysis.SyntaxToken
 *REMOVED*Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.LineKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
 override Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.LineKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
@@ -175,6 +177,7 @@ static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.UsingDirective(Microsoft.Code
 Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax.GlobalKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
 Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken globalKeyword, Microsoft.CodeAnalysis.SyntaxToken usingKeyword, Microsoft.CodeAnalysis.SyntaxToken staticKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.NameEqualsSyntax alias, Microsoft.CodeAnalysis.CSharp.Syntax.NameSyntax name, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax.WithGlobalKeyword(Microsoft.CodeAnalysis.SyntaxToken globalKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax
+static Microsoft.CodeAnalysis.CSharp.SyntaxFactory.YieldStatement(Microsoft.CodeAnalysis.CSharp.SyntaxKind kind, Microsoft.CodeAnalysis.SyntaxToken yieldKeyword, Microsoft.CodeAnalysis.SyntaxToken returnOrBreakKeyword, Microsoft.CodeAnalysis.SyntaxToken questionToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.YieldStatementSyntax
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitExpressionColon(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionColonSyntax node) -> void
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitLineDirectivePosition(Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax node) -> void
 virtual Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor.VisitLineSpanDirectiveTrivia(Microsoft.CodeAnalysis.CSharp.Syntax.LineSpanDirectiveTriviaSyntax node) -> void
