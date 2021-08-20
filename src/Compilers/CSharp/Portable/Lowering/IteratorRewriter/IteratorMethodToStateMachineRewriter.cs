@@ -313,28 +313,56 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
-            //     yield return expression;
+            return VisitCommonYieldReturnStatement(node);
+        }
+        public override BoundNode VisitYieldReturnNotNullStatement(BoundYieldReturnNotNullStatement node)
+        {
+            return VisitCommonYieldReturnStatement(node);
+        }
+
+        private BoundNode VisitCommonYieldReturnStatement(BoundCommonYieldReturnStatement node)
+        {
+            //     yield return? expression;
             // is translated to
-            //     this.current = expression;
-            //     this.state = <next_state>;
-            //     return true;
+            //     if (expression is not null)
+            //     {
+            //         this.current = expression;
+            //         this.state = <next_state>;
+            //         return true;
+            //     }
             //     <next_state_label>: ;
             //     <hidden sequence point>
             //     this.state = finalizeState;
-            int stateNumber;
-            GeneratedLabelSymbol resumeLabel;
-            AddState(out stateNumber, out resumeLabel);
+            //
+            //     yield return expression;
+            // is translated to the same snippet excluding the if statement
+
+            AddState(out int stateNumber, out var resumeLabel);
             _currentFinallyFrame.AddState(stateNumber);
 
             var rewrittenExpression = (BoundExpression)Visit(node.Expression);
 
+            var currentAssignment = F.Assignment(F.Field(F.This(), _current), rewrittenExpression);
+            var stateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(stateNumber));
+            var generatedReturn = GenerateReturn(finished: false);
+
+            var successfulYieldBlock = F.Block(currentAssignment, stateAssignment, generatedReturn);
+
+            BoundStatement notNullCheck = null;
+            if (rewrittenExpression.Kind == BoundKind.YieldReturnNotNullStatement)
+            {
+                notNullCheck = F.If(F.Is(F.Not(F.Null(rewrittenExpression.Type!)), rewrittenExpression.Type!), successfulYieldBlock);
+            }
+
+            var nextStateLabel = F.Label(resumeLabel);
+            var hiddenSequencePoint = F.HiddenSequencePoint();
+            var finalizeStateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState));
+
             return F.Block(
-                F.Assignment(F.Field(F.This(), _current), rewrittenExpression),
-                F.Assignment(F.Field(F.This(), stateField), F.Literal(stateNumber)),
-                GenerateReturn(finished: false),
-                F.Label(resumeLabel),
-                F.HiddenSequencePoint(),
-                F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState)));
+                notNullCheck ?? successfulYieldBlock,
+                nextStateLabel,
+                hiddenSequencePoint,
+                finalizeStateAssignment);
         }
 
         public override BoundNode VisitGotoStatement(BoundGotoStatement node)
