@@ -963,9 +963,13 @@
     <Field Name="ExpressionOpt" Type="BoundExpression?"/>
   </Node>
 
-  <Node Name="BoundYieldReturnStatement" Base="BoundStatement">
+  <AbstractNode Name="BoundCommonYieldReturnStatement" Base="BoundStatement">
     <Field Name="Expression" Type="BoundExpression" Null="disallow"/>
-  </Node>
+  </AbstractNode>
+
+  <Node Name="BoundYieldReturnStatement" Base="BoundCommonYieldReturnStatement"/>
+
+  <Node Name="BoundYieldReturnNotNullStatement" Base="BoundCommonYieldReturnStatement"/>
 
   <Node Name="BoundYieldBreakStatement" Base="BoundStatement"/>
 

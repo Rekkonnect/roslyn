@@ -293,7 +293,7 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
         /// </summary>
         /// <returns>
         /// <see cref="AwaitExpressionSyntax"/> for await expressions,
-        /// <see cref="YieldStatementSyntax"/> for yield break and yield return statements,
+        /// <see cref="YieldStatementSyntax"/> for yield break, yield return and yield return? statements,
         /// <see cref="CommonForEachStatementSyntax"/> for await foreach statements,
         /// <see cref="VariableDeclaratorSyntax"/> for await using declarators.
         /// </returns>
