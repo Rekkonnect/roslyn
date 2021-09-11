@@ -232,6 +232,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
             var typeNameMap = from module in assembly.GetModules()
                               from typeDefHandle in module.MetadataReader.TypeDefinitions
                               let typeDef = module.MetadataReader.GetTypeDefinition(typeDefHandle)
+                              where !typeDef.Attributes.IsAbstract()
                               let supportedLanguages = GetSupportedLanguages(typeDef, module.Module, attributeType, languagesFunc)
                               where supportedLanguages.Any()
                               let typeName = GetFullyQualifiedTypeName(typeDef, module.Module)

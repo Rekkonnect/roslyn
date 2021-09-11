@@ -26,6 +26,11 @@ namespace Microsoft.CodeAnalysis
             return (flags & TypeAttributes.Public) != 0;
         }
 
+        public static bool IsAbstract(this TypeAttributes flags)
+        {
+            return (flags & TypeAttributes.Abstract) != 0;
+        }
+
         public static bool IsSpecialName(this TypeAttributes flags)
         {
             return (flags & TypeAttributes.SpecialName) != 0;
