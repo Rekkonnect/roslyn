@@ -378,7 +378,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             var receiverType = receiver.Type;
             LocalDefinition receiverTemp = null;
             Debug.Assert(!receiverType.IsValueType ||
-                (receiverType.IsNullableType() && expression.HasValueMethodOpt != null), "conditional receiver cannot be a struct");
+                (receiverType.IsNullableType() && expression.HasValueMethodOpt != null) ||
+                (receiverType.IsPointerType() && !receiverType.IsMultipleVoidPointer()), "conditional receiver cannot be a struct or a function pointer");
 
             var receiverConstant = receiver.ConstantValue;
             if (receiverConstant?.IsNull == false)
@@ -563,7 +564,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         private void EmitConditionalReceiver(BoundConditionalReceiver expression, bool used)
         {
-            Debug.Assert(!expression.Type.IsValueType);
+            var expressionType = expression.Type;
+            Debug.Assert(!expressionType.IsValueType || (expressionType.IsPointerType() && !expressionType.IsMultipleVoidPointer()));
 
             if (!expression.Type.IsReferenceType)
             {

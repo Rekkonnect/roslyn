@@ -7515,5 +7515,41 @@ False
             CompileAndVerify(source, options: TestOptions.DebugExe, expectedOutput: expectedOutput);
             CompileAndVerify(source, options: TestOptions.ReleaseExe, expectedOutput: expectedOutput);
         }
+        
+        [Fact]
+        public void ConditionalAccessFromPointer()
+        {
+            string dValue = "13";
+            
+            var source = $@"
+using System;
+
+unsafe class Program
+{{
+    static void Main(string[] args)
+    {{
+        int d = {dValue};
+        int* dPtr = &d;
+        int* nullptr = null;
+
+        WriteValueOrNull(dPtr);
+        WriteValueOrNull(nullptr);
+    }}
+
+    static void WriteValueOrNull(int* ptr)
+    {{
+        Console.WriteLine(ptr?->ToString() ?? ""NULL"");
+    }}
+}}
+";
+
+            var expectedOutput =
+$@"
+{dValue}
+NULL
+";
+            CompileAndVerify(source, options: TestOptions.UnsafeDebugExe, expectedOutput: expectedOutput);
+            CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
+        }
     }
 }
