@@ -7551,5 +7551,107 @@ NULL
             CompileAndVerify(source, options: TestOptions.UnsafeDebugExe, expectedOutput: expectedOutput);
             CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
         }
+        
+        [Fact]
+        public void ConditionalPointerElementAccess()
+        {
+            var source = $@"
+using System;
+
+unsafe class Program
+{{
+    static void Main(string[] args)
+    {{
+        int[] ar = {{ 0, 1, 2, 3, 4 }};
+
+        int* nullptr = null;
+        fixed (int* arPtr = ar)
+        {{
+            WriteValueOrNull(arPtr, 0);
+            WriteValueOrNull(arPtr, 1);
+            WriteValueOrNull(arPtr, 3);
+            WriteValueOrNull(nullptr, 0);
+        }}
+    }}
+
+    static void WriteValueOrNull(int* ptr, int index)
+    {{
+        Console.WriteLine(ptr?[index].ToString() ?? ""NULL"");
+    }}
+}}
+";
+
+            var expectedOutput =
+$@"
+0
+1
+3
+NULL
+";
+            CompileAndVerify(source, options: TestOptions.UnsafeDebugExe, expectedOutput: expectedOutput);
+            CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
+        }
+        
+        [Fact]
+        public void ConditionalPointerMemberAccess()
+        {
+            string dValue = "13";
+
+            var source = $@"
+using System;
+
+unsafe class Program
+{{
+    static void Main(string[] args)
+    {{
+        int d = {dValue};
+        PointerHolder dHolder = new(&d); 
+        PointerHolder nullHolder = null;
+
+        WriteValueOrNull(dHolder);
+        WriteValueOrNull(nullHolder);
+
+        WriteValueOrNullFlow(dHolder);
+        WriteValueOrNullFlow(nullHolder);
+    }}
+
+    static int* GetPointer(PointerHolder holder)
+    {{
+        return holder?.Pointer;
+    }}
+    
+    static void WriteValueOrNull(PointerHolder holder)
+    {{
+        int* ptr = GetPointer(holder);
+        Console.WriteLine(ptr is null ? ""NULL"" : ptr->ToString());
+    }} 
+
+    static void WriteValueOrNullFlow(PointerHolder holder)
+    {{
+        Console.WriteLine(holder?.Pointer->ToString() ?? ""NULL"");
+    }}
+
+    class PointerHolder
+    {{
+        public int* Pointer {{ get; }}
+
+        public PointerHolder(int* ptr)
+        {{
+            Pointer = ptr;
+        }}
+    }} 
+}}
+";
+
+            var expectedOutput =
+$@"
+{dValue}
+NULL
+{dValue}
+NULL
+";
+            CompileAndVerify(source, options: TestOptions.UnsafeDebugExe, expectedOutput: expectedOutput);
+            CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
+        }
     }
 }
