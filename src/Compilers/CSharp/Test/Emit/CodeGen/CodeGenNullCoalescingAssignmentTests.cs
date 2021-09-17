@@ -2990,5 +2990,55 @@ unsafe class C
             
             CompileAndVerify(source, options: TestOptions.UnsafeDebugExe);
         }
+        
+        [Fact]
+        public void FunctionPointerTypes()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        delegate*<void> a = &Function;
+        delegate*<void> b = null;
+
+        b ??= a;
+        b();
+    }
+    
+    static void Function()
+    {
+        Console.WriteLine(""Invoked"");
+    }
+}
+";
+
+            var expectedOutput = @"Invoked";
+            
+            CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.UnsafeDebugExe);
+        }
+        
+        [Fact]
+        public void FunctionPointerIntoVoidPtr()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        delegate*<void> fp = &Function;
+        void* ptr = null;
+
+        ptr ??= fp;
+    }
+    
+    static void Function() { }
+}
+";
+            
+            CompileAndVerify(source, options: TestOptions.UnsafeDebugExe);
+        }
     }
 }

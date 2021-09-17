@@ -7603,5 +7603,76 @@ unsafe class C
                 //          uint* b = dPtr ?? ptr;
                 Diagnostic(ErrorCode.ERR_BadBinaryOps, "dPtr ?? ptr").WithArguments("??", "int*", "uint*").WithLocation(14, 19));
         }
+        
+        [Fact]
+        public void TestFunctionPointerNullCoalescing()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        delegate*<void> fp = &Function;
+        delegate*<void> nullfp = null;
+
+        delegate*<void> a = nullfp ?? fp;
+        delegate*<void> b = fp ?? nullfp;
+        delegate*<void> c = nullfp ?? &Function;
+        delegate*<void> d = nullfp ?? nullfp;
+
+        a();
+        b();
+        c();
+        if (d is not null)
+            d();
+    }
+    
+    static void Function()
+    {
+        Console.WriteLine(""Invoked"");
+    }
+}
+";
+
+            var expectedOutput = @"
+Invoked
+Invoked
+Invoked
+";
+            
+            CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.UnsafeDebugExe);
+        }
+        
+        [Fact]
+        public void TestIncompatibleFunctionPointerTypesNullCoalescing()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        delegate*<void> voidfp = &Function;
+        delegate*<int> intfp = &FunctionInt;
+
+        delegate*<void> a = voidfp ?? intfp;
+        delegate*<void> b = intfp ?? voidfp;
+    }
+    
+    static void Function() { }
+    static int FunctionInt() => 0;
+}
+";
+
+            var compilation = CreateCompilation(source, options: TestOptions.UnsafeDebugExe);
+            compilation.VerifyEmitDiagnostics(
+                // (10,29): error CS0019: Operator '??' cannot be applied to operands of type 'delegate*<void>' and 'delegate*<int>'
+                //          delegate*<void> a = voidfp ?? intfp;
+                Diagnostic(ErrorCode.ERR_BadBinaryOps, "voidfp ?? intfp").WithArguments("??", "delegate*<void>", "delegate*<int>").WithLocation(10, 29),
+                // (11,29): error CS0019: Operator '??' cannot be applied to operands of type 'delegate*<int>' and 'delegate*<void>'
+                //          delegate*<void> b = intfp ?? voidfp;
+                Diagnostic(ErrorCode.ERR_BadBinaryOps, "intfp ?? voidfp").WithArguments("??", "delegate*<int>", "delegate*<void>").WithLocation(11, 29));
+        }
     }
 }
