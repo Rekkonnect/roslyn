@@ -3753,7 +3753,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // SPEC: Otherwise, if A exists and is a non-nullable value type, a compile-time error occurs. First we check for the pre-C# 8.0
-            // SPEC: condition, to ensure that we don't allow previously illegal code in old language versions.
+            // SPEC: condition, to ensure that we don't allow previously illegal code in old language versions. We also check for the pre-C#
+            // SPEC: X.X condition to allow A and B to be pointer types. In that case, A0 should be A.
             if ((object)optLeftType != null && !optLeftType.IsReferenceType && !isLeftNullable)
             {
                 // Prior to C# 8.0, the spec said that the left type must be either a reference type or a nullable value type. This was relaxed
@@ -3761,6 +3762,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (!optLeftType.IsValueType)
                 {
                     CheckFeatureAvailability(node, MessageID.IDS_FeatureUnconstrainedTypeParameterInNullCoalescingOperator, diagnostics);
+                }
+                // Prior to C# X.X, the spec did not permit null-coalescing pointer or function pointer types. This was relaxed
+                // with C# X.X, so if the feature is not enabled then issue a diagnostic and return
+                else if (optLeftType.IsPointerOrFunctionPointer())
+                {
+                    CheckFeatureAvailability(node, MessageID.IDS_FeaturePointerInNullCoalescingOperator, diagnostics);
                 }
                 else
                 {
@@ -3919,8 +3926,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol leftType = leftOperand.Type;
             Debug.Assert((object)leftType != null);
 
-            // If A is a non-nullable value type, a compile-time error occurs
-            if (leftType.IsValueType && !leftType.IsNullableType())
+            // If A is a non-nullable value type, and not a pointer or function pointer type, a compile-time error occurs
+            if (leftType.IsValueType && !leftType.IsNullableType() && !leftType.IsPointerOrFunctionPointer())
             {
                 return GenerateNullCoalescingAssignmentBadBinaryOpsError(node, leftOperand, rightOperand, diagnostics);
             }
