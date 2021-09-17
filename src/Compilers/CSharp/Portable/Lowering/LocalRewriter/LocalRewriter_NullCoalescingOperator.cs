@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(leftConversion.IsValid);
 
             TypeSymbol rewrittenLeftType = rewrittenLeft.Type;
-            Debug.Assert(rewrittenLeftType.IsNullableType() || !rewrittenLeftType.IsValueType);
+            Debug.Assert(rewrittenLeftType.IsNullableType() || rewrittenLeftType.IsPointerOrFunctionPointer() || !rewrittenLeftType.IsValueType);
 
             // Native compiler violates the specification for the case where result type is right operand type and left operand is nullable.
             // For this case, we need to insert an extra explicit nullable conversion from the left operand to its underlying nullable type

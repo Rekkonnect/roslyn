@@ -7515,5 +7515,93 @@ False
             CompileAndVerify(source, options: TestOptions.DebugExe, expectedOutput: expectedOutput);
             CompileAndVerify(source, options: TestOptions.ReleaseExe, expectedOutput: expectedOutput);
         }
+
+        [Fact]
+        public void TestPointerNullCoalescing()
+        {
+            var source = @"
+using System;
+
+unsafe class C
+{
+    static void Main()
+    {
+        int* nullptr = null;
+        int d = 1;
+        int* dPtr = &d;
+
+        AssertNull(nullptr ?? nullptr);
+        AssertNull(nullptr ?? dPtr);
+        AssertNull(dPtr ?? nullptr);
+    }
+
+    static void AssertNull(int* ptr)
+    {
+        Console.WriteLine(ptr is null ? ""NULL"" : ""VALUE"");
+    }
+}";
+
+            var expectedOutput = @"
+NULL
+VALUE
+VALUE
+";
+
+            var comp = CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.UnsafeDebugExe);
+        }
+
+        [Fact]
+        public void TestVoidAndIntPointerNullCoalescing()
+        {
+            var source = @"
+using System;
+
+unsafe class C
+{
+    static void Main()
+    {
+        void* nullptr = null;
+        int d = 1;
+        int* dPtr = &d;
+
+        void* a = nullptr ?? nullptr;
+        void* b = dPtr ?? nullptr;
+        void* c = nullptr ?? dPtr;
+    }
+}";
+
+            var comp = CompileAndVerify(source, options: TestOptions.UnsafeDebugExe);
+        }
+        
+        [Fact]
+        public void TestIncompatiblePointerTypesNullCoalescing()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        int d = 1;
+        int* dPtr = &d;
+        uint* nullptr = null;
+
+        uint* ptr = nullptr;
+
+        uint* a = ptr ?? dPtr;
+        uint* b = dPtr ?? ptr;
+    }
+}
+";
+
+            var compilation = CreateCompilation(source, options: TestOptions.UnsafeDebugExe);
+            compilation.VerifyEmitDiagnostics(
+                // (13,19): error CS0019: Operator '??' cannot be applied to operands of type 'uint*' and 'int*'
+                //          uint* a = ptr ?? dPtr;
+                Diagnostic(ErrorCode.ERR_BadBinaryOps, "ptr ?? dPtr").WithArguments("??", "uint*", "int*").WithLocation(13, 19),
+                // (14,19): error CS0019: Operator '??' cannot be applied to operands of type 'int*' and 'uint*'
+                //          uint* b = dPtr ?? ptr;
+                Diagnostic(ErrorCode.ERR_BadBinaryOps, "dPtr ?? ptr").WithArguments("??", "int*", "uint*").WithLocation(14, 19));
+        }
     }
 }

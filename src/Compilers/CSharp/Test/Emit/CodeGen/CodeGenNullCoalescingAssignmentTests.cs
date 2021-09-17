@@ -2916,5 +2916,79 @@ struct S
 1
 1", options: TestOptions.DebugExe);
         }
+        
+        [Fact]
+        public void PointerTypes()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        int d = 1;
+        int* dPtr = &d;
+        int* nullptr = null;
+
+        int* ptr = nullptr;
+        ptr ??= dPtr;
+        Console.WriteLine(*ptr);
+    }
+}
+";
+            var expectedOutput = @"
+1
+";
+            CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.UnsafeDebugExe);
+        }
+        
+        [Fact]
+        public void IncompatiblePointerTypes()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        int d = 1;
+        int* dPtr = &d;
+        uint* nullptr = null;
+
+        uint* ptr = nullptr;
+        ptr ??= dPtr;
+        Console.WriteLine(*ptr);
+    }
+}
+";
+
+            var compilation = CreateCompilation(source, options: TestOptions.UnsafeDebugExe);
+            compilation.VerifyEmitDiagnostics(
+                // (12,9): error CS0019: Operator '??=' cannot be applied to operands of type 'uint*' and 'int*'
+                //         ptr ??= dPtr;
+                Diagnostic(ErrorCode.ERR_BadBinaryOps, "ptr ??= dPtr").WithArguments("??=", "uint*", "int*").WithLocation(12, 9));
+        }
+        
+        [Fact]
+        public void PtrIntoVoidPtr()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        int d = 1;
+        int* dPtr = &d;
+        int* nullptr = null;
+
+        void* ptr = nullptr;
+        ptr ??= dPtr;
+    }
+}
+";
+            
+            CompileAndVerify(source, options: TestOptions.UnsafeDebugExe);
+        }
     }
 }
