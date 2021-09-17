@@ -7645,6 +7645,29 @@ Invoked
         }
         
         [Fact]
+        public void TestFunctionPointerIntoVoidPtrNullCoalescing()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        delegate*<void> fp = &Function;
+        void* nullfp = null;
+        void* ptr = nullfp ?? fp;
+        Console.WriteLine(ptr is null);
+    }
+    
+    static void Function() { }
+}
+";
+
+            var expectedOutput = @"False";
+            CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.UnsafeDebugExe);
+        }
+        
+        [Fact]
         public void TestIncompatibleFunctionPointerTypesNullCoalescing()
         {
             var source = @"

@@ -3019,6 +3019,34 @@ unsafe class C
             CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.UnsafeDebugExe);
         }
         
+        
+        [Fact]
+        public void IncompatibleFunctionPointerTypes()
+        {
+            var source = @"
+using System;
+unsafe class C
+{
+    static void Main()
+    {
+        delegate*<void> a = &Function;
+        delegate*<int> b = null;
+
+        b ??= a;
+        b();
+    }
+    
+    static void Function() { }
+}
+";
+
+            var compilation = CreateCompilation(source, options: TestOptions.UnsafeDebugExe);
+            compilation.VerifyEmitDiagnostics(
+                // (10,9): error CS0019: Operator '??=' cannot be applied to operands of type 'delegate*<int>' and 'delegate*<void>'
+                //         b ??= a;
+                Diagnostic(ErrorCode.ERR_BadBinaryOps, "b ??= a").WithArguments("??=", "delegate*<int>", "delegate*<void>").WithLocation(10, 9));
+        }
+
         [Fact]
         public void FunctionPointerIntoVoidPtr()
         {
