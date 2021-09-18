@@ -25432,7 +25432,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         public override Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax> AttributeLists => new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax>(this.attributeLists);
         public override Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<SyntaxToken> Modifiers => new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<SyntaxToken>(this.modifiers);
-        /// <summary>Gets the identifier.</summary>
+        /// <summary>Gets the identifier or the new keyword token.</summary>
         public SyntaxToken Identifier => this.identifier;
         public override ParameterListSyntax ParameterList => this.parameterList;
         public ConstructorInitializerSyntax? Initializer => this.initializer;
@@ -38872,7 +38872,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
 #if DEBUG
             if (identifier == null) throw new ArgumentNullException(nameof(identifier));
-            if (identifier.Kind != SyntaxKind.IdentifierToken) throw new ArgumentException(nameof(identifier));
+            switch (identifier.Kind)
+            {
+                case SyntaxKind.IdentifierToken:
+                case SyntaxKind.NewKeyword: break;
+                default: throw new ArgumentException(nameof(identifier));
+            }
             if (parameterList == null) throw new ArgumentNullException(nameof(parameterList));
             if (semicolonToken != null)
             {
@@ -43845,7 +43850,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
 #if DEBUG
             if (identifier == null) throw new ArgumentNullException(nameof(identifier));
-            if (identifier.Kind != SyntaxKind.IdentifierToken) throw new ArgumentException(nameof(identifier));
+            switch (identifier.Kind)
+            {
+                case SyntaxKind.IdentifierToken:
+                case SyntaxKind.NewKeyword: break;
+                default: throw new ArgumentException(nameof(identifier));
+            }
             if (parameterList == null) throw new ArgumentNullException(nameof(parameterList));
             if (semicolonToken != null)
             {

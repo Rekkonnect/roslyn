@@ -1179,10 +1179,10 @@ tryAgain:
                 }
 
                 SyntaxToken modTok;
+                var nextToken = PeekToken(1);
                 switch (newMod)
                 {
                     case DeclarationModifiers.Partial:
-                        var nextToken = PeekToken(1);
                         var isPartialType = this.IsPartialType();
                         var isPartialMember = this.IsPartialMember();
                         if (isPartialType || isPartialMember)
@@ -1220,9 +1220,8 @@ tryAgain:
                         // keyword, or immediately before 'partial struct' if
                         // this is a partial ref struct declaration
                         {
-                            var next = PeekToken(1);
-                            if (isStructOrRecordKeyword(next) ||
-                                (next.ContextualKind == SyntaxKind.PartialKeyword &&
+                            if (isStructOrRecordKeyword(nextToken) ||
+                                (nextToken.ContextualKind == SyntaxKind.PartialKeyword &&
                                  isStructOrRecordKeyword(PeekToken(2))))
                             {
                                 modTok = this.EatToken();
@@ -1249,6 +1248,17 @@ tryAgain:
                         modTok = ConvertToKeyword(this.EatToken());
                         modTok = CheckFeatureAvailability(modTok, MessageID.IDS_FeatureAsync);
                         break;
+
+                    case DeclarationModifiers.New:
+                        // ctor declarations with the new() syntax will immediately terminate this process
+                        if (nextToken.Kind is SyntaxKind.OpenParenToken)
+                        {
+                            // Check whether the feature is enabled for the  
+                            CheckFeatureAvailability(this.CurrentToken, MessageID.IDS_FeatureSimpleConstructorDeclarations);
+                            return;
+                        }
+
+                        goto default;
 
                     default:
                         modTok = this.EatToken();
@@ -2773,7 +2783,8 @@ parse_member_name:;
                 this.ParseModifiers(modifiers, forAccessors: false);
 
                 // Check for constructor form
-                if (this.CurrentToken.Kind == SyntaxKind.IdentifierToken && this.PeekToken(1).Kind == SyntaxKind.OpenParenToken)
+                if (this.CurrentToken.Kind is SyntaxKind.IdentifierToken or SyntaxKind.NewKeyword && 
+                    this.PeekToken(1).Kind == SyntaxKind.OpenParenToken)
                 {
                     return this.ParseConstructorDeclaration(attributes, modifiers);
                 }
@@ -3004,7 +3015,10 @@ parse_member_name:;
         private ConstructorDeclarationSyntax ParseConstructorDeclaration(
             SyntaxList<AttributeListSyntax> attributes, SyntaxListBuilder modifiers)
         {
-            var name = this.ParseIdentifierToken();
+            var identifierOrNew = this.CurrentToken.Kind == SyntaxKind.IdentifierToken
+                ? this.ParseIdentifierToken()
+                : this.EatToken();
+            
             var saveTerm = _termState;
             _termState |= TerminatorState.IsEndOfMethodSignature;
             try
@@ -3019,7 +3033,7 @@ parse_member_name:;
                     out BlockSyntax body, out ArrowExpressionClauseSyntax expressionBody, out SyntaxToken semicolon,
                     requestedExpressionBodyFeature: MessageID.IDS_FeatureExpressionBodiedDeOrConstructor);
 
-                return _syntaxFactory.ConstructorDeclaration(attributes, modifiers.ToList(), name, paramList, initializer, body, expressionBody, semicolon);
+                return _syntaxFactory.ConstructorDeclaration(attributes, modifiers.ToList(), identifierOrNew, paramList, initializer, body, expressionBody, semicolon);
             }
             finally
             {

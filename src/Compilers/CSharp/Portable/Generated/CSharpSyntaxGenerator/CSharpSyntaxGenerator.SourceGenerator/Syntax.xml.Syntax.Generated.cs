@@ -12005,7 +12005,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             }
         }
 
-        /// <summary>Gets the identifier.</summary>
+        /// <summary>Gets the identifier or the new keyword token.</summary>
         public SyntaxToken Identifier => new SyntaxToken(this, ((Syntax.InternalSyntax.ConstructorDeclarationSyntax)this.Green).identifier, GetChildPosition(2), GetChildIndex(2));
 
         public override ParameterListSyntax ParameterList => GetRed(ref this.parameterList, 3)!;

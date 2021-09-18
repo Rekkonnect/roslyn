@@ -3854,9 +3854,10 @@
     <Field Name="Modifiers" Type="SyntaxList&lt;SyntaxToken&gt;" Override="true"/>
     <Field Name="Identifier" Type="SyntaxToken">
       <PropertyComment>
-        <summary>Gets the identifier.</summary>
+        <summary>Gets the identifier or the new keyword token.</summary>
       </PropertyComment>
       <Kind Name="IdentifierToken"/>
+      <Kind Name="NewKeyword"/>
     </Field>
     <Field Name="ParameterList" Type="ParameterListSyntax" Override="true"/>
     <Field Name="Initializer" Type="ConstructorInitializerSyntax" Optional="true"/>

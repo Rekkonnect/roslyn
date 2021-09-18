@@ -149,7 +149,7 @@ base_method_declaration
   ;
 
 constructor_declaration
-  : attribute_list* modifier* identifier_token parameter_list constructor_initializer? (block | (arrow_expression_clause ';'))
+  : attribute_list* modifier* (identifier_token | 'new') parameter_list constructor_initializer? (block | (arrow_expression_clause ';'))
   ;
 
 parameter_list
