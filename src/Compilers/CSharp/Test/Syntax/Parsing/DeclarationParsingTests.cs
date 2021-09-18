@@ -3504,9 +3504,17 @@ class Class1<T>{
             Assert.NotEqual(default, cn.Body.CloseBraceToken);
         }
 
-        private void TestClassConstructorWithModifier(SyntaxKind mod)
+        private void TestClassConstructorWithModifier(SyntaxKind mod, bool newKeywordForCtor)
         {
-            var text = "class a { " + SyntaxFacts.GetText(mod) + " a() { } }";
+            const string className = "a";
+            var ctorIdentifier = newKeywordForCtor ? "new" : className;
+            var text =
+$@"class {className}
+{{
+    {SyntaxFacts.GetText(mod)} {ctorIdentifier}()
+    {{
+    }}
+}}";
             var file = this.ParseFile(text);
 
             Assert.NotNull(file);
@@ -3521,7 +3529,7 @@ class Class1<T>{
             Assert.NotEqual(default, cs.Keyword);
             Assert.Equal(SyntaxKind.ClassKeyword, cs.Keyword.Kind());
             Assert.NotEqual(default, cs.Identifier);
-            Assert.Equal("a", cs.Identifier.ToString());
+            Assert.Equal(className, cs.Identifier.ToString());
             Assert.Null(cs.BaseList);
             Assert.Equal(0, cs.ConstraintClauses.Count);
             Assert.NotEqual(SyntaxKind.None, cs.OpenBraceToken.Kind());
@@ -3535,6 +3543,7 @@ class Class1<T>{
             Assert.Equal(0, cn.AttributeLists.Count);
             Assert.Equal(1, cn.Modifiers.Count);
             Assert.Equal(mod, cn.Modifiers[0].Kind());
+            Assert.Equal(ctorIdentifier, cn.Identifier.ToString());
             Assert.NotNull(cn.Body);
             Assert.NotEqual(default, cn.Body.OpenBraceToken);
             Assert.NotEqual(default, cn.Body.CloseBraceToken);
@@ -3543,11 +3552,22 @@ class Class1<T>{
         [Fact]
         public void TestClassConstructorWithModifiers()
         {
-            TestClassConstructorWithModifier(SyntaxKind.PublicKeyword);
-            TestClassConstructorWithModifier(SyntaxKind.PrivateKeyword);
-            TestClassConstructorWithModifier(SyntaxKind.ProtectedKeyword);
-            TestClassConstructorWithModifier(SyntaxKind.InternalKeyword);
-            TestClassConstructorWithModifier(SyntaxKind.StaticKeyword);
+            var accessibilityModifiers = new[]
+            {
+                SyntaxKind.PublicKeyword,
+                SyntaxKind.ProtectedKeyword,
+                SyntaxKind.PrivateKeyword,
+                SyntaxKind.InternalKeyword,
+            };
+
+            foreach (var modifier in accessibilityModifiers)
+            {
+                TestClassConstructorWithModifier(modifier, false);
+                TestClassConstructorWithModifier(modifier, true);
+            }
+
+            // Currently do not test for static new(), as the syntax is not yet agreed
+            TestClassConstructorWithModifier(SyntaxKind.StaticKeyword, false);
         }
 
         [Fact]
