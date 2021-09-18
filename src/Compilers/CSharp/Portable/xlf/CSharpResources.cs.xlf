@@ -1307,6 +1307,11 @@
         <target state="translated">zapečetěný ToString v záznamu</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureSimpleConstructorDeclarations">
+        <source>simple constructor declarations</source>
+        <target state="new">simple constructor declarations</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureStructFieldInitializers">
         <source>struct field initializers</source>
         <target state="new">struct field initializers</target>
