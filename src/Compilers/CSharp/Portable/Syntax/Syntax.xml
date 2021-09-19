@@ -2410,7 +2410,7 @@
       <Kind Name="ReturnKeyword"/>
       <Kind Name="BreakKeyword"/>
     </Field>
-    <Field Name="QuestionToken" Type="SyntaxToken">
+    <Field Name="QuestionToken" Type="SyntaxToken" Optional="true">
       <Kind Name="QuestionToken"/>
     </Field>
     <Field Name="Expression" Type="ExpressionSyntax" Optional="true"/>
