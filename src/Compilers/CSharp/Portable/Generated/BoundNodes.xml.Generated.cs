@@ -98,6 +98,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         NoOpStatement,
         ReturnStatement,
         YieldReturnStatement,
+        ConditionalYieldReturnStatement,
         YieldBreakStatement,
         ThrowStatement,
         ExpressionStatement,
@@ -3159,10 +3160,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
     }
 
-    internal sealed partial class BoundYieldReturnStatement : BoundStatement
+    internal abstract partial class BoundCommonYieldReturnStatement : BoundStatement
     {
-        public BoundYieldReturnStatement(SyntaxNode syntax, BoundExpression expression, bool hasErrors = false)
-            : base(BoundKind.YieldReturnStatement, syntax, hasErrors || expression.HasErrors())
+        protected BoundCommonYieldReturnStatement(BoundKind kind, SyntaxNode syntax, BoundExpression expression, bool hasErrors = false)
+            : base(kind, syntax, hasErrors)
         {
 
             RoslynDebug.Assert(expression is object, "Field 'expression' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
@@ -3172,6 +3173,18 @@ namespace Microsoft.CodeAnalysis.CSharp
 
 
         public BoundExpression Expression { get; }
+    }
+
+    internal sealed partial class BoundYieldReturnStatement : BoundCommonYieldReturnStatement
+    {
+        public BoundYieldReturnStatement(SyntaxNode syntax, BoundExpression expression, bool hasErrors = false)
+            : base(BoundKind.YieldReturnStatement, syntax, expression, hasErrors || expression.HasErrors())
+        {
+
+            RoslynDebug.Assert(expression is object, "Field 'expression' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
+
+        }
+
         [DebuggerStepThrough]
         public override BoundNode? Accept(BoundTreeVisitor visitor) => visitor.VisitYieldReturnStatement(this);
 
@@ -3180,6 +3193,31 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (expression != this.Expression)
             {
                 var result = new BoundYieldReturnStatement(this.Syntax, expression, this.HasErrors);
+                result.CopyAttributes(this);
+                return result;
+            }
+            return this;
+        }
+    }
+
+    internal sealed partial class BoundConditionalYieldReturnStatement : BoundCommonYieldReturnStatement
+    {
+        public BoundConditionalYieldReturnStatement(SyntaxNode syntax, BoundExpression expression, bool hasErrors = false)
+            : base(BoundKind.ConditionalYieldReturnStatement, syntax, expression, hasErrors || expression.HasErrors())
+        {
+
+            RoslynDebug.Assert(expression is object, "Field 'expression' cannot be null (make the type nullable in BoundNodes.xml to remove this check)");
+
+        }
+
+        [DebuggerStepThrough]
+        public override BoundNode? Accept(BoundTreeVisitor visitor) => visitor.VisitConditionalYieldReturnStatement(this);
+
+        public BoundConditionalYieldReturnStatement Update(BoundExpression expression)
+        {
+            if (expression != this.Expression)
+            {
+                var result = new BoundConditionalYieldReturnStatement(this.Syntax, expression, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8328,6 +8366,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return VisitReturnStatement((BoundReturnStatement)node, arg);
                 case BoundKind.YieldReturnStatement:
                     return VisitYieldReturnStatement((BoundYieldReturnStatement)node, arg);
+                case BoundKind.ConditionalYieldReturnStatement:
+                    return VisitConditionalYieldReturnStatement((BoundConditionalYieldReturnStatement)node, arg);
                 case BoundKind.YieldBreakStatement:
                     return VisitYieldBreakStatement((BoundYieldBreakStatement)node, arg);
                 case BoundKind.ThrowStatement:
@@ -8670,6 +8710,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public virtual R VisitNoOpStatement(BoundNoOpStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitReturnStatement(BoundReturnStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitYieldReturnStatement(BoundYieldReturnStatement node, A arg) => this.DefaultVisit(node, arg);
+        public virtual R VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitYieldBreakStatement(BoundYieldBreakStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitThrowStatement(BoundThrowStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitExpressionStatement(BoundExpressionStatement node, A arg) => this.DefaultVisit(node, arg);
@@ -8880,6 +8921,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public virtual BoundNode? VisitNoOpStatement(BoundNoOpStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitReturnStatement(BoundReturnStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node) => this.DefaultVisit(node);
+        public virtual BoundNode? VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitYieldBreakStatement(BoundYieldBreakStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitThrowStatement(BoundThrowStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitExpressionStatement(BoundExpressionStatement node) => this.DefaultVisit(node);
@@ -9327,6 +9369,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
         public override BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node)
+        {
+            this.Visit(node.Expression);
+            return null;
+        }
+        public override BoundNode? VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
         {
             this.Visit(node.Expression);
             return null;
@@ -10386,6 +10433,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             return node.Update(node.RefKind, expressionOpt);
         }
         public override BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node)
+        {
+            BoundExpression expression = (BoundExpression)this.Visit(node.Expression);
+            return node.Update(expression);
+        }
+        public override BoundNode? VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
         {
             BoundExpression expression = (BoundExpression)this.Visit(node.Expression);
             return node.Update(expression);
@@ -14283,6 +14335,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
         );
         public override TreeDumperNode VisitYieldReturnStatement(BoundYieldReturnStatement node, object? arg) => new TreeDumperNode("yieldReturnStatement", null, new TreeDumperNode[]
+        {
+            new TreeDumperNode("expression", null, new TreeDumperNode[] { Visit(node.Expression, null) }),
+            new TreeDumperNode("hasErrors", node.HasErrors, null)
+        }
+        );
+        public override TreeDumperNode VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node, object? arg) => new TreeDumperNode("conditionalYieldReturnStatement", null, new TreeDumperNode[]
         {
             new TreeDumperNode("expression", null, new TreeDumperNode[] { Visit(node.Expression, null) }),
             new TreeDumperNode("hasErrors", node.HasErrors, null)

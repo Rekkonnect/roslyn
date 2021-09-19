@@ -365,7 +365,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             => InternalSyntaxFactory.ThrowStatement(new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Syntax.InternalSyntax.AttributeListSyntax>(), InternalSyntaxFactory.Token(SyntaxKind.ThrowKeyword), null, InternalSyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
         private static Syntax.InternalSyntax.YieldStatementSyntax GenerateYieldStatement()
-            => InternalSyntaxFactory.YieldStatement(SyntaxKind.YieldReturnStatement, new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Syntax.InternalSyntax.AttributeListSyntax>(), InternalSyntaxFactory.Token(SyntaxKind.YieldKeyword), InternalSyntaxFactory.Token(SyntaxKind.ReturnKeyword), null, InternalSyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            => InternalSyntaxFactory.YieldStatement(SyntaxKind.YieldReturnStatement, new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Syntax.InternalSyntax.AttributeListSyntax>(), InternalSyntaxFactory.Token(SyntaxKind.YieldKeyword), InternalSyntaxFactory.Token(SyntaxKind.ReturnKeyword), InternalSyntaxFactory.Token(SyntaxKind.QuestionToken), null, InternalSyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
         private static Syntax.InternalSyntax.WhileStatementSyntax GenerateWhileStatement()
             => InternalSyntaxFactory.WhileStatement(new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<Syntax.InternalSyntax.AttributeListSyntax>(), InternalSyntaxFactory.Token(SyntaxKind.WhileKeyword), InternalSyntaxFactory.Token(SyntaxKind.OpenParenToken), GenerateIdentifierName(), InternalSyntaxFactory.Token(SyntaxKind.CloseParenToken), GenerateBlock());
@@ -2131,6 +2131,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(default, node.AttributeLists);
             Assert.Equal(SyntaxKind.YieldKeyword, node.YieldKeyword.Kind);
             Assert.Equal(SyntaxKind.ReturnKeyword, node.ReturnOrBreakKeyword.Kind);
+            Assert.Equal(SyntaxKind.QuestionToken, node.QuestionToken.Kind);
             Assert.Null(node.Expression);
             Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind);
 
@@ -10211,7 +10212,7 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             => SyntaxFactory.ThrowStatement(new SyntaxList<AttributeListSyntax>(), SyntaxFactory.Token(SyntaxKind.ThrowKeyword), default(ExpressionSyntax), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
         private static YieldStatementSyntax GenerateYieldStatement()
-            => SyntaxFactory.YieldStatement(SyntaxKind.YieldReturnStatement, new SyntaxList<AttributeListSyntax>(), SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(SyntaxKind.ReturnKeyword), default(ExpressionSyntax), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            => SyntaxFactory.YieldStatement(SyntaxKind.YieldReturnStatement, new SyntaxList<AttributeListSyntax>(), SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(SyntaxKind.ReturnKeyword), SyntaxFactory.Token(SyntaxKind.QuestionToken), default(ExpressionSyntax), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
         private static WhileStatementSyntax GenerateWhileStatement()
             => SyntaxFactory.WhileStatement(new SyntaxList<AttributeListSyntax>(), SyntaxFactory.Token(SyntaxKind.WhileKeyword), SyntaxFactory.Token(SyntaxKind.OpenParenToken), GenerateIdentifierName(), SyntaxFactory.Token(SyntaxKind.CloseParenToken), GenerateBlock());
@@ -11977,9 +11978,10 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests
             Assert.Equal(default, node.AttributeLists);
             Assert.Equal(SyntaxKind.YieldKeyword, node.YieldKeyword.Kind());
             Assert.Equal(SyntaxKind.ReturnKeyword, node.ReturnOrBreakKeyword.Kind());
+            Assert.Equal(SyntaxKind.QuestionToken, node.QuestionToken.Kind());
             Assert.Null(node.Expression);
             Assert.Equal(SyntaxKind.SemicolonToken, node.SemicolonToken.Kind());
-            var newNode = node.WithAttributeLists(node.AttributeLists).WithYieldKeyword(node.YieldKeyword).WithReturnOrBreakKeyword(node.ReturnOrBreakKeyword).WithExpression(node.Expression).WithSemicolonToken(node.SemicolonToken);
+            var newNode = node.WithAttributeLists(node.AttributeLists).WithYieldKeyword(node.YieldKeyword).WithReturnOrBreakKeyword(node.ReturnOrBreakKeyword).WithQuestionToken(node.QuestionToken).WithExpression(node.Expression).WithSemicolonToken(node.SemicolonToken);
             Assert.Equal(node, newNode);
         }
 

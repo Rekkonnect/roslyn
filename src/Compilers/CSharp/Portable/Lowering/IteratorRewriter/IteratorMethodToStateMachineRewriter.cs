@@ -315,7 +315,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             return VisitCommonYieldReturnStatement(node);
         }
-        public override BoundNode VisitYieldReturnNotNullStatement(BoundYieldReturnNotNullStatement node)
+
+        public override BoundNode VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
         {
             return VisitCommonYieldReturnStatement(node);
         }
@@ -349,7 +350,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var successfulYieldBlock = F.Block(currentAssignment, stateAssignment, generatedReturn);
 
             BoundStatement notNullCheck = null;
-            if (rewrittenExpression.Kind == BoundKind.YieldReturnNotNullStatement)
+            if (rewrittenExpression.Kind == BoundKind.ConditionalYieldReturnStatement)
             {
                 notNullCheck = F.If(F.Is(F.Not(F.Null(rewrittenExpression.Type!)), rewrittenExpression.Type!), successfulYieldBlock);
             }

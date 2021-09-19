@@ -969,7 +969,7 @@
 
   <Node Name="BoundYieldReturnStatement" Base="BoundCommonYieldReturnStatement"/>
 
-  <Node Name="BoundYieldReturnNotNullStatement" Base="BoundCommonYieldReturnStatement"/>
+  <Node Name="BoundConditionalYieldReturnStatement" Base="BoundCommonYieldReturnStatement"/>
 
   <Node Name="BoundYieldBreakStatement" Base="BoundStatement"/>
 

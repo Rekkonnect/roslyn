@@ -696,7 +696,7 @@ while_statement
   ;
 
 yield_statement
-  : attribute_list* 'yield' ('return' '?'? | 'break') expression? ';'
+  : attribute_list* 'yield' ('return' | 'break') '?' expression? ';'
   ;
 
 expression
