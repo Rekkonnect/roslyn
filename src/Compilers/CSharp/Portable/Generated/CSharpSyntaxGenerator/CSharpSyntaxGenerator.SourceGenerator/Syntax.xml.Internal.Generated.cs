@@ -14833,11 +14833,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         internal readonly GreenNode? attributeLists;
         internal readonly SyntaxToken yieldKeyword;
         internal readonly SyntaxToken returnOrBreakKeyword;
-        internal readonly SyntaxToken questionToken;
+        internal readonly SyntaxToken? questionToken;
         internal readonly ExpressionSyntax? expression;
         internal readonly SyntaxToken semicolonToken;
 
-        internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations)
+        internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken? questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations)
           : base(kind, diagnostics, annotations)
         {
             this.SlotCount = 6;
@@ -14850,8 +14850,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             this.yieldKeyword = yieldKeyword;
             this.AdjustFlagsAndWidth(returnOrBreakKeyword);
             this.returnOrBreakKeyword = returnOrBreakKeyword;
-            this.AdjustFlagsAndWidth(questionToken);
-            this.questionToken = questionToken;
+            if (questionToken != null)
+            {
+                this.AdjustFlagsAndWidth(questionToken);
+                this.questionToken = questionToken;
+            }
             if (expression != null)
             {
                 this.AdjustFlagsAndWidth(expression);
@@ -14861,7 +14864,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             this.semicolonToken = semicolonToken;
         }
 
-        internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken, SyntaxFactoryContext context)
+        internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken? questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken, SyntaxFactoryContext context)
           : base(kind)
         {
             this.SetFactoryContext(context);
@@ -14875,8 +14878,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             this.yieldKeyword = yieldKeyword;
             this.AdjustFlagsAndWidth(returnOrBreakKeyword);
             this.returnOrBreakKeyword = returnOrBreakKeyword;
-            this.AdjustFlagsAndWidth(questionToken);
-            this.questionToken = questionToken;
+            if (questionToken != null)
+            {
+                this.AdjustFlagsAndWidth(questionToken);
+                this.questionToken = questionToken;
+            }
             if (expression != null)
             {
                 this.AdjustFlagsAndWidth(expression);
@@ -14886,7 +14892,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             this.semicolonToken = semicolonToken;
         }
 
-        internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken)
+        internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken? questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken)
           : base(kind)
         {
             this.SlotCount = 6;
@@ -14899,8 +14905,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             this.yieldKeyword = yieldKeyword;
             this.AdjustFlagsAndWidth(returnOrBreakKeyword);
             this.returnOrBreakKeyword = returnOrBreakKeyword;
-            this.AdjustFlagsAndWidth(questionToken);
-            this.questionToken = questionToken;
+            if (questionToken != null)
+            {
+                this.AdjustFlagsAndWidth(questionToken);
+                this.questionToken = questionToken;
+            }
             if (expression != null)
             {
                 this.AdjustFlagsAndWidth(expression);
@@ -14913,7 +14922,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         public override Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax> AttributeLists => new Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax>(this.attributeLists);
         public SyntaxToken YieldKeyword => this.yieldKeyword;
         public SyntaxToken ReturnOrBreakKeyword => this.returnOrBreakKeyword;
-        public SyntaxToken QuestionToken => this.questionToken;
+        public SyntaxToken? QuestionToken => this.questionToken;
         public ExpressionSyntax? Expression => this.expression;
         public SyntaxToken SemicolonToken => this.semicolonToken;
 
@@ -14973,9 +14982,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             var returnOrBreakKeyword = (SyntaxToken)reader.ReadValue();
             AdjustFlagsAndWidth(returnOrBreakKeyword);
             this.returnOrBreakKeyword = returnOrBreakKeyword;
-            var questionToken = (SyntaxToken)reader.ReadValue();
-            AdjustFlagsAndWidth(questionToken);
-            this.questionToken = questionToken;
+            var questionToken = (SyntaxToken?)reader.ReadValue();
+            if (questionToken != null)
+            {
+                AdjustFlagsAndWidth(questionToken);
+                this.questionToken = questionToken;
+            }
             var expression = (ExpressionSyntax?)reader.ReadValue();
             if (expression != null)
             {
@@ -37635,7 +37647,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             return new ThrowStatementSyntax(SyntaxKind.ThrowStatement, attributeLists.Node, throwKeyword, expression, semicolonToken, this.context);
         }
 
-        public YieldStatementSyntax YieldStatement(SyntaxKind kind, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken)
+        public YieldStatementSyntax YieldStatement(SyntaxKind kind, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken? questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken)
         {
             switch (kind)
             {
@@ -37653,8 +37665,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 case SyntaxKind.BreakKeyword: break;
                 default: throw new ArgumentException(nameof(returnOrBreakKeyword));
             }
-            if (questionToken == null) throw new ArgumentNullException(nameof(questionToken));
-            if (questionToken.Kind != SyntaxKind.QuestionToken) throw new ArgumentException(nameof(questionToken));
+            if (questionToken != null)
+            {
+                switch (questionToken.Kind)
+                {
+                    case SyntaxKind.QuestionToken:
+                    case SyntaxKind.None: break;
+                    default: throw new ArgumentException(nameof(questionToken));
+                }
+            }
             if (semicolonToken == null) throw new ArgumentNullException(nameof(semicolonToken));
             if (semicolonToken.Kind != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
 #endif
@@ -42610,7 +42629,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             return new ThrowStatementSyntax(SyntaxKind.ThrowStatement, attributeLists.Node, throwKeyword, expression, semicolonToken);
         }
 
-        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken)
+        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, Microsoft.CodeAnalysis.Syntax.InternalSyntax.SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SyntaxToken? questionToken, ExpressionSyntax? expression, SyntaxToken semicolonToken)
         {
             switch (kind)
             {
@@ -42628,8 +42647,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 case SyntaxKind.BreakKeyword: break;
                 default: throw new ArgumentException(nameof(returnOrBreakKeyword));
             }
-            if (questionToken == null) throw new ArgumentNullException(nameof(questionToken));
-            if (questionToken.Kind != SyntaxKind.QuestionToken) throw new ArgumentException(nameof(questionToken));
+            if (questionToken != null)
+            {
+                switch (questionToken.Kind)
+                {
+                    case SyntaxKind.QuestionToken:
+                    case SyntaxKind.None: break;
+                    default: throw new ArgumentException(nameof(questionToken));
+                }
+            }
             if (semicolonToken == null) throw new ArgumentNullException(nameof(semicolonToken));
             if (semicolonToken.Kind != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
 #endif

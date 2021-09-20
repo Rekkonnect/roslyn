@@ -4086,19 +4086,24 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.BreakKeyword: break;
                 default: throw new ArgumentException(nameof(returnOrBreakKeyword));
             }
-            if (questionToken.Kind() != SyntaxKind.QuestionToken) throw new ArgumentException(nameof(questionToken));
+            switch (questionToken.Kind())
+            {
+                case SyntaxKind.QuestionToken:
+                case SyntaxKind.None: break;
+                default: throw new ArgumentException(nameof(questionToken));
+            }
             if (semicolonToken.Kind() != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
-            return (YieldStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.YieldStatement(kind, attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), (Syntax.InternalSyntax.SyntaxToken)yieldKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)returnOrBreakKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)questionToken.Node!, expression == null ? null : (Syntax.InternalSyntax.ExpressionSyntax)expression.Green, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node!).CreateRed();
+            return (YieldStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.YieldStatement(kind, attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), (Syntax.InternalSyntax.SyntaxToken)yieldKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)returnOrBreakKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken?)questionToken.Node, expression == null ? null : (Syntax.InternalSyntax.ExpressionSyntax)expression.Green, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node!).CreateRed();
         }
 
         /// <summary>Creates a new YieldStatementSyntax instance.</summary>
         public static YieldStatementSyntax YieldStatement(SyntaxKind kind, SyntaxList<AttributeListSyntax> attributeLists, ExpressionSyntax? expression)
-            => SyntaxFactory.YieldStatement(kind, attributeLists, SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(GetYieldStatementReturnOrBreakKeywordKind(kind)), SyntaxFactory.Token(SyntaxKind.QuestionToken), expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            => SyntaxFactory.YieldStatement(kind, attributeLists, SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(GetYieldStatementReturnOrBreakKeywordKind(kind)), default, expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
 #pragma warning disable RS0027
         /// <summary>Creates a new YieldStatementSyntax instance.</summary>
         public static YieldStatementSyntax YieldStatement(SyntaxKind kind, ExpressionSyntax? expression = default)
-            => SyntaxFactory.YieldStatement(kind, default, SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(GetYieldStatementReturnOrBreakKeywordKind(kind)), SyntaxFactory.Token(SyntaxKind.QuestionToken), expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            => SyntaxFactory.YieldStatement(kind, default, SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(GetYieldStatementReturnOrBreakKeywordKind(kind)), default, expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 #pragma warning restore RS0027
 
         private static SyntaxKind GetYieldStatementReturnOrBreakKeywordKind(SyntaxKind kind)

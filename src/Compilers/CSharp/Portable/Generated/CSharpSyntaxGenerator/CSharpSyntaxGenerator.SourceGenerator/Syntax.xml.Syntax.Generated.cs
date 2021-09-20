@@ -7014,7 +7014,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public SyntaxToken ReturnOrBreakKeyword => new SyntaxToken(this, ((Syntax.InternalSyntax.YieldStatementSyntax)this.Green).returnOrBreakKeyword, GetChildPosition(2), GetChildIndex(2));
 
-        public SyntaxToken QuestionToken => new SyntaxToken(this, ((Syntax.InternalSyntax.YieldStatementSyntax)this.Green).questionToken, GetChildPosition(3), GetChildIndex(3));
+        public SyntaxToken QuestionToken
+        {
+            get
+            {
+                var slot = ((Syntax.InternalSyntax.YieldStatementSyntax)this.Green).questionToken;
+                return slot != null ? new SyntaxToken(this, slot, GetChildPosition(3), GetChildIndex(3)) : default;
+            }
+        }
 
         public ExpressionSyntax? Expression => GetRed(ref this.expression, 4);
 
