@@ -4076,6 +4076,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.YieldReturnStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.YieldBreakStatement: break;
                 default: throw new ArgumentException(nameof(kind));
             }
@@ -4097,22 +4098,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         /// <summary>Creates a new YieldStatementSyntax instance.</summary>
-        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, SyntaxList<AttributeListSyntax> attributeLists, ExpressionSyntax? expression)
-            => SyntaxFactory.YieldStatement(kind, attributeLists, SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(GetYieldStatementReturnOrBreakKeywordKind(kind)), default, expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken returnOrBreakKeyword, ExpressionSyntax? expression)
+            => SyntaxFactory.YieldStatement(kind, attributeLists, SyntaxFactory.Token(SyntaxKind.YieldKeyword), returnOrBreakKeyword, default, expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
-#pragma warning disable RS0027
         /// <summary>Creates a new YieldStatementSyntax instance.</summary>
-        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, ExpressionSyntax? expression = default)
-            => SyntaxFactory.YieldStatement(kind, default, SyntaxFactory.Token(SyntaxKind.YieldKeyword), SyntaxFactory.Token(GetYieldStatementReturnOrBreakKeywordKind(kind)), default, expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-#pragma warning restore RS0027
-
-        private static SyntaxKind GetYieldStatementReturnOrBreakKeywordKind(SyntaxKind kind)
-            => kind switch
-            {
-                SyntaxKind.YieldReturnStatement => SyntaxKind.ReturnKeyword,
-                SyntaxKind.YieldBreakStatement => SyntaxKind.BreakKeyword,
-                _ => throw new ArgumentOutOfRangeException(),
-            };
+        public static YieldStatementSyntax YieldStatement(SyntaxKind kind, SyntaxToken returnOrBreakKeyword)
+            => SyntaxFactory.YieldStatement(kind, default, SyntaxFactory.Token(SyntaxKind.YieldKeyword), returnOrBreakKeyword, default, default, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
         /// <summary>Creates a new WhileStatementSyntax instance.</summary>
         public static WhileStatementSyntax WhileStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken whileKeyword, SyntaxToken openParenToken, ExpressionSyntax condition, SyntaxToken closeParenToken, StatementSyntax statement)

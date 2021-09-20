@@ -9233,7 +9233,7 @@ tryAgain:
             {
                 kind = SyntaxKind.YieldReturnStatement;
                 returnOrBreak = this.EatToken(SyntaxKind.ReturnKeyword);
-                var peekedQuestion = this.PeekToken(1);
+                var peekedQuestion = this.CurrentToken;
                 if (peekedQuestion.Kind == SyntaxKind.QuestionToken)
                 {
                     question = this.EatToken(SyntaxKind.QuestionToken);

@@ -37652,6 +37652,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             switch (kind)
             {
                 case SyntaxKind.YieldReturnStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.YieldBreakStatement: break;
                 default: throw new ArgumentException(nameof(kind));
             }
@@ -42634,6 +42635,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             switch (kind)
             {
                 case SyntaxKind.YieldReturnStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.YieldBreakStatement: break;
                 default: throw new ArgumentException(nameof(kind));
             }

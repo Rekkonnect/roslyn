@@ -2401,8 +2401,9 @@
   </Node>
   <Node Name="YieldStatementSyntax" Base="StatementSyntax">
     <Kind Name="YieldReturnStatement"/>
-    <Field Name="AttributeLists" Type="SyntaxList&lt;AttributeListSyntax&gt;" Override="true"/>
+    <Kind Name="ConditionalYieldReturnStatement"/>
     <Kind Name="YieldBreakStatement"/>
+    <Field Name="AttributeLists" Type="SyntaxList&lt;AttributeListSyntax&gt;" Override="true"/>
     <Field Name="YieldKeyword" Type="SyntaxToken">
       <Kind Name="YieldKeyword"/>
     </Field>

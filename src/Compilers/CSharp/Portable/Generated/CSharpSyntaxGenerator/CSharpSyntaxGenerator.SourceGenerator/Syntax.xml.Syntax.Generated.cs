@@ -6995,6 +6995,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     /// <para>This node is associated with the following syntax kinds:</para>
     /// <list type="bullet">
     /// <item><description><see cref="SyntaxKind.YieldReturnStatement"/></description></item>
+    /// <item><description><see cref="SyntaxKind.ConditionalYieldReturnStatement"/></description></item>
     /// <item><description><see cref="SyntaxKind.YieldBreakStatement"/></description></item>
     /// </list>
     /// </remarks>
