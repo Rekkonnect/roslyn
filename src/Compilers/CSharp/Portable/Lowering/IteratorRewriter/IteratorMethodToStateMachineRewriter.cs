@@ -325,9 +325,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             //     yield return? expression;
             // is translated to
-            //     if (expression is not null)
+            //     var expressionResult = expression;
+            //     if (expressionResult is not null)
             //     {
-            //         this.current = expression;
+            //         this.current = expressionResult;
             //         this.state = <next_state>;
             //         return true;
             //     }
@@ -343,16 +344,27 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var rewrittenExpression = (BoundExpression)Visit(node.Expression);
 
-            var currentAssignment = F.Assignment(F.Field(F.This(), _current), rewrittenExpression);
+            // Always assign the result of the expression to a temporary variable, regardless of whether a null check is performed
+            var expressionType = node.Expression.Type!;
+            var cachedResultVariable = F.Local(F.SynthesizedLocal(expressionType));
+            var cachedResultAssignment = F.Assignment(cachedResultVariable, rewrittenExpression);
+
+            // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get
+            BoundExpression iteratedResult = cachedResultVariable;
+            if (expressionType.IsNullableType())
+            {
+                var valuePropertySymbol = expressionType.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
+                iteratedResult = F.Property(cachedResultVariable, valuePropertySymbol!);
+            }
+
+            var currentAssignment = F.Assignment(F.Field(F.This(), _current), iteratedResult);
             var stateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(stateNumber));
             var generatedReturn = GenerateReturn(finished: false);
 
-            var successfulYieldBlock = F.Block(currentAssignment, stateAssignment, generatedReturn);
-
-            BoundStatement notNullCheck = null;
-            if (rewrittenExpression.Kind == BoundKind.ConditionalYieldReturnStatement)
+            BoundStatement yieldIterationBlock = F.Block(currentAssignment, stateAssignment, generatedReturn);
+            if (node.Kind == BoundKind.ConditionalYieldReturnStatement)
             {
-                notNullCheck = F.If(F.Is(F.Not(F.Null(rewrittenExpression.Type!)), rewrittenExpression.Type!), successfulYieldBlock);
+                yieldIterationBlock = F.If(F.Is(F.Not(F.Null(expressionType!)), expressionType!), yieldIterationBlock);
             }
 
             var nextStateLabel = F.Label(resumeLabel);
@@ -360,7 +372,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             var finalizeStateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState));
 
             return F.Block(
-                notNullCheck ?? successfulYieldBlock,
+                cachedResultAssignment,
+                yieldIterationBlock,
                 nextStateLabel,
                 hiddenSequencePoint,
                 finalizeStateAssignment);
