@@ -333,7 +333,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 case SyntaxKind.WhileStatement:
                     return ((WhileStatementSyntax)statement).WhileKeyword;
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldReturnNotNullStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.YieldBreakStatement:
                     return ((YieldStatementSyntax)statement).YieldKeyword;
                 case SyntaxKind.LocalFunctionStatement:
@@ -412,7 +412,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 case SyntaxKind.WhileStatement:
                     return GetFirstExcludedToken(((WhileStatementSyntax)statement).Statement);
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldReturnNotNullStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.YieldBreakStatement:
                     return ((YieldStatementSyntax)statement).SemicolonToken;
                 case SyntaxKind.LocalFunctionStatement:

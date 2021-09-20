@@ -814,7 +814,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.LockStatement:
                 case SyntaxKind.IfStatement:
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldReturnNotNullStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.ReturnStatement:
                 case SyntaxKind.ThrowStatement:
                     Debug.Assert((object)_containingMemberOrLambda == enclosing.ContainingMemberOrLambda);

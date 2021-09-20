@@ -863,6 +863,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         LineDirectivePosition = 9070,
         LineSpanDirectiveTrivia = 9071,
 
-        YieldReturnNotNullStatement = 9072,
+        ConditionalYieldReturnStatement = 9072,
     }
 }

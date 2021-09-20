@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     result = BindYieldBreakStatement((YieldStatementSyntax)node, diagnostics);
                     break;
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldReturnNotNullStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                     result = BindYieldReturnStatement((YieldStatementSyntax)node, diagnostics);
                     break;
                 case SyntaxKind.LockStatement:
@@ -331,7 +331,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.LockStatement:
                 case SyntaxKind.IfStatement:
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldReturnNotNullStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.ReturnStatement:
                 case SyntaxKind.ThrowStatement:
                     binder = this.GetBinder(node);

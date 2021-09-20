@@ -9237,7 +9237,7 @@ tryAgain:
                 if (peekedQuestion.Kind == SyntaxKind.QuestionToken)
                 {
                     question = this.EatToken(SyntaxKind.QuestionToken);
-                    kind = SyntaxKind.YieldReturnNotNullStatement;
+                    kind = SyntaxKind.ConditionalYieldReturnStatement;
                 }
 
                 if (this.CurrentToken.Kind == SyntaxKind.SemicolonToken)

@@ -255,7 +255,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ExpressionStatement:
                 case SyntaxKind.IfStatement:
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldReturnNotNullStatement:
+                case SyntaxKind.ConditionalYieldReturnStatement:
                 case SyntaxKind.ReturnStatement:
                 case SyntaxKind.ThrowStatement:
                 case SyntaxKind.GotoCaseStatement:
