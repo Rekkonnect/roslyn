@@ -2999,5 +2999,62 @@ class Program
   IL_0044:  ret
 }");
         }
+
+        [Fact]
+        public void TestConditionalIterator01()
+        {
+            var source =
+                @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    static IEnumerable<object> NonNull(params object?[] objs)
+    {
+        foreach (var o in objs)
+            yield return? o;
+    }
+
+    static void Main(string[] args)
+    {
+        var obj = new object();
+        var nonNull = NonNull(null, obj, null, null, obj, obj, null).ToArray();
+        Console.Write(nonNull.Length);
+    }
+}
+";
+            var compilation = CompileAndVerify(source, expectedOutput: "3");
+        }
+
+        [Fact]
+        public void TestConditionalIterator02()
+        {
+            var source =
+                @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    static IEnumerable<int> NonNull(params int?[] ints)
+    {
+        foreach (var i in ints)
+            yield return? i;
+    }
+
+    static void Main(string[] args)
+    {
+        var nonNull = NonNull(null, 0, 1, null, 2, 3, null, null, null, 4, 5, null).ToArray();
+        Console.Write($""{nonNull.Length} - "");
+        foreach (var i in nonNull)
+            Console.Write(i);
+    }
+}
+";
+            var compilation = CompileAndVerify(source, expectedOutput: "6 - 012345");
+        }
     }
 }

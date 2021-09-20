@@ -1351,6 +1351,24 @@ public class Test
             Assert.Empty(ctrlFlowAnalysis.ExitPoints);
         }
 
+        [Fact]
+        public void TestConditionalYieldReturnStatement()
+        {
+            var source = @"
+using System.Collections.Generic;
+
+public class Test 
+{
+    public IEnumerator<int> M1(string s)
+    {
+        /*<bind>*/yield return? s?.Length;/*</bind>*/
+    }
+}
+";
+            var ctrlFlowAnalysis = CompileAndAnalyzeControlFlowStatements(source);
+            Assert.Empty(ctrlFlowAnalysis.ExitPoints);
+        }
+
         #endregion
     }
 }
