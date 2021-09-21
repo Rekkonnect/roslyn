@@ -326,15 +326,18 @@ namespace Microsoft.CodeAnalysis.CSharp
             //     yield return? expression;
             // is translated to
             //     var expressionResult = expression;
-            //     if (expressionResult is not null)
+            //     if (expressionResult is expressionResult.GetType()) // bound type
             //     {
-            //         this.current = expressionResult;
+            //         this.current = expressionResult; // (1)
             //         this.state = <next_state>;
             //         return true;
             //     }
             //     <next_state_label>: ;
             //     <hidden sequence point>
             //     this.state = finalizeState;
+            //
+            // if expressionResult is Nullable<T>, (1) is instead translated as:
+            //         this.current = expressionResult.Value;
             //
             //     yield return expression;
             // is translated to the same snippet excluding the if statement
@@ -346,12 +349,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Always assign the result of the expression to a temporary variable, regardless of whether a null check is performed
             var expressionType = node.Expression.Type!;
-            var cachedResultVariable = F.Local(F.SynthesizedLocal(expressionType));
+            var cachedResultVariable = F.Local(F.SynthesizedLocal(expressionType, node.Syntax));
             var cachedResultAssignment = F.Assignment(cachedResultVariable, rewrittenExpression);
 
             // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get
             BoundExpression iteratedResult = cachedResultVariable;
-            if (expressionType.IsNullableType())
+            if (node.Kind == BoundKind.ConditionalYieldReturnStatement && expressionType.IsNullableType())
             {
                 var valuePropertySymbol = expressionType.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
                 iteratedResult = F.Property(cachedResultVariable, valuePropertySymbol!);
@@ -364,7 +367,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundStatement yieldIterationBlock = F.Block(currentAssignment, stateAssignment, generatedReturn);
             if (node.Kind == BoundKind.ConditionalYieldReturnStatement)
             {
-                yieldIterationBlock = F.If(F.Is(F.Not(F.Null(expressionType!)), expressionType!), yieldIterationBlock);
+                // Regardless of this expression's validity, I believe there's a deeper issue arising in the locals
+                yieldIterationBlock = F.If(F.Is(cachedResultVariable, expressionType!), yieldIterationBlock);
             }
 
             var nextStateLabel = F.Label(resumeLabel);

@@ -1798,17 +1798,39 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (!conversion.IsImplicit || !conversion.IsValid)
             {
-                // We suppress conversion errors on default parameters; eg,
-                // if someone says "void M(string s = 123) {}". We will report
-                // a special error in the default parameter binder.
-
-                if (!isDefaultParameter)
+                bool invalidate = true;
+                // if the expression is after a yield return?, the yield return? is its direct parent
+                if (expression.Syntax.Parent?.Kind() == SyntaxKind.ConditionalYieldReturnStatement)
                 {
-                    GenerateImplicitConversionError(diagnostics, expression.Syntax, conversion, expression, targetType);
+                    // Consider the underlying type of the nullable struct
+                    var exprType = expression.Type!;
+                    if (exprType.IsNullableType())
+                    {
+                        var underlyingExprType = exprType.GetNullableUnderlyingType();
+                        var classifiedUnderlyingConversion = this.Conversions.ClassifyConversionFromExpressionType(underlyingExprType, targetType, ref useSiteInfo);
+                        if (classifiedUnderlyingConversion.IsValid)
+                        {
+                            invalidate = false;
+                            conversion = classifiedUnderlyingConversion;
+                            // No further action is taken, pray for your lives
+                        }
+                    }
                 }
 
-                // Suppress any additional diagnostics
-                diagnostics = BindingDiagnosticBag.Discarded;
+                if (invalidate)
+                {
+                    // We suppress conversion errors on default parameters; eg,
+                    // if someone says "void M(string s = 123) {}". We will report
+                    // a special error in the default parameter binder.
+
+                    if (!isDefaultParameter)
+                    {
+                        GenerateImplicitConversionError(diagnostics, expression.Syntax, conversion, expression, targetType);
+                    }
+
+                    // Suppress any additional diagnostics
+                    diagnostics = BindingDiagnosticBag.Discarded;
+                }
             }
 
             return CreateConversion(expression.Syntax, expression, conversion, isCast: false, conversionGroupOpt: null, targetType, diagnostics);

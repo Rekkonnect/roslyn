@@ -3004,7 +3004,7 @@ class Program
         public void TestConditionalIterator01()
         {
             var source =
-                @"
+@"
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -3032,7 +3032,7 @@ class C
         public void TestConditionalIterator02()
         {
             var source =
-                @"
+@"
 using System;
 using System.Collections.Generic;
 using System.Linq;
