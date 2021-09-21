@@ -1734,7 +1734,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue; // a tracked exception
                     }
 
-                    if (pend.Branch.Kind != BoundKind.YieldReturnStatement)
+                    if (pend.Branch.Kind is not BoundKind.YieldReturnStatement
+                                        and not BoundKind.ConditionalYieldReturnStatement)
                     {
                         updatePendingBranchState(ref pend.State, ref stateMovedUpInFinally);
 
@@ -3282,6 +3283,16 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         public override BoundNode VisitYieldReturnStatement(BoundYieldReturnStatement node)
+        {
+            return VisitCommonYieldReturnStatement(node);
+        }
+
+        public override BoundNode? VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
+        {
+            return VisitCommonYieldReturnStatement(node);
+        }
+
+        private BoundNode VisitCommonYieldReturnStatement(BoundCommonYieldReturnStatement node)
         {
             VisitRvalue(node.Expression);
             PendingBranches.Add(new PendingBranch(node, this.State, null));

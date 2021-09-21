@@ -9872,11 +9872,22 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
+            return VisitCommonYieldReturnStatement(node);
+        }
+
+        public override BoundNode? VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
+        {
+            return VisitCommonYieldReturnStatement(node);
+        }
+
+        private BoundNode? VisitCommonYieldReturnStatement(BoundCommonYieldReturnStatement node)
+        {
             BoundExpression expr = node.Expression;
             if (expr == null)
             {
                 return null;
             }
+
             var method = (MethodSymbol)CurrentSymbol;
             TypeWithAnnotations elementType = InMethodBinder.GetIteratorElementTypeFromReturnType(compilation, RefKind.None,
                 method.ReturnType, errorLocation: null, diagnostics: null);

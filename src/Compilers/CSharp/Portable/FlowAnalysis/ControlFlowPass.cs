@@ -302,6 +302,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case BoundKind.YieldBreakStatement:
                     case BoundKind.YieldReturnStatement:
+                    case BoundKind.ConditionalYieldReturnStatement:
                         // ERR_BadYieldInFinally reported during initial binding
                         break;
                     default:

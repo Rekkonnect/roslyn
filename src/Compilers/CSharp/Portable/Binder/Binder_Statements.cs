@@ -270,7 +270,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             CheckRequiredLangVersionForAsyncIteratorMethods(diagnostics);
-            return new BoundYieldReturnStatement(node, argument);
+
+            return node.Kind() switch
+            {
+                SyntaxKind.YieldReturnStatement => new BoundYieldReturnStatement(node, argument),
+                SyntaxKind.ConditionalYieldReturnStatement => new BoundConditionalYieldReturnStatement(node, argument),
+            };
         }
 
         private BoundStatement BindYieldBreakStatement(YieldStatementSyntax node, BindingDiagnosticBag diagnostics)
