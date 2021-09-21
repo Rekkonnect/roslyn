@@ -349,15 +349,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Always assign the result of the expression to a temporary variable, regardless of whether a null check is performed
             var expressionType = node.Expression.Type!;
-            var cachedResultVariable = F.Local(F.SynthesizedLocal(expressionType, node.Syntax));
-            var cachedResultAssignment = F.Assignment(cachedResultVariable, rewrittenExpression);
+            var cachedResultLocal = F.SynthesizedLocal(expressionType);
+            var cachedResultAssignment = F.Assignment(F.Local(cachedResultLocal), rewrittenExpression);
 
             // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get
-            BoundExpression iteratedResult = cachedResultVariable;
+            BoundExpression iteratedResult = F.Local(cachedResultLocal);
             if (node.Kind == BoundKind.ConditionalYieldReturnStatement && expressionType.IsNullableType())
             {
                 var valuePropertySymbol = expressionType.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
-                iteratedResult = F.Property(cachedResultVariable, valuePropertySymbol!);
+                iteratedResult = F.Property(F.Local(cachedResultLocal), valuePropertySymbol!);
             }
 
             var currentAssignment = F.Assignment(F.Field(F.This(), _current), iteratedResult);
@@ -368,7 +368,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (node.Kind == BoundKind.ConditionalYieldReturnStatement)
             {
                 // Regardless of this expression's validity, I believe there's a deeper issue arising in the locals
-                yieldIterationBlock = F.If(F.Is(cachedResultVariable, expressionType!), yieldIterationBlock);
+                yieldIterationBlock = F.If(F.Is(F.Local(cachedResultLocal), expressionType!), yieldIterationBlock);
             }
 
             var nextStateLabel = F.Label(resumeLabel);
@@ -376,6 +376,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var finalizeStateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState));
 
             return F.Block(
+                ImmutableArray.Create<LocalSymbol>(cachedResultLocal),
                 cachedResultAssignment,
                 yieldIterationBlock,
                 nextStateLabel,
