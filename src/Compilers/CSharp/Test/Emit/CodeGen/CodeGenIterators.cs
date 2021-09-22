@@ -3059,7 +3059,7 @@ class C
             CompileAndVerify(source, expectedOutput: "6 - 012345");
         }
 
-        [Fact(Skip = "Dynamic binder not loaded")]
+        [Fact]
         public void TestConditionalIteratorDynamicType()
         {
             var source =
@@ -3099,7 +3099,10 @@ class C
     }}
 }}
 ";
-            CompileAndVerify(source, options: TestOptions.ReleaseExe, expectedOutput: "3");
+            CompileAndVerify(source,
+                references: new[] { CSharpRef },
+                options: TestOptions.ReleaseExe,
+                expectedOutput: "3");
         }
 
         [Fact]
