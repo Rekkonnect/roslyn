@@ -3143,6 +3143,7 @@ class C
         // Every statement should have a warning
         yield return? null;
         yield return? default;
+        yield return? default(object);
         yield return? ""not null"";
 
         const string s = nameof(s);
@@ -3161,6 +3162,7 @@ class C
 ";
             var compilation = CreateCompilation(source);
 
+            // TODO: Update error codes in comments once shipped
             compilation.VerifyEmitDiagnostics(
                 // (10,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
                 //         yield return? null;
@@ -3169,24 +3171,27 @@ class C
                 //         yield return? default;
                 Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(11, 9),
                 // (12,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
-                //         yield return? "not null";
+                //         yield return? default(object);
                 Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(12, 9),
-                // (15,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                // (13,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? "not null";
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(13, 9),
+                // (16,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
                 //         yield return? s;
-                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(15, 9),
-                // (17,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
-                //         yield return? "value" + s + "other";
-                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(17, 9),
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(16, 9),
                 // (18,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
-                //         yield return? $"value {s}";
+                //         yield return? "value" + s + "other";
                 Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(18, 9),
+                // (19,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? $"value {s}";
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(19, 9),
 
-                // (23,9): error CS9900: The type of the expression in the conditional yield return must be nullable.
-                //         yield return? default;
-                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(23, 9),
                 // (24,9): error CS9900: The type of the expression in the conditional yield return must be nullable.
+                //         yield return? default;
+                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(24, 9),
+                // (25,9): error CS9900: The type of the expression in the conditional yield return must be nullable.
                 //         yield return? 0;
-                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(24, 9)
+                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(25, 9)
             );
         }
     }
