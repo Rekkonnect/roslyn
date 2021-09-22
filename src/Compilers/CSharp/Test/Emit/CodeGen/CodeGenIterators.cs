@@ -3001,7 +3001,7 @@ class Program
         }
 
         [Fact]
-        public void TestConditionalIterator01()
+        public void TestConditionalIteratorReferenceType()
         {
             var source =
 @"
@@ -3029,7 +3029,7 @@ class C
         }
 
         [Fact]
-        public void TestConditionalIterator02()
+        public void TestConditionalIteratorNullableToValueType()
         {
             var source =
 @"

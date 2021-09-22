@@ -235,29 +235,39 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ValidateYield(node, diagnostics);
             TypeSymbol elementType = GetIteratorElementType().Type;
-            BoundExpression argument = (node.Expression == null)
+            BoundExpression initialArgument = (node.Expression == null)
                 ? BadExpression(node).MakeCompilerGenerated()
                 : BindValue(node.Expression, diagnostics, BindValueKind.RValue);
+            var argument = initialArgument;
             argument = ValidateEscape(argument, ExternalScope, isByRef: false, diagnostics: diagnostics);
 
             if (!argument.HasAnyErrors)
             {
-                argument = GenerateConversionForAssignment(elementType, argument, diagnostics);
+                argument = GenerateConversionForAssignment(elementType, argument, diagnostics, implicitConversionError: false);
                 if (argument.HasAnyErrors)
                 {
-                    if (argument.Type!.IsNullableType())
+                    if (initialArgument.Type!.IsNullableType())
                     {
+                        elementType = initialArgument.Type.GetNullableUnderlyingType();
                         // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get
-                        var valuePropertySymbol = argument.Type.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
+                        var valuePropertySymbol = initialArgument.Type.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
+                        Debug.Assert(valuePropertySymbol is not null);
 
-                        var denulledArgument = argument;
-                        denulledArgument = new BoundPropertyAccess(node, argument, valuePropertySymbol,
-                            LookupResultKind.Viable, argument.Type.GetNullableUnderlyingType());
+                        var denulledArgument = new BoundPropertyAccess(node, initialArgument.WithWasConverted(),
+                            valuePropertySymbol, LookupResultKind.Viable, elementType);
                         argument = GenerateConversionForAssignment(elementType, denulledArgument, diagnostics);
 
                         // TODO: In the case that the underlying type cannot be converted to the target type either,
                         //       consider a more specific error message hinting that yield return? could accept an
                         //       implicit conversion from the underlying type into the target type
+                        if (argument.HasAnyErrors)
+                        {
+                            argument = BindToTypeForErrorRecovery(argument);
+                        }
+                    }
+                    else
+                    {
+                        argument = BindToTypeForErrorRecovery(argument);
                     }
                 }
             }
@@ -1785,7 +1795,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 boundStatements);
         }
 
-        internal BoundExpression GenerateConversionForAssignment(TypeSymbol targetType, BoundExpression expression, BindingDiagnosticBag diagnostics, bool isDefaultParameter = false, bool isRefAssignment = false)
+        internal BoundExpression GenerateConversionForAssignment(TypeSymbol targetType, BoundExpression expression, BindingDiagnosticBag diagnostics,
+            bool isDefaultParameter = false, bool isRefAssignment = false, bool implicitConversionError = true)
         {
             Debug.Assert((object)targetType != null);
             Debug.Assert(expression != null);
@@ -1820,23 +1831,24 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (!conversion.IsImplicit || !conversion.IsValid)
             {
-                bool invalidate = true;
-                // if the expression is after a yield return?, the yield return? is its direct parent
-
-                if (invalidate)
+                if (!implicitConversionError)
                 {
-                    // We suppress conversion errors on default parameters; eg,
-                    // if someone says "void M(string s = 123) {}". We will report
-                    // a special error in the default parameter binder.
-
-                    if (!isDefaultParameter)
-                    {
-                        GenerateImplicitConversionError(diagnostics, expression.Syntax, conversion, expression, targetType);
-                    }
-
-                    // Suppress any additional diagnostics
-                    diagnostics = BindingDiagnosticBag.Discarded;
+                    // Apply HasErrors to the expression without reporting diagnostics
+                    return expression.WithHasErrors();
                 }
+
+                // We suppress conversion errors on default parameters; eg,
+                // if someone says "void M(string s = 123) {}". We will report
+                // a special error in the default parameter binder.
+
+                if (!isDefaultParameter)
+                {
+                    GenerateImplicitConversionError(diagnostics, expression.Syntax, conversion, expression,
+                        targetType);
+                }
+
+                // Suppress any additional diagnostics
+                diagnostics = BindingDiagnosticBag.Discarded;
             }
 
             return CreateConversion(expression.Syntax, expression, conversion, isCast: false, conversionGroupOpt: null, targetType, diagnostics);

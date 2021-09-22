@@ -339,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 F.HiddenSequencePoint(),
                 F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState)));
         }
-        
+
         public override BoundNode VisitGotoStatement(BoundGotoStatement node)
         {
             BoundExpression caseExpressionOpt = (BoundExpression)this.Visit(node.CaseExpressionOpt);
