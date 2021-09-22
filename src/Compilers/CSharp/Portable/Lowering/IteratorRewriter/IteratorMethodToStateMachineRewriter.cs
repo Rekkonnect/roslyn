@@ -311,79 +311,35 @@ namespace Microsoft.CodeAnalysis.CSharp
             return GenerateReturn(finished: true);
         }
 
-        public override BoundNode VisitYieldReturnStatement(BoundYieldReturnStatement node)
-        {
-            return VisitCommonYieldReturnStatement(node);
-        }
-
         public override BoundNode VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
         {
-            return VisitCommonYieldReturnStatement(node);
+            throw ExceptionUtilities.Unreachable;
         }
 
-        private BoundNode VisitCommonYieldReturnStatement(BoundCommonYieldReturnStatement node)
+        public override BoundNode VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
-            //     yield return? expression;
+            //     yield return expression;
             // is translated to
-            //     var expressionResult = expression;
-            //     if (expressionResult is expressionResult.GetType()) // bound type
-            //     {
-            //         this.current = expressionResult; // (1)
-            //         this.state = <next_state>;
-            //         return true;
-            //     }
+            //     this.current = expression;
+            //     this.state = <next_state>;
+            //     return true;
             //     <next_state_label>: ;
             //     <hidden sequence point>
             //     this.state = finalizeState;
-            //
-            // if expressionResult is Nullable<T>, (1) is instead translated as:
-            //         this.current = expressionResult.Value;
-            //
-            //     yield return expression;
-            // is translated to the same snippet excluding the if statement
-
             AddState(out int stateNumber, out var resumeLabel);
             _currentFinallyFrame.AddState(stateNumber);
 
             var rewrittenExpression = (BoundExpression)Visit(node.Expression);
 
-            // Always assign the result of the expression to a temporary variable, regardless of whether a null check is performed
-            var expressionType = node.Expression.Type!;
-            var cachedResultLocal = F.SynthesizedLocal(expressionType);
-            var cachedResultAssignment = F.Assignment(F.Local(cachedResultLocal), rewrittenExpression);
-
-            // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get
-            BoundExpression iteratedResult = F.Local(cachedResultLocal);
-            if (node.Kind == BoundKind.ConditionalYieldReturnStatement && expressionType.IsNullableType())
-            {
-                var valuePropertySymbol = expressionType.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
-                iteratedResult = F.Property(F.Local(cachedResultLocal), valuePropertySymbol!);
-            }
-
-            var currentAssignment = F.Assignment(F.Field(F.This(), _current), iteratedResult);
-            var stateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(stateNumber));
-            var generatedReturn = GenerateReturn(finished: false);
-
-            BoundStatement yieldIterationBlock = F.Block(currentAssignment, stateAssignment, generatedReturn);
-            if (node.Kind == BoundKind.ConditionalYieldReturnStatement)
-            {
-                // Regardless of this expression's validity, I believe there's a deeper issue arising in the locals
-                yieldIterationBlock = F.If(F.Is(F.Local(cachedResultLocal), expressionType!), yieldIterationBlock);
-            }
-
-            var nextStateLabel = F.Label(resumeLabel);
-            var hiddenSequencePoint = F.HiddenSequencePoint();
-            var finalizeStateAssignment = F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState));
-
             return F.Block(
-                ImmutableArray.Create<LocalSymbol>(cachedResultLocal),
-                cachedResultAssignment,
-                yieldIterationBlock,
-                nextStateLabel,
-                hiddenSequencePoint,
-                finalizeStateAssignment);
+                F.Assignment(F.Field(F.This(), _current), rewrittenExpression),
+                F.Assignment(F.Field(F.This(), stateField), F.Literal(stateNumber)),
+                GenerateReturn(finished: false),
+                F.Label(resumeLabel),
+                F.HiddenSequencePoint(),
+                F.Assignment(F.Field(F.This(), stateField), F.Literal(_currentFinallyFrame.finalizeState)));
         }
-
+        
         public override BoundNode VisitGotoStatement(BoundGotoStatement node)
         {
             BoundExpression caseExpressionOpt = (BoundExpression)this.Visit(node.CaseExpressionOpt);

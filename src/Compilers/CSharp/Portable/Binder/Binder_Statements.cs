@@ -243,6 +243,23 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (!argument.HasAnyErrors)
             {
                 argument = GenerateConversionForAssignment(elementType, argument, diagnostics);
+                if (argument.HasAnyErrors)
+                {
+                    if (argument.Type!.IsNullableType())
+                    {
+                        // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get
+                        var valuePropertySymbol = argument.Type.GetMembers(nameof(Nullable<int>.Value))[0] as PropertySymbol;
+
+                        var denulledArgument = argument;
+                        denulledArgument = new BoundPropertyAccess(node, argument, valuePropertySymbol,
+                            LookupResultKind.Viable, argument.Type.GetNullableUnderlyingType());
+                        argument = GenerateConversionForAssignment(elementType, denulledArgument, diagnostics);
+
+                        // TODO: In the case that the underlying type cannot be converted to the target type either,
+                        //       consider a more specific error message hinting that yield return? could accept an
+                        //       implicit conversion from the underlying type into the target type
+                    }
+                }
             }
             else
             {
@@ -1805,22 +1822,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 bool invalidate = true;
                 // if the expression is after a yield return?, the yield return? is its direct parent
-                if (expression.Syntax.Parent?.Kind() == SyntaxKind.ConditionalYieldReturnStatement)
-                {
-                    // Consider the underlying type of the nullable struct
-                    var exprType = expression.Type!;
-                    if (exprType.IsNullableType())
-                    {
-                        var underlyingExprType = exprType.GetNullableUnderlyingType();
-                        var classifiedUnderlyingConversion = this.Conversions.ClassifyConversionFromExpressionType(underlyingExprType, targetType, ref useSiteInfo);
-                        if (classifiedUnderlyingConversion.IsValid)
-                        {
-                            invalidate = false;
-                            conversion = classifiedUnderlyingConversion;
-                            // No further action is taken, pray for your lives
-                        }
-                    }
-                }
 
                 if (invalidate)
                 {
