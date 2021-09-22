@@ -2001,6 +2001,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         #endregion
 
+        #region diagnostics introduced for C# Next
+
+        ERR_NonNullableInConditionalYieldReturn = 9900,
+        WRN_ConstantInConditionalYieldReturn,
+
+        #endregion
+
         // Note: you will need to re-generate compiler code after adding warnings (eng\generate-compiler-code.cmd)
     }
 }

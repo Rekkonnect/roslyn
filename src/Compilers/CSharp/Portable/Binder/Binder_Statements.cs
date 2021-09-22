@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.PooledObjects;
+using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp
@@ -241,12 +242,52 @@ namespace Microsoft.CodeAnalysis.CSharp
             var argument = initialArgument;
             argument = ValidateEscape(argument, ExternalScope, isByRef: false, diagnostics: diagnostics);
 
+            // Validate expression type in yield return?
+            if (node.Kind() == SyntaxKind.ConditionalYieldReturnStatement)
+            {
+                var diagnosticLocation = Location.Create(node.SyntaxTree,
+                    TextSpan.FromBounds(node.YieldKeyword.SpanStart, node.QuestionToken.Span.End));
+
+                if (argument.ConstantValue is not null)
+                {
+                    ExpressionErrors(argument.Type, true);
+                }
+                else if (argument.Type is null)
+                {
+                    // If not the default literal, what else could not give us any type?
+                    Debug.Assert(argument.Kind is BoundKind.DefaultLiteral);
+
+                    // Artificially bind the default literal to the returning element type
+                    ExpressionErrors(elementType, true);
+                }
+                else if (argument.Kind is BoundKind.UnconvertedInterpolatedString)
+                {
+                    Error(diagnostics, ErrorCode.WRN_ConstantInConditionalYieldReturn, diagnosticLocation);
+                }
+                else
+                {
+                    ExpressionErrors(argument.Type, false);
+                }
+
+                void ExpressionErrors(TypeSymbol boundExpressionType, bool isConstant)
+                {
+                    if (boundExpressionType?.CanBeAssignedNull() is false)
+                    {
+                        Error(diagnostics, ErrorCode.ERR_NonNullableInConditionalYieldReturn, diagnosticLocation);
+                    }
+                    else if (isConstant)
+                    {
+                        Error(diagnostics, ErrorCode.WRN_ConstantInConditionalYieldReturn, diagnosticLocation);
+                    }
+                }
+            }
+
             if (!argument.HasAnyErrors)
             {
                 argument = GenerateConversionForAssignment(elementType, argument, diagnostics, implicitConversionError: false);
                 if (argument.HasAnyErrors)
                 {
-                    if (initialArgument.Type!.IsNullableType())
+                    if (node.Kind() == SyntaxKind.ConditionalYieldReturnStatement && initialArgument.Type!.IsNullableType())
                     {
                         elementType = initialArgument.Type.GetNullableUnderlyingType();
                         // CONSIDER: Add WellKnownMember.System_Nullable_T__Value_get

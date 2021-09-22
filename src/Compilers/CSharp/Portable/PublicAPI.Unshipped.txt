@@ -25,7 +25,7 @@ Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithLine(Micros
 Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax
 *REMOVED*Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.File.get -> Microsoft.CodeAnalysis.SyntaxToken
 Microsoft.CodeAnalysis.CSharp.Syntax.YieldStatementSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken yieldKeyword, Microsoft.CodeAnalysis.SyntaxToken returnOrBreakKeyword, Microsoft.CodeAnalysis.SyntaxToken questionToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.YieldStatementSyntax
-Microsoft.CodeAnalysis.CSharp.SyntaxKind.YieldReturnNotNullStatement = 9072 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.ConditionalYieldReturnStatement = 9072 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 override Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.File.get -> Microsoft.CodeAnalysis.SyntaxToken
 *REMOVED*Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.LineKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
 override Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.LineKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken

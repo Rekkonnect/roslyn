@@ -862,6 +862,11 @@
         <target state="translated">Nepovedlo se určit výstupní adresář.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_NonNullableInConditionalYieldReturn">
+        <source>The type of the expression in the conditional yield return must be nullable.</source>
+        <target state="new">The type of the expression in the conditional yield return must be nullable.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_NonPrivateAPIInRecord">
         <source>Record member '{0}' must be private.</source>
         <target state="translated">Člen záznamu {0} musí být privátní.</target>
@@ -1415,6 +1420,16 @@
       <trans-unit id="WRN_CompileTimeCheckedOverflow_Title">
         <source>The operation may overflow at runtime (use 'unchecked' syntax to override)</source>
         <target state="new">The operation may overflow at runtime (use 'unchecked' syntax to override)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_ConstantInConditionalYieldReturn">
+        <source>A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)</source>
+        <target state="new">A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WRN_ConstantInConditionalYieldReturn_Title">
+        <source>Constant expression in null-conditional yield return statement</source>
+        <target state="new">Constant expression in null-conditional yield return statement</target>
         <note />
       </trans-unit>
       <trans-unit id="WRN_DoNotCompareFunctionPointers">

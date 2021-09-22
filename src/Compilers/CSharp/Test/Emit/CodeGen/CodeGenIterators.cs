@@ -3005,6 +3005,8 @@ class Program
         {
             var source =
 @"
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -3025,7 +3027,7 @@ class C
     }
 }
 ";
-            var compilation = CompileAndVerify(source, expectedOutput: "3");
+            CompileAndVerify(source, expectedOutput: "3");
         }
 
         [Fact]
@@ -3054,7 +3056,138 @@ class C
     }
 }
 ";
-            var compilation = CompileAndVerify(source, expectedOutput: "6 - 012345");
+            CompileAndVerify(source, expectedOutput: "6 - 012345");
+        }
+
+        [Fact(Skip = "Dynamic binder not loaded")]
+        public void TestConditionalIteratorDynamicType()
+        {
+            var source =
+$@"
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{{
+    static IEnumerable<dynamic> NonNull(params dynamic?[] values)
+    {{
+        foreach (var value in values)
+            yield return? value;
+    }}
+
+    static void PrintResult(IEnumerable<dynamic> nonNull)
+    {{
+        int count = 0;
+        foreach (dynamic value in nonNull)
+        {{
+            count++;
+            if (value is null)
+                throw new Exception();
+        }}
+        Console.WriteLine(count);
+    }}
+
+    static void Main(string[] args)
+    {{
+        var obj = new object();
+        dynamic d = obj;
+        var nonNull = NonNull(null, d, null, null, d, d, null);
+        PrintResult(nonNull);
+    }}
+}}
+";
+            CompileAndVerify(source, options: TestOptions.ReleaseExe, expectedOutput: "3");
+        }
+
+        [Fact]
+        public void TestConditionalIteratorValueType()
+        {
+            var source =
+@"
+using System;
+using System.Collections.Generic;
+
+class C
+{
+    static IEnumerable<int> NonNull(params int[] ints)
+    {
+        foreach (var i in ints)
+            yield return? i;
+    }
+}
+";
+            var compilation = CreateCompilation(source);
+
+            compilation.VerifyEmitDiagnostics(
+                // (10,13): error CS9900: The type of the expression in the conditional yield return must be nullable.
+                //          yield return? i;
+                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(10, 13)
+            );
+        }
+
+        [Fact]
+        public void TestConditionalIteratorDisallowedExpressions()
+        {
+            var source =
+@"
+using System;
+using System.Collections.Generic;
+
+class C
+{
+    static IEnumerable<object> ReferenceType()
+    {
+        // Every statement should have a warning
+        yield return? null;
+        yield return? default;
+        yield return? ""not null"";
+
+        const string s = nameof(s);
+        yield return? s;
+
+        yield return? ""value"" + s + ""other"";
+        yield return? $""value {s}"";
+    }
+    static IEnumerable<int> ValueType()
+    {
+        // Every statement should have an error
+        yield return? default;
+        yield return? 0; 
+    }
+}
+";
+            var compilation = CreateCompilation(source);
+
+            compilation.VerifyEmitDiagnostics(
+                // (10,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? null;
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(10, 9),
+                // (11,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? default;
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(11, 9),
+                // (12,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? "not null";
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(12, 9),
+                // (15,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? s;
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(15, 9),
+                // (17,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? "value" + s + "other";
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(17, 9),
+                // (18,9): error CS9901: A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)
+                //         yield return? $"value {s}";
+                Diagnostic(ErrorCode.WRN_ConstantInConditionalYieldReturn, "yield return?").WithLocation(18, 9),
+
+                // (23,9): error CS9900: The type of the expression in the conditional yield return must be nullable.
+                //         yield return? default;
+                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(23, 9),
+                // (24,9): error CS9900: The type of the expression in the conditional yield return must be nullable.
+                //         yield return? 0;
+                Diagnostic(ErrorCode.ERR_NonNullableInConditionalYieldReturn, "yield return?").WithLocation(24, 9)
+            );
         }
     }
 }

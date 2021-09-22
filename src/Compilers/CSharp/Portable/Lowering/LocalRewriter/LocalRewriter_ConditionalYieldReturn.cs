@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 
 namespace Microsoft.CodeAnalysis.CSharp
@@ -13,20 +12,12 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public override BoundNode VisitConditionalYieldReturnStatement(BoundConditionalYieldReturnStatement node)
         {
-            // Remove this if not valid
-            Debug.Assert(node.Expression.ConstantValue is null);
-
             var rewrittenExpression = VisitExpression(node.Expression);
-
             return RewriteConditionalYieldReturnStatement(node.Syntax, rewrittenExpression);
         }
 
         private BoundNode? RewriteConditionalYieldReturnStatement(SyntaxNode syntax, BoundExpression rewrittenExpression)
         {
-            var rewrittenExpressionValue = rewrittenExpression.ConstantValue;
-            // Errors should have been produced beforehand
-            Debug.Assert(rewrittenExpressionValue is null);
-
             // This feels hacky, but binding must have been performed somehow, so this is how we handle nullable yield
             // returning
             var initializationAssignmentExpression = rewrittenExpression;

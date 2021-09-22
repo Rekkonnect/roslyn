@@ -6866,4 +6866,13 @@ To remove the warning, you can use /reference instead (set the Embed Interop Typ
   <data name="WRN_CompileTimeCheckedOverflow_Title" xml:space="preserve">
     <value>The operation may overflow at runtime (use 'unchecked' syntax to override)</value>
   </data>
+  <data name="ERR_NonNullableInConditionalYieldReturn" xml:space="preserve">
+    <value>The type of the expression in the conditional yield return must be nullable.</value>
+  </data>
+  <data name="WRN_ConstantInConditionalYieldReturn" xml:space="preserve">
+    <value>A constant expression's nullability is known at compile-time. (Did you mean to use the standard yield return statement?)</value>
+  </data>
+  <data name="WRN_ConstantInConditionalYieldReturn_Title" xml:space="preserve">
+    <value>Constant expression in null-conditional yield return statement</value>
+  </data>
 </root>
