@@ -375,7 +375,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         {
             var receiver = expression.Receiver;
 
-            var receiverType = receiver.Type;
+            var receiverType = receiver.Type!;
             LocalDefinition receiverTemp = null;
             Debug.Assert(!receiverType.IsValueType ||
                 (receiverType.IsNullableType() && expression.HasValueMethodOpt != null) ||
@@ -469,6 +469,10 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                     _builder.EmitOpCode(ILOpCode.Dup);
                     // here we have loaded two copies of a reference   { O, O }  or  {&nub, &nub}
                 }
+            }
+            else if (receiverType.TypeKind is TypeKind.Pointer or TypeKind.FunctionPointer)
+            {
+                EmitExpression(receiver, used);
             }
             else
             {

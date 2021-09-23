@@ -7548,8 +7548,28 @@ $@"
 {dValue}
 NULL
 ";
+
             CompileAndVerify(source, options: TestOptions.UnsafeDebugExe, expectedOutput: expectedOutput);
-            CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
+            var verifier = CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
+            verifier.VerifyIL("Program.WriteValueOrNull(int*)", @"
+{
+  // Code size       29 (0x1d)
+  .maxstack  2
+  IL_0000:  ldarg.0
+  IL_0001:  brtrue.s   IL_0006
+  IL_0003:  ldnull
+  IL_0004:  br.s       IL_000e
+  IL_0006:  ldarga.s   V_0
+  IL_0008:  ldind.i
+  IL_0009:  call       ""string int.ToString()""
+  IL_000e:  dup
+  IL_000f:  brtrue.s   IL_0017
+  IL_0011:  pop
+  IL_0012:  ldstr      ""NULL""
+  IL_0017:  call       ""void System.Console.WriteLine(string)""
+  IL_001c:  ret
+}
+");
         }
         
         [Fact]

@@ -52,8 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             ConditionalAccessLoweringKind loweringKind;
             // dynamic receivers are not directly supported in codegen and need to be lowered to a conditional
-            // pointer receivers are probably not yet supported in IL gen
-            var lowerToConditional = node.AccessExpression.Type.IsDynamic() || node.Receiver.Type.IsPointerOrFunctionPointer();
+            var lowerToConditional = node.AccessExpression.Type.IsDynamic();
 
             if (!lowerToConditional)
             {
