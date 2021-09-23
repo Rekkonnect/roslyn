@@ -10972,10 +10972,12 @@ tryAgain:
                         }
                         break;
 
-                    case SyntaxKind.MinusGreaterThanToken:
-                        expr = _syntaxFactory.MemberAccessExpression(SyntaxKind.PointerMemberAccessExpression, expr, this.EatToken(), this.ParseSimpleName(NameOptions.InExpression));
-                        break;
                     case SyntaxKind.DotToken:
+                    case SyntaxKind.MinusGreaterThanToken:
+                        var expressionType = tk is SyntaxKind.MinusGreaterThanToken
+                            ? SyntaxKind.PointerMemberAccessExpression
+                            : SyntaxKind.SimpleMemberAccessExpression;
+
                         // if we have the error situation:
                         //
                         //      expr.
@@ -10990,13 +10992,13 @@ tryAgain:
                             this.PeekToken(2).ContextualKind == SyntaxKind.IdentifierToken)
                         {
                             expr = _syntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression, expr, this.EatToken(),
+                                expressionType, expr, this.EatToken(),
                                 this.AddError(this.CreateMissingIdentifierName(), ErrorCode.ERR_IdentifierExpected));
 
                             return expr;
                         }
 
-                        expr = _syntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, expr, this.EatToken(), this.ParseSimpleName(NameOptions.InExpression));
+                        expr = _syntaxFactory.MemberAccessExpression(expressionType, expr, this.EatToken(), this.ParseSimpleName(NameOptions.InExpression));
                         break;
 
                     case SyntaxKind.QuestionToken:

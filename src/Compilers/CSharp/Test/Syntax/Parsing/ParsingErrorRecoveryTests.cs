@@ -6632,6 +6632,56 @@ class C
             }));
         }
 
+        [Fact]
+        public void VariableDeclarationBelowIncompleteSimpleMemberAccess()
+        {
+            var text = @"
+class C
+{
+    void Main()
+    {
+        int a = expr.
+        X x;
+    }
+}
+";
+
+            SyntaxTree syntaxTree = SyntaxFactory.ParseSyntaxTree(text);
+            Assert.Equal(text, syntaxTree.GetCompilationUnitRoot().ToFullString());
+
+            var diagnostics = syntaxTree.GetDiagnostics();
+            Assert.True(diagnostics.Select(d => ((IFormattable)d).ToString(null, EnsureEnglishUICulture.PreferredOrNull)).SequenceEqual(new[]
+            {
+                "(6,22): error CS1001: Identifier expected",
+                "(6,22): error CS1002: ; expected",
+            }));
+        }
+
+        [Fact]
+        public void VariableDeclarationBelowIncompletePointerMemberAccess()
+        {
+            var text = @"
+class C
+{
+    void Main()
+    {
+        expr->
+        X x;
+    }
+}
+";
+
+            SyntaxTree syntaxTree = SyntaxFactory.ParseSyntaxTree(text);
+            Assert.Equal(text, syntaxTree.GetCompilationUnitRoot().ToFullString());
+
+            var diagnostics = syntaxTree.GetDiagnostics();
+            Assert.True(diagnostics.Select(d => ((IFormattable)d).ToString(null, EnsureEnglishUICulture.PreferredOrNull)).SequenceEqual(new[]
+            {
+                "(6,15): error CS1001: Identifier expected",
+                "(6,15): error CS1002: ; expected",
+            }));
+        }
+
         [WorkItem(545647, "http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/545647")]
         [Fact]
         public void IncompleteVariableDeclarationAboveBinaryExpression()
