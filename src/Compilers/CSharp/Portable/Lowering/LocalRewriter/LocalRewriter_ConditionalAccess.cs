@@ -52,7 +52,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             ConditionalAccessLoweringKind loweringKind;
             // dynamic receivers are not directly supported in codegen and need to be lowered to a conditional
-            var lowerToConditional = node.AccessExpression.Type.IsDynamic();
+            // pointer receivers are probably not yet supported in IL gen
+            var lowerToConditional = node.AccessExpression.Type.IsDynamic() || node.Receiver.Type.IsPointerOrFunctionPointer();
 
             if (!lowerToConditional)
             {
@@ -173,10 +174,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case ConditionalAccessLoweringKind.Conditional:
                     {
-                        // (object)r != null ? access : default(T)
-                        var condition = _factory.ObjectNotEqual(
-                                _factory.Convert(objectType, loweredReceiver),
-                                _factory.Null(objectType));
+                        // r is not null ? access : default(T)
+                        var condition = MakeNullCheck(node.Syntax, loweredReceiver, BinaryOperatorKind.NotEqual);
 
                         var consequence = loweredAccessExpression;
 

@@ -7576,6 +7576,8 @@ unsafe class Program
 
     static void WriteValueOrNull(int* ptr, int index)
     {{
+        Console.Write(ptr?[index] ?? -1);
+        Console.Write("" - "");
         Console.WriteLine(ptr?[index].ToString() ?? ""NULL"");
     }}
 }}
@@ -7583,10 +7585,10 @@ unsafe class Program
 
             var expectedOutput =
 $@"
-0
-1
-3
-NULL
+0 - 0
+1 - 1
+3 - 3
+-1 - NULL
 ";
             CompileAndVerify(source, options: TestOptions.UnsafeDebugExe, expectedOutput: expectedOutput);
             CompileAndVerify(source, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
