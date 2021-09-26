@@ -557,6 +557,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override bool IsInitOnly => false;
 
+        internal override bool IsCached => false;
+
         internal sealed override Cci.CallingConvention CallingConvention
         {
             get

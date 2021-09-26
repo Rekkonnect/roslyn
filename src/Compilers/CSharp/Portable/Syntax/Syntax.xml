@@ -4038,6 +4038,7 @@
     <Kind Name="GetAccessorDeclaration"/>
     <Kind Name="SetAccessorDeclaration"/>
     <Kind Name="InitAccessorDeclaration"/>
+    <Kind Name="InitGetAccessorDeclaration"/>
     <Kind Name="AddAccessorDeclaration"/>
     <Kind Name="RemoveAccessorDeclaration"/>
     <Kind Name="UnknownAccessorDeclaration"/>
@@ -4055,6 +4056,7 @@
       <Kind Name="GetKeyword"/>
       <Kind Name="SetKeyword"/>
       <Kind Name="InitKeyword"/>
+      <Kind Name="GetKeyword"/>
       <Kind Name="AddKeyword"/>
       <Kind Name="RemoveKeyword"/>
       <Kind Name="IdentifierToken"/>

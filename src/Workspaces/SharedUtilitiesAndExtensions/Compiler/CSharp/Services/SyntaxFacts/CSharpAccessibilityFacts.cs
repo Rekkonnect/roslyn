@@ -41,6 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.LanguageServices
                 case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                 case SyntaxKind.AddAccessorDeclaration:
                 case SyntaxKind.RemoveAccessorDeclaration:
                     return true;
@@ -284,6 +285,7 @@ namespace Microsoft.CodeAnalysis.CSharp.LanguageServices
                     break;
 
                 case SyntaxKind.GetAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                     return DeclarationKind.GetAccessor;
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:

@@ -26,6 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly ImmutableArray<ParameterSymbol> _parameters;
         private readonly RefKind _refKind;
         private readonly bool _isInitOnly;
+        private readonly bool _isCached;
         private readonly bool _isStatic;
         private readonly TypeWithAnnotations _returnType;
         private readonly ImmutableArray<CustomModifier> _refCustomModifiers;
@@ -40,6 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             ImmutableArray<ParameterSymbol> parameters,
             RefKind refKind,
             bool isInitOnly,
+            bool isCached,
             bool isStatic,
             TypeWithAnnotations returnType,
             ImmutableArray<CustomModifier> refCustomModifiers,
@@ -50,6 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _typeParameters = typeParameters;
             _refKind = refKind;
             _isInitOnly = isInitOnly;
+            _isCached = isCached;
             _isStatic = isStatic;
             _returnType = returnType;
             _refCustomModifiers = refCustomModifiers;
@@ -169,6 +172,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override bool IsDeclaredReadOnly => false;
 
         internal override bool IsInitOnly => _isInitOnly;
+
+        internal override bool IsCached => _isCached;
 
         internal override int CalculateLocalSyntaxOffset(int localPosition, SyntaxTree localTree) { throw ExceptionUtilities.Unreachable; }
 

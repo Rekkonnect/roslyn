@@ -130,6 +130,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal sealed override bool IsInitOnly => false;
 
+            internal sealed override bool IsCached => false;
+
             public sealed override ImmutableArray<CustomModifier> RefCustomModifiers
             {
                 get { return ImmutableArray<CustomModifier>.Empty; }

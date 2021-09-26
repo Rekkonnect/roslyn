@@ -375,6 +375,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override bool IsInitOnly => false;
 
+        internal override bool IsCached => false;
+
         internal override bool IsMetadataNewSlot(bool ignoreInterfaceImplementationChanges = false) => false;
 
         internal override bool IsMetadataVirtual(bool ignoreInterfaceImplementationChanges = false) => false;

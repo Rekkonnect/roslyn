@@ -99,6 +99,7 @@ namespace Microsoft.CodeAnalysis.CodeGeneration
 
         public override bool IsReadOnly => Modifiers.IsReadOnly;
         public override bool IsInitOnly { get; }
+        public override bool IsCached { get; }
 
         public override System.Reflection.MethodImplAttributes MethodImplementationFlags => default;
 

@@ -25,6 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly bool _isAutoPropertyAccessor;
         private readonly bool _isExpressionBodied;
         private readonly bool _usesInit;
+        private readonly bool _isCached;
 
         public static SourcePropertyAccessorSymbol CreateAccessorSymbol(
             NamedTypeSymbol containingType,
@@ -34,16 +35,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isAutoPropertyAccessor,
             BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert(syntax.Kind() == SyntaxKind.GetAccessorDeclaration ||
-                syntax.Kind() == SyntaxKind.SetAccessorDeclaration ||
-                syntax.Kind() == SyntaxKind.InitAccessorDeclaration);
+            Debug.Assert(syntax.Kind() is SyntaxKind.GetAccessorDeclaration
+                                       or SyntaxKind.SetAccessorDeclaration
+                                       or SyntaxKind.InitAccessorDeclaration
+                                       or SyntaxKind.InitGetAccessorDeclaration);
 
-            bool isGetMethod = (syntax.Kind() == SyntaxKind.GetAccessorDeclaration);
+            bool isGetMethod = syntax.Kind() is SyntaxKind.GetAccessorDeclaration
+                                             or SyntaxKind.InitGetAccessorDeclaration;
             var methodKind = isGetMethod ? MethodKind.PropertyGet : MethodKind.PropertySet;
 
             bool hasBody = syntax.Body is object;
             bool hasExpressionBody = syntax.ExpressionBody is object;
             bool isNullableAnalysisEnabled = containingType.DeclaringCompilation.IsNullableAnalysisEnabledIn(syntax);
+            bool isCached = syntax.Keyword.IsKind(SyntaxKind.InitKeyword);
             CheckForBlockAndExpressionBody(syntax.Body, syntax.ExpressionBody, syntax, diagnostics);
             return new SourcePropertyAccessorSymbol(
                 containingType,
@@ -57,6 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 syntax.Modifiers,
                 methodKind,
                 syntax.Keyword.IsKind(SyntaxKind.InitKeyword),
+                isCached,
                 isAutoPropertyAccessor,
                 isNullableAnalysisEnabled: isNullableAnalysisEnabled,
                 diagnostics);
@@ -82,6 +87,33 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
 #nullable enable
         public static SourcePropertyAccessorSymbol CreateAccessorSymbol(
+            bool isCached,
+            NamedTypeSymbol containingType,
+            SynthesizedRecordPropertySymbol property,
+            DeclarationModifiers propertyModifiers,
+            Location location,
+            CSharpSyntaxNode syntax,
+            BindingDiagnosticBag diagnostics)
+        {
+            return new SourcePropertyAccessorSymbol(
+                containingType,
+                property,
+                propertyModifiers,
+                location,
+                syntax,
+                hasBody: false,
+                hasExpressionBody: false,
+                isIterator: false,
+                modifiers: new SyntaxTokenList(),
+                MethodKind.PropertyGet,
+                usesInit: false,
+                isCached,
+                isAutoPropertyAccessor: true,
+                isNullableAnalysisEnabled: false,
+                diagnostics);
+        }
+
+        public static SourcePropertyAccessorSymbol CreateAccessorSymbol(
             bool isGetMethod,
             bool usesInit,
             NamedTypeSymbol containingType,
@@ -104,6 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 modifiers: new SyntaxTokenList(),
                 methodKind,
                 usesInit,
+                isCached: false,
                 isAutoPropertyAccessor: true,
                 isNullableAnalysisEnabled: false,
                 diagnostics);
@@ -187,6 +220,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             SyntaxTokenList modifiers,
             MethodKind methodKind,
             bool usesInit,
+            bool isCached,
             bool isAutoPropertyAccessor,
             bool isNullableAnalysisEnabled,
             BindingDiagnosticBag diagnostics)
@@ -199,10 +233,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _isAutoPropertyAccessor = isAutoPropertyAccessor;
             Debug.Assert(!_property.IsExpressionBodied, "Cannot have accessors in expression bodied lightweight properties");
             _isExpressionBodied = !hasBody && hasExpressionBody;
+
             _usesInit = usesInit;
             if (_usesInit)
             {
                 Binder.CheckFeatureAvailability(syntax, MessageID.IDS_FeatureInitOnlySetters, diagnostics, location);
+            }
+
+            _isCached = isCached;
+            if (_isCached)
+            {
+                Binder.CheckFeatureAvailability(syntax, MessageID.IDS_FeatureCachedProperties, diagnostics, location);
             }
 
             bool modifierErrors;
@@ -492,6 +533,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override bool IsInitOnly => !IsStatic && _usesInit;
 
+        internal sealed override bool IsCached => _isCached;
+
         private DeclarationModifiers MakeModifiers(SyntaxTokenList modifiers, bool isExplicitInterfaceImplementation,
             bool hasBody, Location location, BindingDiagnosticBag diagnostics, out bool modifierErrors)
         {
@@ -640,6 +683,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                     return OneOrMany.Create(((AccessorDeclarationSyntax)syntax).AttributeLists);
             }
 
@@ -711,6 +755,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     case SyntaxKind.GetAccessorDeclaration:
                     case SyntaxKind.SetAccessorDeclaration:
                     case SyntaxKind.InitAccessorDeclaration:
+                    case SyntaxKind.InitGetAccessorDeclaration:
                     case SyntaxKind.ArrowExpressionClause:
                         return false;
                 };

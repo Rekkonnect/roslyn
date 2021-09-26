@@ -2146,7 +2146,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (identifier.Kind())
             {
                 case SyntaxKind.IdentifierToken:
-                case SyntaxKind.GlobalKeyword: break;
+                case SyntaxKind.GlobalKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(identifier));
             }
             return (IdentifierNameSyntax)Syntax.InternalSyntax.SyntaxFactory.IdentifierName((Syntax.InternalSyntax.SyntaxToken)identifier.Node!).CreateRed();
@@ -2230,7 +2231,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.StringKeyword:
                 case SyntaxKind.CharKeyword:
                 case SyntaxKind.ObjectKeyword:
-                case SyntaxKind.VoidKeyword: break;
+                case SyntaxKind.VoidKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(keyword));
             }
             return (PredefinedTypeSyntax)Syntax.InternalSyntax.SyntaxFactory.PredefinedType((Syntax.InternalSyntax.SyntaxToken)keyword.Node!).CreateRed();
@@ -2306,7 +2308,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (managedOrUnmanagedKeyword.Kind())
             {
                 case SyntaxKind.ManagedKeyword:
-                case SyntaxKind.UnmanagedKeyword: break;
+                case SyntaxKind.UnmanagedKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(managedOrUnmanagedKeyword));
             }
             return (FunctionPointerCallingConventionSyntax)Syntax.InternalSyntax.SyntaxFactory.FunctionPointerCallingConvention((Syntax.InternalSyntax.SyntaxToken)managedOrUnmanagedKeyword.Node!, unmanagedCallingConventionList == null ? null : (Syntax.InternalSyntax.FunctionPointerUnmanagedCallingConventionListSyntax)unmanagedCallingConventionList.Green).CreateRed();
@@ -2366,7 +2369,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (identifier.Kind())
             {
                 case SyntaxKind.IdentifierToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(identifier));
             }
             return (TupleElementSyntax)Syntax.InternalSyntax.SyntaxFactory.TupleElement((Syntax.InternalSyntax.TypeSyntax)type.Green, (Syntax.InternalSyntax.SyntaxToken?)identifier.Node).CreateRed();
@@ -2394,7 +2398,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (readOnlyKeyword.Kind())
             {
                 case SyntaxKind.ReadOnlyKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(readOnlyKeyword));
             }
             if (type == null) throw new ArgumentNullException(nameof(type));
@@ -2443,7 +2448,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.PreDecrementExpression:
                 case SyntaxKind.AddressOfExpression:
                 case SyntaxKind.PointerIndirectionExpression:
-                case SyntaxKind.IndexExpression: break;
+                case SyntaxKind.IndexExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (operatorToken.Kind())
@@ -2456,7 +2462,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.MinusMinusToken:
                 case SyntaxKind.AmpersandToken:
                 case SyntaxKind.AsteriskToken:
-                case SyntaxKind.CaretToken: break;
+                case SyntaxKind.CaretToken:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (operand == null) throw new ArgumentNullException(nameof(operand));
@@ -2501,7 +2508,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.PostIncrementExpression:
                 case SyntaxKind.PostDecrementExpression:
-                case SyntaxKind.SuppressNullableWarningExpression: break;
+                case SyntaxKind.SuppressNullableWarningExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (operand == null) throw new ArgumentNullException(nameof(operand));
@@ -2509,7 +2517,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken:
-                case SyntaxKind.ExclamationToken: break;
+                case SyntaxKind.ExclamationToken:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             return (PostfixUnaryExpressionSyntax)Syntax.InternalSyntax.SyntaxFactory.PostfixUnaryExpression(kind, (Syntax.InternalSyntax.ExpressionSyntax)operand.Green, (Syntax.InternalSyntax.SyntaxToken)operatorToken.Node!).CreateRed();
@@ -2534,14 +2543,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.SimpleMemberAccessExpression:
-                case SyntaxKind.PointerMemberAccessExpression: break;
+                case SyntaxKind.PointerMemberAccessExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (expression == null) throw new ArgumentNullException(nameof(expression));
             switch (operatorToken.Kind())
             {
                 case SyntaxKind.DotToken:
-                case SyntaxKind.MinusGreaterThanToken: break;
+                case SyntaxKind.MinusGreaterThanToken:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (name == null) throw new ArgumentNullException(nameof(name));
@@ -2647,7 +2658,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GreaterThanOrEqualExpression:
                 case SyntaxKind.IsExpression:
                 case SyntaxKind.AsExpression:
-                case SyntaxKind.CoalesceExpression: break;
+                case SyntaxKind.CoalesceExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (left == null) throw new ArgumentNullException(nameof(left));
@@ -2673,7 +2685,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GreaterThanEqualsToken:
                 case SyntaxKind.IsKeyword:
                 case SyntaxKind.AsKeyword:
-                case SyntaxKind.QuestionQuestionToken: break;
+                case SyntaxKind.QuestionQuestionToken:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (right == null) throw new ArgumentNullException(nameof(right));
@@ -2727,7 +2740,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.OrAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
                 case SyntaxKind.RightShiftAssignmentExpression:
-                case SyntaxKind.CoalesceAssignmentExpression: break;
+                case SyntaxKind.CoalesceAssignmentExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (left == null) throw new ArgumentNullException(nameof(left));
@@ -2744,7 +2758,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.BarEqualsToken:
                 case SyntaxKind.LessThanLessThanEqualsToken:
                 case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-                case SyntaxKind.QuestionQuestionEqualsToken: break;
+                case SyntaxKind.QuestionQuestionEqualsToken:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (right == null) throw new ArgumentNullException(nameof(right));
@@ -2822,7 +2837,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.TrueLiteralExpression:
                 case SyntaxKind.FalseLiteralExpression:
                 case SyntaxKind.NullLiteralExpression:
-                case SyntaxKind.DefaultLiteralExpression: break;
+                case SyntaxKind.DefaultLiteralExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (token.Kind())
@@ -2834,7 +2850,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
                 case SyntaxKind.NullKeyword:
-                case SyntaxKind.DefaultKeyword: break;
+                case SyntaxKind.DefaultKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(token));
             }
             return (LiteralExpressionSyntax)Syntax.InternalSyntax.SyntaxFactory.LiteralExpression(kind, (Syntax.InternalSyntax.SyntaxToken)token.Node!).CreateRed();
@@ -2908,13 +2925,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.CheckedExpression:
-                case SyntaxKind.UncheckedExpression: break;
+                case SyntaxKind.UncheckedExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (keyword.Kind())
             {
                 case SyntaxKind.CheckedKeyword:
-                case SyntaxKind.UncheckedKeyword: break;
+                case SyntaxKind.UncheckedKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(keyword));
             }
             if (openParenToken.Kind() != SyntaxKind.OpenParenToken) throw new ArgumentException(nameof(openParenToken));
@@ -3033,7 +3052,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.RefKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.InKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(refKindKeyword));
             }
             if (expression == null) throw new ArgumentNullException(nameof(expression));
@@ -3143,7 +3163,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.CollectionInitializerExpression:
                 case SyntaxKind.ArrayInitializerExpression:
                 case SyntaxKind.ComplexElementInitializerExpression:
-                case SyntaxKind.WithInitializerExpression: break;
+                case SyntaxKind.WithInitializerExpression:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (openBraceToken.Kind() != SyntaxKind.OpenBraceToken) throw new ArgumentException(nameof(openBraceToken));
@@ -3418,7 +3439,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.AscendingOrdering:
-                case SyntaxKind.DescendingOrdering: break;
+                case SyntaxKind.DescendingOrdering:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (expression == null) throw new ArgumentNullException(nameof(expression));
@@ -3426,7 +3448,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.AscendingKeyword:
                 case SyntaxKind.DescendingKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(ascendingOrDescendingKeyword));
             }
             return (OrderingSyntax)Syntax.InternalSyntax.SyntaxFactory.Ordering(kind, (Syntax.InternalSyntax.ExpressionSyntax)expression.Green, (Syntax.InternalSyntax.SyntaxToken?)ascendingOrDescendingKeyword.Node).CreateRed();
@@ -3504,7 +3527,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (stringStartToken.Kind())
             {
                 case SyntaxKind.InterpolatedStringStartToken:
-                case SyntaxKind.InterpolatedVerbatimStringStartToken: break;
+                case SyntaxKind.InterpolatedVerbatimStringStartToken:
+                    break;
                 default: throw new ArgumentException(nameof(stringStartToken));
             }
             if (stringEndToken.Kind() != SyntaxKind.InterpolatedStringEndToken) throw new ArgumentException(nameof(stringEndToken));
@@ -3662,7 +3686,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.LessThanToken:
                 case SyntaxKind.LessThanEqualsToken:
                 case SyntaxKind.GreaterThanToken:
-                case SyntaxKind.GreaterThanEqualsToken: break;
+                case SyntaxKind.GreaterThanEqualsToken:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (expression == null) throw new ArgumentNullException(nameof(expression));
@@ -3682,14 +3707,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.OrPattern:
-                case SyntaxKind.AndPattern: break;
+                case SyntaxKind.AndPattern:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (left == null) throw new ArgumentNullException(nameof(left));
             switch (operatorToken.Kind())
             {
                 case SyntaxKind.OrKeyword:
-                case SyntaxKind.AndKeyword: break;
+                case SyntaxKind.AndKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (right == null) throw new ArgumentNullException(nameof(right));
@@ -3804,7 +3831,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (LocalFunctionStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.LocalFunctionStatement(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.TypeSyntax)returnType.Green, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, typeParameterList == null ? null : (Syntax.InternalSyntax.TypeParameterListSyntax)typeParameterList.Green, (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, constraintClauses.Node.ToGreenList<Syntax.InternalSyntax.TypeParameterConstraintClauseSyntax>(), body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -3828,13 +3856,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (awaitKeyword.Kind())
             {
                 case SyntaxKind.AwaitKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(awaitKeyword));
             }
             switch (usingKeyword.Kind())
             {
                 case SyntaxKind.UsingKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(usingKeyword));
             }
             if (declaration == null) throw new ArgumentNullException(nameof(declaration));
@@ -3977,7 +4007,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.GotoStatement:
                 case SyntaxKind.GotoCaseStatement:
-                case SyntaxKind.GotoDefaultStatement: break;
+                case SyntaxKind.GotoDefaultStatement:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (gotoKeyword.Kind() != SyntaxKind.GotoKeyword) throw new ArgumentException(nameof(gotoKeyword));
@@ -3985,7 +4016,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.CaseKeyword:
                 case SyntaxKind.DefaultKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(caseOrDefaultKeyword));
             }
             if (semicolonToken.Kind() != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
@@ -4076,14 +4108,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.YieldReturnStatement:
-                case SyntaxKind.YieldBreakStatement: break;
+                case SyntaxKind.YieldBreakStatement:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (yieldKeyword.Kind() != SyntaxKind.YieldKeyword) throw new ArgumentException(nameof(yieldKeyword));
             switch (returnOrBreakKeyword.Kind())
             {
                 case SyntaxKind.ReturnKeyword:
-                case SyntaxKind.BreakKeyword: break;
+                case SyntaxKind.BreakKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(returnOrBreakKeyword));
             }
             if (semicolonToken.Kind() != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
@@ -4174,7 +4208,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (awaitKeyword.Kind())
             {
                 case SyntaxKind.AwaitKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(awaitKeyword));
             }
             if (forEachKeyword.Kind() != SyntaxKind.ForEachKeyword) throw new ArgumentException(nameof(forEachKeyword));
@@ -4206,7 +4241,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (awaitKeyword.Kind())
             {
                 case SyntaxKind.AwaitKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(awaitKeyword));
             }
             if (forEachKeyword.Kind() != SyntaxKind.ForEachKeyword) throw new ArgumentException(nameof(forEachKeyword));
@@ -4233,7 +4269,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (awaitKeyword.Kind())
             {
                 case SyntaxKind.AwaitKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(awaitKeyword));
             }
             if (usingKeyword.Kind() != SyntaxKind.UsingKeyword) throw new ArgumentException(nameof(usingKeyword));
@@ -4276,13 +4313,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.CheckedStatement:
-                case SyntaxKind.UncheckedStatement: break;
+                case SyntaxKind.UncheckedStatement:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (keyword.Kind())
             {
                 case SyntaxKind.CheckedKeyword:
-                case SyntaxKind.UncheckedKeyword: break;
+                case SyntaxKind.UncheckedKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(keyword));
             }
             if (block == null) throw new ArgumentNullException(nameof(block));
@@ -4382,14 +4421,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (openParenToken.Kind())
             {
                 case SyntaxKind.OpenParenToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(openParenToken));
             }
             if (expression == null) throw new ArgumentNullException(nameof(expression));
             switch (closeParenToken.Kind())
             {
                 case SyntaxKind.CloseParenToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(closeParenToken));
             }
             if (openBraceToken.Kind() != SyntaxKind.OpenBraceToken) throw new ArgumentException(nameof(openBraceToken));
@@ -4526,7 +4567,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (identifier.Kind())
             {
                 case SyntaxKind.IdentifierToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(identifier));
             }
             if (closeParenToken.Kind() != SyntaxKind.CloseParenToken) throw new ArgumentException(nameof(closeParenToken));
@@ -4606,7 +4648,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (globalKeyword.Kind())
             {
                 case SyntaxKind.GlobalKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(globalKeyword));
             }
             if (usingKeyword.Kind() != SyntaxKind.UsingKeyword) throw new ArgumentException(nameof(usingKeyword));
@@ -4633,7 +4676,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (NamespaceDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.NamespaceDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)namespaceKeyword.Node!, (Syntax.InternalSyntax.NameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node!, externs.Node.ToGreenList<Syntax.InternalSyntax.ExternAliasDirectiveSyntax>(), usings.Node.ToGreenList<Syntax.InternalSyntax.UsingDirectiveSyntax>(), members.Node.ToGreenList<Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node!, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -4760,7 +4804,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.InKeyword:
                 case SyntaxKind.OutKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(varianceKeyword));
             }
             if (identifier.Kind() != SyntaxKind.IdentifierToken) throw new ArgumentException(nameof(identifier));
@@ -4785,7 +4830,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (ClassDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.ClassDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)keyword.Node!, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, typeParameterList == null ? null : (Syntax.InternalSyntax.TypeParameterListSyntax)typeParameterList.Green, baseList == null ? null : (Syntax.InternalSyntax.BaseListSyntax)baseList.Green, constraintClauses.Node.ToGreenList<Syntax.InternalSyntax.TypeParameterConstraintClauseSyntax>(), (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node!, members.Node.ToGreenList<Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node!, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -4813,7 +4859,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (StructDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.StructDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)keyword.Node!, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, typeParameterList == null ? null : (Syntax.InternalSyntax.TypeParameterListSyntax)typeParameterList.Green, baseList == null ? null : (Syntax.InternalSyntax.BaseListSyntax)baseList.Green, constraintClauses.Node.ToGreenList<Syntax.InternalSyntax.TypeParameterConstraintClauseSyntax>(), (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node!, members.Node.ToGreenList<Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node!, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -4841,7 +4888,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (InterfaceDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.InterfaceDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)keyword.Node!, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, typeParameterList == null ? null : (Syntax.InternalSyntax.TypeParameterListSyntax)typeParameterList.Green, baseList == null ? null : (Syntax.InternalSyntax.BaseListSyntax)baseList.Green, constraintClauses.Node.ToGreenList<Syntax.InternalSyntax.TypeParameterConstraintClauseSyntax>(), (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node!, members.Node.ToGreenList<Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node!, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -4865,33 +4913,38 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.RecordDeclaration:
-                case SyntaxKind.RecordStructDeclaration: break;
+                case SyntaxKind.RecordStructDeclaration:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (classOrStructKeyword.Kind())
             {
                 case SyntaxKind.ClassKeyword:
                 case SyntaxKind.StructKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(classOrStructKeyword));
             }
             if (identifier.Kind() != SyntaxKind.IdentifierToken) throw new ArgumentException(nameof(identifier));
             switch (openBraceToken.Kind())
             {
                 case SyntaxKind.OpenBraceToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(openBraceToken));
             }
             switch (closeBraceToken.Kind())
             {
                 case SyntaxKind.CloseBraceToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(closeBraceToken));
             }
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (RecordDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.RecordDeclaration(kind, attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)keyword.Node!, (Syntax.InternalSyntax.SyntaxToken?)classOrStructKeyword.Node, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, typeParameterList == null ? null : (Syntax.InternalSyntax.TypeParameterListSyntax)typeParameterList.Green, parameterList == null ? null : (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, baseList == null ? null : (Syntax.InternalSyntax.BaseListSyntax)baseList.Green, constraintClauses.Node.ToGreenList<Syntax.InternalSyntax.TypeParameterConstraintClauseSyntax>(), (Syntax.InternalSyntax.SyntaxToken?)openBraceToken.Node, members.Node.ToGreenList<Syntax.InternalSyntax.MemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken?)closeBraceToken.Node, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -4927,7 +4980,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (EnumDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.EnumDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)enumKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, baseList == null ? null : (Syntax.InternalSyntax.BaseListSyntax)baseList.Green, (Syntax.InternalSyntax.SyntaxToken)openBraceToken.Node!, members.Node.ToGreenSeparatedList<Syntax.InternalSyntax.EnumMemberDeclarationSyntax>(), (Syntax.InternalSyntax.SyntaxToken)closeBraceToken.Node!, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5053,19 +5107,22 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.ClassConstraint:
-                case SyntaxKind.StructConstraint: break;
+                case SyntaxKind.StructConstraint:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (classOrStructKeyword.Kind())
             {
                 case SyntaxKind.ClassKeyword:
-                case SyntaxKind.StructKeyword: break;
+                case SyntaxKind.StructKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(classOrStructKeyword));
             }
             switch (questionToken.Kind())
             {
                 case SyntaxKind.QuestionToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(questionToken));
             }
             return (ClassOrStructConstraintSyntax)Syntax.InternalSyntax.SyntaxFactory.ClassOrStructConstraint(kind, (Syntax.InternalSyntax.SyntaxToken)classOrStructKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken?)questionToken.Node).CreateRed();
@@ -5155,7 +5212,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (MethodDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.MethodDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.TypeSyntax)returnType.Green, explicitInterfaceSpecifier == null ? null : (Syntax.InternalSyntax.ExplicitInterfaceSpecifierSyntax)explicitInterfaceSpecifier.Green, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, typeParameterList == null ? null : (Syntax.InternalSyntax.TypeParameterListSyntax)typeParameterList.Green, (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, constraintClauses.Node.ToGreenList<Syntax.InternalSyntax.TypeParameterConstraintClauseSyntax>(), body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5202,14 +5260,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GreaterThanEqualsToken:
                 case SyntaxKind.FalseKeyword:
                 case SyntaxKind.TrueKeyword:
-                case SyntaxKind.IsKeyword: break;
+                case SyntaxKind.IsKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             if (parameterList == null) throw new ArgumentNullException(nameof(parameterList));
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (OperatorDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.OperatorDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.TypeSyntax)returnType.Green, explicitInterfaceSpecifier == null ? null : (Syntax.InternalSyntax.ExplicitInterfaceSpecifierSyntax)explicitInterfaceSpecifier.Green, (Syntax.InternalSyntax.SyntaxToken)operatorKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)operatorToken.Node!, (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5229,7 +5289,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (implicitOrExplicitKeyword.Kind())
             {
                 case SyntaxKind.ImplicitKeyword:
-                case SyntaxKind.ExplicitKeyword: break;
+                case SyntaxKind.ExplicitKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(implicitOrExplicitKeyword));
             }
             if (operatorKeyword.Kind() != SyntaxKind.OperatorKeyword) throw new ArgumentException(nameof(operatorKeyword));
@@ -5238,7 +5299,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (ConversionOperatorDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.ConversionOperatorDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)implicitOrExplicitKeyword.Node!, explicitInterfaceSpecifier == null ? null : (Syntax.InternalSyntax.ExplicitInterfaceSpecifierSyntax)explicitInterfaceSpecifier.Green, (Syntax.InternalSyntax.SyntaxToken)operatorKeyword.Node!, (Syntax.InternalSyntax.TypeSyntax)type.Green, (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5260,7 +5322,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (ConstructorDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.ConstructorDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, initializer == null ? null : (Syntax.InternalSyntax.ConstructorInitializerSyntax)initializer.Green, body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5284,14 +5347,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.BaseConstructorInitializer:
-                case SyntaxKind.ThisConstructorInitializer: break;
+                case SyntaxKind.ThisConstructorInitializer:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (colonToken.Kind() != SyntaxKind.ColonToken) throw new ArgumentException(nameof(colonToken));
             switch (thisOrBaseKeyword.Kind())
             {
                 case SyntaxKind.BaseKeyword:
-                case SyntaxKind.ThisKeyword: break;
+                case SyntaxKind.ThisKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(thisOrBaseKeyword));
             }
             if (argumentList == null) throw new ArgumentNullException(nameof(argumentList));
@@ -5319,7 +5384,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (DestructorDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.DestructorDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)tildeToken.Node!, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, (Syntax.InternalSyntax.ParameterListSyntax)parameterList.Green, body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5345,7 +5411,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (PropertyDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.PropertyDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.TypeSyntax)type.Green, explicitInterfaceSpecifier == null ? null : (Syntax.InternalSyntax.ExplicitInterfaceSpecifierSyntax)explicitInterfaceSpecifier.Green, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, accessorList == null ? null : (Syntax.InternalSyntax.AccessorListSyntax)accessorList.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, initializer == null ? null : (Syntax.InternalSyntax.EqualsValueClauseSyntax)initializer.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5384,7 +5451,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (EventDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.EventDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)eventKeyword.Node!, (Syntax.InternalSyntax.TypeSyntax)type.Green, explicitInterfaceSpecifier == null ? null : (Syntax.InternalSyntax.ExplicitInterfaceSpecifierSyntax)explicitInterfaceSpecifier.Green, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, accessorList == null ? null : (Syntax.InternalSyntax.AccessorListSyntax)accessorList.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5411,7 +5479,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (IndexerDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.IndexerDeclaration(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.TypeSyntax)type.Green, explicitInterfaceSpecifier == null ? null : (Syntax.InternalSyntax.ExplicitInterfaceSpecifierSyntax)explicitInterfaceSpecifier.Green, (Syntax.InternalSyntax.SyntaxToken)thisKeyword.Node!, (Syntax.InternalSyntax.BracketedParameterListSyntax)parameterList.Green, accessorList == null ? null : (Syntax.InternalSyntax.AccessorListSyntax)accessorList.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5445,9 +5514,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                 case SyntaxKind.AddAccessorDeclaration:
                 case SyntaxKind.RemoveAccessorDeclaration:
-                case SyntaxKind.UnknownAccessorDeclaration: break;
+                case SyntaxKind.UnknownAccessorDeclaration:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             switch (keyword.Kind())
@@ -5457,13 +5528,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.InitKeyword:
                 case SyntaxKind.AddKeyword:
                 case SyntaxKind.RemoveKeyword:
-                case SyntaxKind.IdentifierToken: break;
+                case SyntaxKind.IdentifierToken:
+                    break;
                 default: throw new ArgumentException(nameof(keyword));
             }
             switch (semicolonToken.Kind())
             {
                 case SyntaxKind.SemicolonToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(semicolonToken));
             }
             return (AccessorDeclarationSyntax)Syntax.InternalSyntax.SyntaxFactory.AccessorDeclaration(kind, attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)keyword.Node!, body == null ? null : (Syntax.InternalSyntax.BlockSyntax)body.Green, expressionBody == null ? null : (Syntax.InternalSyntax.ArrowExpressionClauseSyntax)expressionBody.Green, (Syntax.InternalSyntax.SyntaxToken?)semicolonToken.Node).CreateRed();
@@ -5483,6 +5556,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 SyntaxKind.GetAccessorDeclaration => SyntaxKind.GetKeyword,
                 SyntaxKind.SetAccessorDeclaration => SyntaxKind.SetKeyword,
                 SyntaxKind.InitAccessorDeclaration => SyntaxKind.InitKeyword,
+                SyntaxKind.InitGetAccessorDeclaration => SyntaxKind.GetKeyword,
                 SyntaxKind.AddAccessorDeclaration => SyntaxKind.AddKeyword,
                 SyntaxKind.RemoveAccessorDeclaration => SyntaxKind.RemoveKeyword,
                 SyntaxKind.UnknownAccessorDeclaration => SyntaxKind.IdentifierToken,
@@ -5519,7 +5593,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (identifier.Kind())
             {
                 case SyntaxKind.IdentifierToken:
-                case SyntaxKind.ArgListKeyword: break;
+                case SyntaxKind.ArgListKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(identifier));
             }
             return (ParameterSyntax)Syntax.InternalSyntax.SyntaxFactory.Parameter(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), modifiers.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), type == null ? null : (Syntax.InternalSyntax.TypeSyntax)type.Green, (Syntax.InternalSyntax.SyntaxToken)identifier.Node!, @default == null ? null : (Syntax.InternalSyntax.EqualsValueClauseSyntax)@default.Green).CreateRed();
@@ -5568,7 +5643,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (kind)
             {
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
-                case SyntaxKind.MultiLineDocumentationCommentTrivia: break;
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                    break;
                 default: throw new ArgumentException(nameof(kind));
             }
             if (endOfComment.Kind() != SyntaxKind.EndOfDocumentationCommentToken) throw new ArgumentException(nameof(endOfComment));
@@ -5648,7 +5724,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GreaterThanToken:
                 case SyntaxKind.GreaterThanEqualsToken:
                 case SyntaxKind.FalseKeyword:
-                case SyntaxKind.TrueKeyword: break;
+                case SyntaxKind.TrueKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(operatorToken));
             }
             return (OperatorMemberCrefSyntax)Syntax.InternalSyntax.SyntaxFactory.OperatorMemberCref((Syntax.InternalSyntax.SyntaxToken)operatorKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)operatorToken.Node!, parameters == null ? null : (Syntax.InternalSyntax.CrefParameterListSyntax)parameters.Green).CreateRed();
@@ -5668,7 +5745,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (implicitOrExplicitKeyword.Kind())
             {
                 case SyntaxKind.ImplicitKeyword:
-                case SyntaxKind.ExplicitKeyword: break;
+                case SyntaxKind.ExplicitKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(implicitOrExplicitKeyword));
             }
             if (operatorKeyword.Kind() != SyntaxKind.OperatorKeyword) throw new ArgumentException(nameof(operatorKeyword));
@@ -5716,7 +5794,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.RefKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.InKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(refKindKeyword));
             }
             if (type == null) throw new ArgumentNullException(nameof(type));
@@ -5825,13 +5904,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (startQuoteToken.Kind())
             {
                 case SyntaxKind.SingleQuoteToken:
-                case SyntaxKind.DoubleQuoteToken: break;
+                case SyntaxKind.DoubleQuoteToken:
+                    break;
                 default: throw new ArgumentException(nameof(startQuoteToken));
             }
             switch (endQuoteToken.Kind())
             {
                 case SyntaxKind.SingleQuoteToken:
-                case SyntaxKind.DoubleQuoteToken: break;
+                case SyntaxKind.DoubleQuoteToken:
+                    break;
                 default: throw new ArgumentException(nameof(endQuoteToken));
             }
             return (XmlTextAttributeSyntax)Syntax.InternalSyntax.SyntaxFactory.XmlTextAttribute((Syntax.InternalSyntax.XmlNameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)equalsToken.Node!, (Syntax.InternalSyntax.SyntaxToken)startQuoteToken.Node!, textTokens.Node.ToGreenList<Syntax.InternalSyntax.SyntaxToken>(), (Syntax.InternalSyntax.SyntaxToken)endQuoteToken.Node!).CreateRed();
@@ -5853,14 +5934,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (startQuoteToken.Kind())
             {
                 case SyntaxKind.SingleQuoteToken:
-                case SyntaxKind.DoubleQuoteToken: break;
+                case SyntaxKind.DoubleQuoteToken:
+                    break;
                 default: throw new ArgumentException(nameof(startQuoteToken));
             }
             if (cref == null) throw new ArgumentNullException(nameof(cref));
             switch (endQuoteToken.Kind())
             {
                 case SyntaxKind.SingleQuoteToken:
-                case SyntaxKind.DoubleQuoteToken: break;
+                case SyntaxKind.DoubleQuoteToken:
+                    break;
                 default: throw new ArgumentException(nameof(endQuoteToken));
             }
             return (XmlCrefAttributeSyntax)Syntax.InternalSyntax.SyntaxFactory.XmlCrefAttribute((Syntax.InternalSyntax.XmlNameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)equalsToken.Node!, (Syntax.InternalSyntax.SyntaxToken)startQuoteToken.Node!, (Syntax.InternalSyntax.CrefSyntax)cref.Green, (Syntax.InternalSyntax.SyntaxToken)endQuoteToken.Node!).CreateRed();
@@ -5878,14 +5961,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (startQuoteToken.Kind())
             {
                 case SyntaxKind.SingleQuoteToken:
-                case SyntaxKind.DoubleQuoteToken: break;
+                case SyntaxKind.DoubleQuoteToken:
+                    break;
                 default: throw new ArgumentException(nameof(startQuoteToken));
             }
             if (identifier == null) throw new ArgumentNullException(nameof(identifier));
             switch (endQuoteToken.Kind())
             {
                 case SyntaxKind.SingleQuoteToken:
-                case SyntaxKind.DoubleQuoteToken: break;
+                case SyntaxKind.DoubleQuoteToken:
+                    break;
                 default: throw new ArgumentException(nameof(endQuoteToken));
             }
             return (XmlNameAttributeSyntax)Syntax.InternalSyntax.SyntaxFactory.XmlNameAttribute((Syntax.InternalSyntax.XmlNameSyntax)name.Green, (Syntax.InternalSyntax.SyntaxToken)equalsToken.Node!, (Syntax.InternalSyntax.SyntaxToken)startQuoteToken.Node!, (Syntax.InternalSyntax.IdentifierNameSyntax)identifier.Green, (Syntax.InternalSyntax.SyntaxToken)endQuoteToken.Node!).CreateRed();
@@ -6113,13 +6198,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.NumericLiteralToken:
                 case SyntaxKind.DefaultKeyword:
-                case SyntaxKind.HiddenKeyword: break;
+                case SyntaxKind.HiddenKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(line));
             }
             switch (file.Kind())
             {
                 case SyntaxKind.StringLiteralToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(file));
             }
             if (endOfDirectiveToken.Kind() != SyntaxKind.EndOfDirectiveToken) throw new ArgumentException(nameof(endOfDirectiveToken));
@@ -6160,7 +6247,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (characterOffset.Kind())
             {
                 case SyntaxKind.NumericLiteralToken:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(characterOffset));
             }
             if (file.Kind() != SyntaxKind.StringLiteralToken) throw new ArgumentException(nameof(file));
@@ -6185,7 +6273,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (disableOrRestoreKeyword.Kind())
             {
                 case SyntaxKind.DisableKeyword:
-                case SyntaxKind.RestoreKeyword: break;
+                case SyntaxKind.RestoreKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(disableOrRestoreKeyword));
             }
             if (endOfDirectiveToken.Kind() != SyntaxKind.EndOfDirectiveToken) throw new ArgumentException(nameof(endOfDirectiveToken));
@@ -6267,14 +6356,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.EnableKeyword:
                 case SyntaxKind.DisableKeyword:
-                case SyntaxKind.RestoreKeyword: break;
+                case SyntaxKind.RestoreKeyword:
+                    break;
                 default: throw new ArgumentException(nameof(settingToken));
             }
             switch (targetToken.Kind())
             {
                 case SyntaxKind.WarningsKeyword:
                 case SyntaxKind.AnnotationsKeyword:
-                case SyntaxKind.None: break;
+                case SyntaxKind.None:
+                    break;
                 default: throw new ArgumentException(nameof(targetToken));
             }
             if (endOfDirectiveToken.Kind() != SyntaxKind.EndOfDirectiveToken) throw new ArgumentException(nameof(endOfDirectiveToken));

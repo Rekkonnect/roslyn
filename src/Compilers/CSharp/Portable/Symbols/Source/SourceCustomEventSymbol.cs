@@ -109,6 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         case SyntaxKind.GetAccessorDeclaration:
                         case SyntaxKind.SetAccessorDeclaration:
                         case SyntaxKind.InitAccessorDeclaration:
+                        case SyntaxKind.InitGetAccessorDeclaration:
                             diagnostics.Add(ErrorCode.ERR_AddOrRemoveExpected, accessor.Keyword.GetLocation());
                             break;
 

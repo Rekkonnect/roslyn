@@ -13,6 +13,7 @@ using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
+    // TODO: Consider creating a new class that inherits this one for synthesized init get property backing fields
     /// <summary>
     /// Represents a compiler generated backing field for an automatically implemented property.
     /// </summary>

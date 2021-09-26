@@ -70,6 +70,7 @@ namespace Microsoft.CodeAnalysis.CodeGeneration
 
         public override bool IsReadOnly => _constructedFrom.IsReadOnly;
         public override bool IsInitOnly => _constructedFrom.IsInitOnly;
+        public override bool IsCached => _constructedFrom.IsCached;
 
         public override System.Reflection.MethodImplAttributes MethodImplementationFlags => _constructedFrom.MethodImplementationFlags;
 

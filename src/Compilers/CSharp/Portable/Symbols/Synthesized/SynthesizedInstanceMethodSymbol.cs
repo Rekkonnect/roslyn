@@ -75,6 +75,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override bool IsInitOnly => false;
 
+        internal override bool IsCached => false;
+
         public sealed override FlowAnalysisAnnotations FlowAnalysisAnnotations => FlowAnalysisAnnotations.None;
 
         internal override bool IsNullableAnalysisEnabled() => false;

@@ -1591,6 +1591,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     interfaceMethod.Parameters,
                     interfaceMethod.RefKind,
                     interfaceMethod.IsInitOnly,
+                    interfaceMethod.IsCached,
                     interfaceMethod.IsStatic,
                     interfaceMethod.ReturnTypeWithAnnotations,
                     interfaceMethod.RefCustomModifiers,

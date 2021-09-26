@@ -373,6 +373,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Utilities
                 SyntaxKind.GetAccessorDeclaration or
                 SyntaxKind.SetAccessorDeclaration or
                 SyntaxKind.InitAccessorDeclaration or
+                SyntaxKind.InitGetAccessorDeclaration or
                 SyntaxKind.AddAccessorDeclaration or
                 SyntaxKind.RemoveAccessorDeclaration;
         }

@@ -254,10 +254,11 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
             IPropertySymbol property, CodeGenerationDestination destination,
             CodeGenerationOptions options, ParseOptions parseOptions)
         {
+            var getAccessorKind = property.GetMethod?.IsCached == true ? SyntaxKind.InitGetAccessorDeclaration : SyntaxKind.GetAccessorDeclaration;
             var setAccessorKind = property.SetMethod?.IsInitOnly == true ? SyntaxKind.InitAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
             var accessors = new List<AccessorDeclarationSyntax>
             {
-                GenerateAccessorDeclaration(property, property.GetMethod, SyntaxKind.GetAccessorDeclaration, destination, options, parseOptions),
+                GenerateAccessorDeclaration(property, property.GetMethod, getAccessorKind, destination, options, parseOptions),
                 GenerateAccessorDeclaration(property, property.SetMethod, setAccessorKind, destination, options, parseOptions),
             };
 

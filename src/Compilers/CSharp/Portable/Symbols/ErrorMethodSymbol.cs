@@ -134,6 +134,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override bool IsInitOnly => false;
 
+        internal override bool IsCached => false;
+
         internal override int ParameterCount
         {
             get { return 0; }

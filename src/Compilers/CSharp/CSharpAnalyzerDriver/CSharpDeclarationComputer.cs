@@ -257,6 +257,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                     {
                         var t = (AccessorDeclarationSyntax)node;
                         var blocks = ArrayBuilder<SyntaxNode>.GetInstance();

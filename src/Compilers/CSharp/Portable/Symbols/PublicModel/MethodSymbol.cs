@@ -153,6 +153,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
             }
         }
 
+        bool IMethodSymbol.IsCached
+        {
+            get
+            {
+                return _underlying.IsCached;
+            }
+        }
+
         IMethodSymbol IMethodSymbol.OriginalDefinition
         {
             get

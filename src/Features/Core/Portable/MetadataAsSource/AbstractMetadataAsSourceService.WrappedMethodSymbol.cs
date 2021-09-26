@@ -32,6 +32,7 @@ namespace Microsoft.CodeAnalysis.MetadataAsSource
 
             public bool IsReadOnly => _symbol.IsReadOnly;
             public bool IsInitOnly => _symbol.IsInitOnly;
+            public bool IsCached => _symbol.IsCached;
 
             public System.Reflection.MethodImplAttributes MethodImplementationFlags => _symbol.MethodImplementationFlags;
 

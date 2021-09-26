@@ -236,6 +236,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         IDS_FeatureParameterlessStructConstructors = MessageBase + 12810,
         IDS_FeatureStructFieldInitializers = MessageBase + 12811,
         IDS_FeatureGenericAttributes = MessageBase + 12812,
+
+        IDS_FeatureCachedProperties = MessageBase + 12900,
     }
 
     // Message IDs may refer to strings that need to be localized.

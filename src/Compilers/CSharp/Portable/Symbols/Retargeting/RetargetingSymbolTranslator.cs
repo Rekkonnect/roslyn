@@ -1039,6 +1039,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                         targetParamsBuilder.ToImmutableAndFree(),
                         method.RefKind,
                         method.IsInitOnly,
+                        method.IsCached,
                         method.IsStatic,
                         translator.Retarget(method.ReturnTypeWithAnnotations, RetargetOptions.RetargetPrimitiveTypesByTypeCode),
                         translator.RetargetModifiers(method.RefCustomModifiers, out modifiersHaveChanged_Ignored),

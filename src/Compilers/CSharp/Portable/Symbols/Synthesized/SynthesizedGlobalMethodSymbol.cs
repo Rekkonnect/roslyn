@@ -322,6 +322,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override bool IsInitOnly => false;
 
+        internal sealed override bool IsCached => false;
+
         internal override bool SynthesizesLoweredBoundBody
         {
             get { return true; }

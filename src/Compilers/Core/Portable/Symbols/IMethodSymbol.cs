@@ -146,6 +146,11 @@ namespace Microsoft.CodeAnalysis
         bool IsInitOnly { get; }
 
         /// <summary>
+        /// Returns true for init get accessors, and false otherwise.
+        /// </summary>
+        bool IsCached { get; }
+
+        /// <summary>
         /// Get the original definition of this symbol. If this symbol is derived from another
         /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
         /// source or metadata.

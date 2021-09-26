@@ -814,6 +814,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override bool RequiresSecurityObject => false;
         internal override bool IsDeclaredReadOnly => false;
         internal override bool IsInitOnly => false;
+        internal override bool IsCached => false;
         internal override ImmutableArray<string> GetAppliedConditionalSymbols() => ImmutableArray<string>.Empty;
         public override FlowAnalysisAnnotations ReturnTypeFlowAnalysisAnnotations => FlowAnalysisAnnotations.None;
         public override ImmutableHashSet<string> ReturnNotNullIfParameterNotNull => ImmutableHashSet<string>.Empty;

@@ -2003,5 +2003,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         #endregion
 
         // Note: you will need to re-generate compiler code after adding warnings (eng\generate-compiler-code.cmd)
+
+        #region diagnostics introduced for C# preview
+
+        ERR_InitGetAccessorNoBody = 9900,
+
+        #endregion
     }
 }

@@ -41,6 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 out bool hasAccessorList,
                 out bool accessorsHaveImplementation,
                 out bool isInitOnly,
+                out bool isCached,
                 out var getSyntax,
                 out var setSyntax);
 
@@ -76,6 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 isAutoProperty: isAutoProperty,
                 isExpressionBodied: isExpressionBodied,
                 isInitOnly: isInitOnly,
+                isCached: isCached,
                 memberName,
                 location,
                 diagnostics);
@@ -93,6 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isAutoProperty,
             bool isExpressionBodied,
             bool isInitOnly,
+            bool isCached,
             string memberName,
             Location location,
             BindingDiagnosticBag diagnostics)
@@ -109,6 +112,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 isAutoProperty: isAutoProperty,
                 isExpressionBodied: isExpressionBodied,
                 isInitOnly: isInitOnly,
+                isCached: isCached,
                 syntax.Type.GetRefKind(),
                 memberName,
                 syntax.AttributeLists,
@@ -162,6 +166,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             out bool hasAccessorList,
             out bool accessorsHaveImplementation,
             out bool isInitOnly,
+            out bool isCached,
             out CSharpSyntaxNode? getSyntax,
             out CSharpSyntaxNode? setSyntax)
         {
@@ -171,18 +176,35 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             getSyntax = null;
             setSyntax = null;
             isInitOnly = false;
+            isCached = false;
 
             if (hasAccessorList)
             {
                 accessorsHaveImplementation = false;
                 foreach (var accessor in syntax.AccessorList!.Accessors)
                 {
+                    bool hasBody = accessor.Body != null || accessor.ExpressionBody != null;
+
                     switch (accessor.Kind())
                     {
                         case SyntaxKind.GetAccessorDeclaration:
-                            if (getSyntax == null)
+                        case SyntaxKind.InitGetAccessorDeclaration:
+                            if (!isCached && getSyntax is null)
                             {
                                 getSyntax = accessor;
+                                if (accessor.Kind() is SyntaxKind.InitGetAccessorDeclaration)
+                                {
+                                    isCached = true;
+                                    if (!hasBody)
+                                    {
+                                        bool isAbstract = accessor.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.AbstractKeyword));
+
+                                        if (!isAbstract)
+                                        {
+                                            diagnostics.Add(ErrorCode.ERR_InitGetAccessorNoBody, accessor.Keyword.GetLocation());
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
@@ -191,7 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             break;
                         case SyntaxKind.SetAccessorDeclaration:
                         case SyntaxKind.InitAccessorDeclaration:
-                            if (setSyntax == null)
+                            if (!isCached && setSyntax is null)
                             {
                                 setSyntax = accessor;
                                 if (accessor.Keyword.IsKind(SyntaxKind.InitKeyword))
@@ -216,7 +238,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             throw ExceptionUtilities.UnexpectedValue(accessor.Kind());
                     }
 
-                    if (accessor.Body != null || accessor.ExpressionBody != null)
+                    if (hasBody)
                     {
                         isAutoProperty = false;
                         accessorsHaveImplementation = true;
@@ -237,6 +259,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 switch (accessor.Kind())
                 {
                     case SyntaxKind.GetAccessorDeclaration:
+                    case SyntaxKind.InitGetAccessorDeclaration:
                         return accessor;
                 }
             }

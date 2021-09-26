@@ -37,11 +37,12 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                     result = BlockOrExpression(operatorDeclaration.Body, operatorDeclaration.ExpressionBody);
                     break;
 
+                case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                 case SyntaxKind.AddAccessorDeclaration:
                 case SyntaxKind.RemoveAccessorDeclaration:
-                case SyntaxKind.GetAccessorDeclaration:
                     var accessorDeclaration = (AccessorDeclarationSyntax)node;
                     result = BlockOrExpression(accessorDeclaration.Body, accessorDeclaration.ExpressionBody);
                     break;

@@ -422,6 +422,8 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override bool IsInitOnly => false;
 
+        internal override bool IsCached => false;
+
         internal override ObsoleteAttributeData ObsoleteAttributeData
         {
             get { throw ExceptionUtilities.Unreachable; }

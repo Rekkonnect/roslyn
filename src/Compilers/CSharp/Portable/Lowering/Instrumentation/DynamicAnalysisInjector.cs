@@ -567,9 +567,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case SyntaxKind.GetAccessorDeclaration:
                     case SyntaxKind.SetAccessorDeclaration:
                     case SyntaxKind.InitAccessorDeclaration:
+                    case SyntaxKind.InitGetAccessorDeclaration:
                     case SyntaxKind.ConstructorDeclaration:
                     case SyntaxKind.OperatorDeclaration:
-
                         return parent;
                 }
             }
@@ -593,6 +593,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                     AccessorDeclarationSyntax accessorSyntax = (AccessorDeclarationSyntax)syntax;
                     return SkipAttributes(syntax, accessorSyntax.AttributeLists, accessorSyntax.Modifiers, accessorSyntax.Keyword, null);
 

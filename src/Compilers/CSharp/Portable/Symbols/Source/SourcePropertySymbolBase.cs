@@ -81,6 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isAutoProperty,
             bool isExpressionBodied,
             bool isInitOnly,
+            bool isCached,
             RefKind refKind,
             string memberName,
             SyntaxList<AttributeListSyntax> indexerNameAttributeLists,
@@ -142,7 +143,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 _name = _lazySourceName = memberName;
             }
 
-            if ((isAutoProperty && hasGetAccessor) || hasInitializer)
+            if (isCached)
+            {
+                Debug.Assert(!isAutoProperty, "A cached property must not be an auto property.");
+                Debug.Assert(!isInitOnly, "A cached property must not contain information about an init property accessor.");
+                Debug.Assert(!hasSetAccessor, "A cached property must not contain information about a set property accessor.");
+                string fieldName = GeneratedNames.MakeBackingFieldName(_name);
+
+                // TODO: Reconsider backing field for init get accessor
+            }
+            else if ((isAutoProperty && hasGetAccessor) || hasInitializer)
             {
                 Debug.Assert(!IsIndexer);
                 string fieldName = GeneratedNames.MakeBackingFieldName(_name);

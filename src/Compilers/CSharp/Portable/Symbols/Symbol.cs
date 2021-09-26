@@ -461,7 +461,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// Examples include (this list is not exhaustive):
         ///   the default constructor for a class or struct that is created if one is not provided,
         ///   the BeginInvoke/Invoke/EndInvoke methods for a delegate,
-        ///   the generated backing field for an auto property or a field-like event,
+        ///   the generated backing field for an auto property, a cached property or a field-like event,
         ///   the "this" parameter for non-static methods,
         ///   the "value" parameter for a property setter,
         ///   the parameters on indexer accessor methods (not on the indexer itself),

@@ -357,6 +357,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal abstract bool IsInitOnly { get; }
 
         /// <summary>
+        /// Indicates whether the accessor is marked with the 'init get' modifier.
+        /// </summary>
+        internal abstract bool IsCached { get; }
+
+        /// <summary>
         /// Indicates whether the method is effectively readonly,
         /// by either the method or the containing type being marked readonly.
         /// </summary>

@@ -92,6 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                     case SyntaxKind.OperatorDeclaration:
                     case SyntaxKind.SetAccessorDeclaration:
                     case SyntaxKind.InitAccessorDeclaration:
+                    case SyntaxKind.InitGetAccessorDeclaration:
                     case SyntaxKind.AddAccessorDeclaration:
                     case SyntaxKind.RemoveAccessorDeclaration:
                     case SyntaxKind.GetAccessorDeclaration:
@@ -1601,6 +1602,7 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                 case SyntaxKind.GetAccessorDeclaration:
                 case SyntaxKind.SetAccessorDeclaration:
                 case SyntaxKind.InitAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                 case SyntaxKind.AddAccessorDeclaration:
                 case SyntaxKind.RemoveAccessorDeclaration:
                 case SyntaxKind.UnknownAccessorDeclaration:
@@ -1962,6 +1964,7 @@ namespace Microsoft.CodeAnalysis.CSharp.EditAndContinue
                     return FeaturesResources.enum_value;
 
                 case SyntaxKind.GetAccessorDeclaration:
+                case SyntaxKind.InitGetAccessorDeclaration:
                     if (node.Parent!.Parent!.IsKind(SyntaxKind.PropertyDeclaration))
                     {
                         return CSharpFeaturesResources.property_getter;

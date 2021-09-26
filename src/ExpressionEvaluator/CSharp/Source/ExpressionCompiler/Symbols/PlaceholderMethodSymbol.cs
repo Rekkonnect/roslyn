@@ -126,6 +126,8 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
 
         internal override bool IsInitOnly => false;
 
+        internal override bool IsCached => false;
+
         public override ImmutableArray<Location> Locations
         {
             get { return ImmutableArray<Location>.Empty; }

@@ -32,6 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 isAutoProperty: false,
                 isExpressionBodied: false,
                 isInitOnly: false,
+                isCached: false,
                 RefKind.None,
                 PropertyName,
                 indexerNameAttributeLists: new SyntaxList<AttributeListSyntax>(),
@@ -134,6 +135,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                        modifiers: new SyntaxTokenList(),
                        MethodKind.PropertyGet,
                        usesInit: false,
+                       isCached: false,
                        isAutoPropertyAccessor: true,
                        isNullableAnalysisEnabled: false,
                        diagnostics)

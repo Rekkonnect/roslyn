@@ -1153,6 +1153,8 @@ tryAgain:
                     return DeclarationModifiers.Async;
                 case SyntaxKind.RefKeyword:
                     return DeclarationModifiers.Ref;
+                case SyntaxKind.InitKeyword:
+                    return DeclarationModifiers.Init;
                 case SyntaxKind.IdentifierToken:
                     switch (contextualKind)
                     {
@@ -1179,10 +1181,10 @@ tryAgain:
                 }
 
                 SyntaxToken modTok;
+                var nextToken = PeekToken(1);
                 switch (newMod)
                 {
                     case DeclarationModifiers.Partial:
-                        var nextToken = PeekToken(1);
                         var isPartialType = this.IsPartialType();
                         var isPartialMember = this.IsPartialMember();
                         if (isPartialType || isPartialMember)
@@ -1220,9 +1222,8 @@ tryAgain:
                         // keyword, or immediately before 'partial struct' if
                         // this is a partial ref struct declaration
                         {
-                            var next = PeekToken(1);
-                            if (isStructOrRecordKeyword(next) ||
-                                (next.ContextualKind == SyntaxKind.PartialKeyword &&
+                            if (isStructOrRecordKeyword(nextToken) ||
+                                (nextToken.ContextualKind == SyntaxKind.PartialKeyword &&
                                  isStructOrRecordKeyword(PeekToken(2))))
                             {
                                 modTok = this.EatToken();
@@ -1249,6 +1250,24 @@ tryAgain:
                         modTok = ConvertToKeyword(this.EatToken());
                         modTok = CheckFeatureAvailability(modTok, MessageID.IDS_FeatureAsync);
                         break;
+
+                    case DeclarationModifiers.Init:
+                        // 'init' is only a modifier if used on an init get accessor
+                        // it must be immediately before the 'get' keyword
+
+                        if (!shouldInitBeTreatedAsModifier())
+                        {
+                            return;
+                        }
+
+                        modTok = this.EatToken();
+                        modTok = CheckFeatureAvailability(modTok, MessageID.IDS_FeatureCachedProperties);
+                        break;
+
+                        bool shouldInitBeTreatedAsModifier()
+                        {
+                            return forAccessors && nextToken.Kind == SyntaxKind.GetKeyword;
+                        }
 
                     default:
                         modTok = this.EatToken();
@@ -4034,8 +4053,8 @@ parse_member_name:;
                     }
                 }
 
-                var accessorName = this.EatToken(SyntaxKind.IdentifierToken,
-                    isEvent ? ErrorCode.ERR_AddOrRemoveExpected : ErrorCode.ERR_GetOrSetExpected);
+                var expectedAccessorError = isEvent ? ErrorCode.ERR_AddOrRemoveExpected : ErrorCode.ERR_GetOrSetExpected;
+                var accessorName = this.EatToken(SyntaxKind.IdentifierToken, expectedAccessorError);
                 var accessorKind = GetAccessorKind(accessorName);
 
                 // Only convert the identifier to a keyword if it's a valid one.  Otherwise any
@@ -4050,8 +4069,7 @@ parse_member_name:;
                     // to report that the identifier is incorrect.
                     if (!accessorName.IsMissing)
                     {
-                        accessorName = this.AddError(accessorName,
-                            isEvent ? ErrorCode.ERR_AddOrRemoveExpected : ErrorCode.ERR_GetOrSetExpected);
+                        accessorName = this.AddError(accessorName, expectedAccessorError);
                     }
                     else
                     {
@@ -4128,16 +4146,15 @@ parse_member_name:;
 
         private SyntaxKind GetAccessorKind(SyntaxToken accessorName)
         {
-            switch (accessorName.ContextualKind)
+            return accessorName.ContextualKind switch
             {
-                case SyntaxKind.GetKeyword: return SyntaxKind.GetAccessorDeclaration;
-                case SyntaxKind.SetKeyword: return SyntaxKind.SetAccessorDeclaration;
-                case SyntaxKind.InitKeyword: return SyntaxKind.InitAccessorDeclaration;
-                case SyntaxKind.AddKeyword: return SyntaxKind.AddAccessorDeclaration;
-                case SyntaxKind.RemoveKeyword: return SyntaxKind.RemoveAccessorDeclaration;
-            }
-
-            return SyntaxKind.UnknownAccessorDeclaration;
+                SyntaxKind.GetKeyword => SyntaxKind.GetAccessorDeclaration,
+                SyntaxKind.SetKeyword => SyntaxKind.SetAccessorDeclaration,
+                SyntaxKind.InitKeyword => SyntaxKind.InitAccessorDeclaration,
+                SyntaxKind.AddKeyword => SyntaxKind.AddAccessorDeclaration,
+                SyntaxKind.RemoveKeyword => SyntaxKind.RemoveAccessorDeclaration,
+                _ => SyntaxKind.UnknownAccessorDeclaration,
+            };
         }
 
         internal ParameterListSyntax ParseParenthesizedParameterList()
@@ -4845,6 +4862,7 @@ tryAgain:
                     case SyntaxKind.GetAccessorDeclaration:
                     case SyntaxKind.SetAccessorDeclaration:
                     case SyntaxKind.InitAccessorDeclaration:
+                    case SyntaxKind.InitGetAccessorDeclaration:
                         return ((CSharp.Syntax.AccessorDeclarationSyntax)decl).Modifiers;
                     case SyntaxKind.ClassDeclaration:
                     case SyntaxKind.StructDeclaration:

@@ -757,6 +757,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 name: null,
                                 refKind: RefKind.None,
                                 isInitOnly: false,
+                                isCached: false,
                                 isStatic: false,
                                 returnType: default,
                                 refCustomModifiers: ImmutableArray<CustomModifier>.Empty,

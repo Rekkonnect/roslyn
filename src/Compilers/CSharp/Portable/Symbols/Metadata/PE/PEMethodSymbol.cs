@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             // We currently pack everything into a 32-bit int with the following layout:
             //
-            // |u|t|s|r|q|p|ooo|n|m|l|k|j|i|h|g|f|e|d|c|b|aaaaa|
+            // |w|v|u|t|s|r|q|p|ooo|n|m|l|k|j|i|h|g|f|e|d|c|b|aaaaa|
             // 
             // a = method kind. 5 bits.
             // b = method kind populated. 1 bit.
@@ -72,7 +72,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             // s = IsInitOnlyBit. 1 bit.
             // t = IsInitOnlyPopulatedBit. 1 bit.
             // u = IsUnmanagedCallersOnlyAttributePopulated. 1 bit.
-            // 6 bits remain for future purposes.
+            // v = IsCachedBit. 1 bit.
+            // w = IsCachedPopulatedBit. 1 bit.
+            // 4 bits remain for future purposes.
 
             private const int MethodKindOffset = 0;
             private const int MethodKindMask = 0x1F;
@@ -98,6 +100,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             private const int IsInitOnlyBit = 0x1 << 24;
             private const int IsInitOnlyPopulatedBit = 0x1 << 25;
             private const int IsUnmanagedCallersOnlyAttributePopulatedBit = 0x1 << 26;
+            private const int IsCachedBit = 0x1 << 27;
+            private const int IsCachedPopulatedBit = 0x1 << 28;
 
             private int _bits;
 
@@ -134,6 +138,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             public bool IsInitOnly => (_bits & IsInitOnlyBit) != 0;
             public bool IsInitOnlyPopulated => (_bits & IsInitOnlyPopulatedBit) != 0;
             public bool IsUnmanagedCallersOnlyAttributePopulated => (_bits & IsUnmanagedCallersOnlyAttributePopulatedBit) != 0;
+            public bool IsCached => (_bits & IsCachedBit) != 0;
+            public bool IsCachedPopulated => (_bits & IsCachedPopulatedBit) != 0;
 
 #if DEBUG
             static PackedFlags()
@@ -239,6 +245,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             public void SetIsUnmanagedCallersOnlyAttributePopulated()
             {
                 ThreadSafeFlagOperations.Set(ref _bits, IsUnmanagedCallersOnlyAttributePopulatedBit);
+            }
+
+            public void InitializeIsCached(bool isCached)
+            {
+                int bitsToSet = (isCached ? IsCachedBit : 0) | IsCachedPopulatedBit;
+                Debug.Assert(BitsAreUnsetOrSame(_bits, bitsToSet));
+                ThreadSafeFlagOperations.Set(ref _bits, bitsToSet);
             }
         }
 
@@ -1319,6 +1332,21 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     _packedFlags.InitializeIsInitOnly(isInitOnly);
                 }
                 return _packedFlags.IsInitOnly;
+            }
+        }
+
+        internal override bool IsCached
+        {
+            get
+            {
+                if (!_packedFlags.IsCachedPopulated)
+                {
+                    bool isCached = !this.IsStatic &&
+                        this.MethodKind == MethodKind.PropertyGet &&
+                        ReturnTypeWithAnnotations.CustomModifiers.HasIsCachedModifier();
+                    _packedFlags.InitializeIsCached(isCached);
+                }
+                return _packedFlags.IsCached;
             }
         }
 

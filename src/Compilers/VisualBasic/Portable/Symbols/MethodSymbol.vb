@@ -117,6 +117,12 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Symbols
             End Get
         End Property
 
+        Private ReadOnly Property IMethodSymbol_IsCached As Boolean Implements IMethodSymbol.IsCached
+            Get
+                Return False '' TODO: To be overriden
+            End Get
+        End Property
+
         ''' <summary>
         ''' Returns true if this method has no return type; i.e., is a Sub instead of a Function.
         ''' </summary>

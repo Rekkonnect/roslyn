@@ -12749,6 +12749,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     /// <item><description><see cref="SyntaxKind.GetAccessorDeclaration"/></description></item>
     /// <item><description><see cref="SyntaxKind.SetAccessorDeclaration"/></description></item>
     /// <item><description><see cref="SyntaxKind.InitAccessorDeclaration"/></description></item>
+    /// <item><description><see cref="SyntaxKind.InitGetAccessorDeclaration"/></description></item>
     /// <item><description><see cref="SyntaxKind.AddAccessorDeclaration"/></description></item>
     /// <item><description><see cref="SyntaxKind.RemoveAccessorDeclaration"/></description></item>
     /// <item><description><see cref="SyntaxKind.UnknownAccessorDeclaration"/></description></item>

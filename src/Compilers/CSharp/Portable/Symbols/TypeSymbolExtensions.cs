@@ -1908,6 +1908,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static bool IsWellKnownTypeIsExternalInit(this TypeSymbol typeSymbol)
             => typeSymbol.IsWellKnownCompilerServicesTopLevelType("IsExternalInit");
 
+        internal static bool IsWellKnownTypeIsCached(this TypeSymbol typeSymbol)
+            => typeSymbol.IsWellKnownCompilerServicesTopLevelType("IsCached");
+
         internal static bool IsWellKnownTypeOutAttribute(this TypeSymbol typeSymbol) => typeSymbol.IsWellKnownInteropServicesTopLevelType("OutAttribute");
 
         private static bool IsWellKnownInteropServicesTopLevelType(this TypeSymbol typeSymbol, string name)
