@@ -1170,8 +1170,10 @@ tryAgain:
             }
         }
 
-        private void ParseModifiers(SyntaxListBuilder tokens, bool forAccessors)
+        private void ParseModifiers(SyntaxListBuilder tokens, bool forAccessors, out DeclarationModifiers modifierFlags)
         {
+            modifierFlags = default;
+
             while (true)
             {
                 var newMod = GetModifier(this.CurrentToken);
@@ -1179,6 +1181,8 @@ tryAgain:
                 {
                     break;
                 }
+
+                modifierFlags |= newMod;
 
                 SyntaxToken modTok;
                 var nextToken = PeekToken(1);
@@ -2337,7 +2341,7 @@ tryAgain:
                 }
 
                 // All modifiers that might start an expression are processed above.
-                this.ParseModifiers(modifiers, forAccessors: false);
+                this.ParseModifiers(modifiers, forAccessors: false, out var modifierFlags);
                 bool haveModifiers = (modifiers.Count > 0);
                 MemberDeclarationSyntax result;
 
@@ -2789,7 +2793,8 @@ parse_member_name:;
             {
                 var attributes = this.ParseAttributeDeclarations();
 
-                this.ParseModifiers(modifiers, forAccessors: false);
+                // TODO: Evaluate performance improvements with the introduction of modifier flags
+                this.ParseModifiers(modifiers, forAccessors: false, out var modifierFlags);
 
                 // Check for constructor form
                 if (this.CurrentToken.Kind == SyntaxKind.IdentifierToken && this.PeekToken(1).Kind == SyntaxKind.OpenParenToken)
@@ -4040,7 +4045,8 @@ parse_member_name:;
             try
             {
                 var accAttrs = this.ParseAttributeDeclarations();
-                this.ParseModifiers(accMods, forAccessors: true);
+                // TODO: Evaluate performance improvements  from the introduction of modifier flags
+                this.ParseModifiers(accMods, forAccessors: true, out var modifierFlags);
 
                 // check availability of readonly members feature for accessors
                 CheckForVersionSpecificModifiers(accMods, SyntaxKind.ReadOnlyKeyword, MessageID.IDS_FeatureReadOnlyMembers);
@@ -4055,7 +4061,7 @@ parse_member_name:;
 
                 var expectedAccessorError = isEvent ? ErrorCode.ERR_AddOrRemoveExpected : ErrorCode.ERR_GetOrSetExpected;
                 var accessorName = this.EatToken(SyntaxKind.IdentifierToken, expectedAccessorError);
-                var accessorKind = GetAccessorKind(accessorName);
+                var accessorKind = GetAccessorKind(accessorName, accMods);
 
                 // Only convert the identifier to a keyword if it's a valid one.  Otherwise any
                 // other contextual keyword (like 'partial') will be converted into a keyword
@@ -4144,17 +4150,24 @@ parse_member_name:;
                     ? ErrorCode.ERR_SemiOrLBraceOrArrowExpected
                     : ErrorCode.ERR_SemiOrLBraceExpected);
 
-        private SyntaxKind GetAccessorKind(SyntaxToken accessorName)
+        private static SyntaxKind GetAccessorKind(SyntaxToken accessorName, DeclarationModifiers accessorModifiers)
         {
             return accessorName.ContextualKind switch
             {
-                SyntaxKind.GetKeyword => SyntaxKind.GetAccessorDeclaration,
+                SyntaxKind.GetKeyword => GetterKind(accessorModifiers),
                 SyntaxKind.SetKeyword => SyntaxKind.SetAccessorDeclaration,
                 SyntaxKind.InitKeyword => SyntaxKind.InitAccessorDeclaration,
                 SyntaxKind.AddKeyword => SyntaxKind.AddAccessorDeclaration,
                 SyntaxKind.RemoveKeyword => SyntaxKind.RemoveAccessorDeclaration,
                 _ => SyntaxKind.UnknownAccessorDeclaration,
             };
+
+            static SyntaxKind GetterKind(DeclarationModifiers accessorModifiers)
+            {
+                if (accessorModifiers.HasFlag(DeclarationModifiers.Init))
+                    return SyntaxKind.InitGetAccessorDeclaration;
+                return SyntaxKind.GetAccessorDeclaration;
+            }
         }
 
         internal ParameterListSyntax ParseParenthesizedParameterList()
