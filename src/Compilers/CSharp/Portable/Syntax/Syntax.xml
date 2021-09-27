@@ -2410,7 +2410,7 @@
       <Kind Name="ReturnKeyword"/>
       <Kind Name="BreakKeyword"/>
     </Field>
-    <Field Name="Expression" Type="ExpressionSyntax" Optional="true"/>
+    <Field Name="ExpressionList" Type="SeparatedSyntaxList&lt;ExpressionSyntax&gt;"/>
     <Field Name="SemicolonToken" Type="SyntaxToken">
       <Kind Name="SemicolonToken"/>
     </Field>

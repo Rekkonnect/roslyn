@@ -1346,6 +1346,21 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         /// <summary>
+        /// Creates a singleton or empty separated list, depending on whehter the node is <see langword="null"/> or not.
+        /// </summary>
+        /// <typeparam name="TNode">The specific type of the element nodes.</typeparam>
+        /// <param name="node">The single node. If the node is <see langword="null"/>, the resulting list is empty.</param>
+        public static SeparatedSyntaxList<TNode> SingletonOrEmptySeparatedList<TNode>(TNode? node) where TNode : SyntaxNode
+        {
+            if (node is null)
+            {
+                return SeparatedList<TNode>();
+            }
+
+            return SingletonSeparatedList<TNode>(node);
+        }
+
+        /// <summary>
         /// Creates a separated list of nodes from a sequence of nodes, synthesizing comma separators in between.
         /// </summary>
         /// <typeparam name="TNode">The specific type of the element nodes.</typeparam>

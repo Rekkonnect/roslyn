@@ -2999,5 +2999,47 @@ class Program
   IL_0044:  ret
 }");
         }
+
+        [Fact]
+        public void MultipleYieldReturnTuples()
+        {
+            var source =
+@"using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        foreach (var s in GetTupleValues((0, 1)))
+            Console.WriteLine(s);
+    }
+
+    static IEnumerable<T> GetTupleValues<T>((T, T) t)
+    {
+        yield return t.Item1, t.Item2;
+    }
+
+    static IEnumerable<T> GetTupleValuesAlternative<T>((T, T) t)
+    {
+        yield return t.Item1;
+        yield return t.Item2;
+    }
+}";
+            var expectedOutput = @"
+0
+1
+";
+
+            const string testedMethodSignature = "<GetTupleValues>d__1<T>";
+            const string alternativeMethodSignature = "<GetTupleValuesAlternative>d__2<T>";
+
+            var compilation = CompileAndVerify(source, expectedOutput: expectedOutput, options: TestOptions.ReleaseExe);
+            var expectedIL = compilation.VisualizeIL(GetIteratorMoveNextMethodIdentifier(alternativeMethodSignature));
+            var testedMethodIdentifier = GetIteratorMoveNextMethodIdentifier(testedMethodSignature);
+            compilation.VerifyIL(testedMethodIdentifier, expectedIL.Replace(alternativeMethodSignature, testedMethodSignature));
+
+            static string GetIteratorMoveNextMethodIdentifier(string signature) => $"Program.{signature}.System.Collections.IEnumerator.MoveNext()";
+        }
     }
 }

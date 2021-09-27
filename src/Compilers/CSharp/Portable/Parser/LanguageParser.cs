@@ -8836,7 +8836,7 @@ done:;
                 else if (this.CurrentToken.Kind != SyntaxKind.SemicolonToken)
                 {
                     // Not a type followed by an identifier, so it must be an expression list.
-                    this.ParseForStatementExpressionList(ref openParen, initializers);
+                    this.ParseSimpleExpressionList(ref openParen, initializers);
                 }
 
                 var semi = this.EatToken(SyntaxKind.SemicolonToken);
@@ -8849,7 +8849,7 @@ done:;
                 var semi2 = this.EatToken(SyntaxKind.SemicolonToken);
                 if (this.CurrentToken.Kind != SyntaxKind.CloseParenToken)
                 {
-                    this.ParseForStatementExpressionList(ref semi2, incrementors);
+                    this.ParseSimpleExpressionList(ref semi2, incrementors);
                 }
 
                 var closeParen = this.EatToken(SyntaxKind.CloseParenToken);
@@ -8872,44 +8872,46 @@ done:;
                 || this.CurrentToken.Kind == SyntaxKind.OpenBraceToken;
         }
 
-        private void ParseForStatementExpressionList(ref SyntaxToken startToken, SeparatedSyntaxListBuilder<ExpressionSyntax> list)
+        private void ParseSimpleExpressionList(ref SyntaxToken startToken, SeparatedSyntaxListBuilder<ExpressionSyntax> list)
         {
-            if (this.CurrentToken.Kind != SyntaxKind.CloseParenToken && this.CurrentToken.Kind != SyntaxKind.SemicolonToken)
+            if (this.CurrentToken.Kind is SyntaxKind.CloseParenToken or SyntaxKind.SemicolonToken)
             {
-tryAgain:
-                if (this.IsPossibleExpression() || this.CurrentToken.Kind == SyntaxKind.CommaToken)
-                {
-                    // first argument
-                    list.Add(this.ParseExpressionCore());
+                return;
+            }
 
-                    // additional arguments
-                    int lastTokenPosition = -1;
-                    while (IsMakingProgress(ref lastTokenPosition))
+tryAgain:
+            if (this.IsPossibleExpression() || this.CurrentToken.Kind == SyntaxKind.CommaToken)
+            {
+                // first argument
+                list.Add(this.ParseExpressionCore());
+
+                // additional arguments
+                int lastTokenPosition = -1;
+                while (IsMakingProgress(ref lastTokenPosition))
+                {
+                    if (this.CurrentToken.Kind is SyntaxKind.CloseParenToken or SyntaxKind.SemicolonToken)
                     {
-                        if (this.CurrentToken.Kind == SyntaxKind.CloseParenToken || this.CurrentToken.Kind == SyntaxKind.SemicolonToken)
-                        {
-                            break;
-                        }
-                        else if (this.CurrentToken.Kind == SyntaxKind.CommaToken || this.IsPossibleExpression())
-                        {
-                            list.AddSeparator(this.EatToken(SyntaxKind.CommaToken));
-                            list.Add(this.ParseExpressionCore());
-                            continue;
-                        }
-                        else if (this.SkipBadForStatementExpressionListTokens(ref startToken, list, SyntaxKind.CommaToken) == PostSkipAction.Abort)
-                        {
-                            break;
-                        }
+                        break;
+                    }
+                    else if (this.CurrentToken.Kind == SyntaxKind.CommaToken || this.IsPossibleExpression())
+                    {
+                        list.AddSeparator(this.EatToken(SyntaxKind.CommaToken));
+                        list.Add(this.ParseExpressionCore());
+                        continue;
+                    }
+                    else if (this.SkipBadSimpleExpressionListTokens(ref startToken, list, SyntaxKind.CommaToken) == PostSkipAction.Abort)
+                    {
+                        break;
                     }
                 }
-                else if (this.SkipBadForStatementExpressionListTokens(ref startToken, list, SyntaxKind.IdentifierToken) == PostSkipAction.Continue)
-                {
-                    goto tryAgain;
-                }
+            }
+            else if (this.SkipBadSimpleExpressionListTokens(ref startToken, list, SyntaxKind.IdentifierToken) == PostSkipAction.Continue)
+            {
+                goto tryAgain;
             }
         }
 
-        private PostSkipAction SkipBadForStatementExpressionListTokens(ref SyntaxToken startToken, SeparatedSyntaxListBuilder<ExpressionSyntax> list, SyntaxKind expected)
+        private PostSkipAction SkipBadSimpleExpressionListTokens(ref SyntaxToken startToken, SeparatedSyntaxListBuilder<ExpressionSyntax> list, SyntaxKind expected)
         {
             return this.SkipBadSeparatedListTokensWithExpectedKind(ref startToken, list,
                 p => p.CurrentToken.Kind != SyntaxKind.CommaToken && !p.IsPossibleExpression(),
@@ -9218,7 +9220,7 @@ tryAgain:
 
             var yieldToken = ConvertToKeyword(this.EatToken());
             SyntaxToken returnOrBreak;
-            ExpressionSyntax arg = null;
+            var args = SyntaxFactory.SeparatedList<ExpressionSyntax>();
             SyntaxKind kind;
 
             yieldToken = CheckFeatureAvailability(yieldToken, MessageID.IDS_FeatureIterators);
@@ -9238,12 +9240,14 @@ tryAgain:
                 }
                 else
                 {
-                    arg = this.ParseExpressionCore();
+                    var builder = SeparatedSyntaxListBuilder<ExpressionSyntax>.Create();
+                    this.ParseSimpleExpressionList(ref returnOrBreak, builder);
+                    args = builder.ToList();
                 }
             }
 
             var semi = this.EatToken(SyntaxKind.SemicolonToken);
-            return _syntaxFactory.YieldStatement(kind, attributes, yieldToken, returnOrBreak, arg, semi);
+            return _syntaxFactory.YieldStatement(kind, attributes, yieldToken, returnOrBreak, args, semi);
         }
 
         private SwitchStatementSyntax ParseSwitchStatement(SyntaxList<AttributeListSyntax> attributes)

@@ -9873,8 +9873,22 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
-            BoundExpression expr = node.Expression;
-            if (expr == null)
+            return VisitYieldReturnStatementExpression(node.Expression);
+        }
+
+        public override BoundNode? VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node)
+        {
+            foreach (var expression in node.ExpressionList)
+            {
+                // Since the result is always null, never capture it
+                _ = VisitYieldReturnStatementExpression(expression);
+            }
+            return null;
+        }
+
+        private BoundNode? VisitYieldReturnStatementExpression(BoundExpression expression)
+        {
+            if (expression == null)
             {
                 return null;
             }
@@ -9882,7 +9896,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeWithAnnotations elementType = InMethodBinder.GetIteratorElementTypeFromReturnType(compilation, RefKind.None,
                 method.ReturnType, errorLocation: null, diagnostics: null);
 
-            _ = VisitOptionalImplicitConversion(expr, elementType, useLegacyWarnings: false, trackMembers: false, AssignmentKind.Return);
+            _ = VisitOptionalImplicitConversion(expression, elementType, useLegacyWarnings: false, trackMembers: false, AssignmentKind.Return);
             return null;
         }
 

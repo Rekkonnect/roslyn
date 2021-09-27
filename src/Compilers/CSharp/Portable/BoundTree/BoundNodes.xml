@@ -963,6 +963,10 @@
     <Field Name="ExpressionOpt" Type="BoundExpression?"/>
   </Node>
 
+  <Node Name="BoundMultipleYieldReturnStatement" Base="BoundStatement">
+    <Field Name="ExpressionList" Type="ImmutableArray&lt;BoundExpression&gt;"/>
+  </Node>
+
   <Node Name="BoundYieldReturnStatement" Base="BoundStatement">
     <Field Name="Expression" Type="BoundExpression" Null="disallow"/>
   </Node>

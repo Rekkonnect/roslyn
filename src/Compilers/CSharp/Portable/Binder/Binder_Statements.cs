@@ -234,20 +234,31 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ValidateYield(node, diagnostics);
             TypeSymbol elementType = GetIteratorElementType().Type;
-            BoundExpression argument = (node.Expression == null)
-                ? BadExpression(node).MakeCompilerGenerated()
-                : BindValue(node.Expression, diagnostics, BindValueKind.RValue);
-            argument = ValidateEscape(argument, ExternalScope, isByRef: false, diagnostics: diagnostics);
 
-            if (!argument.HasAnyErrors)
+            var arguments = ImmutableArray.CreateBuilder<BoundExpression>(node.ExpressionList.Count);
+            if (!node.ExpressionList.Any())
             {
-                argument = GenerateConversionForAssignment(elementType, argument, diagnostics);
+                arguments.Add(BadExpression(node).MakeCompilerGenerated());
             }
             else
             {
-                argument = BindToTypeForErrorRecovery(argument);
-            }
+                foreach (var expression in node.ExpressionList)
+                {
+                    BoundExpression argument = BindValue(expression, diagnostics, BindValueKind.RValue);
+                    argument = ValidateEscape(argument, ExternalScope, isByRef: false, diagnostics: diagnostics);
 
+                    if (!argument.HasAnyErrors)
+                    {
+                        argument = GenerateConversionForAssignment(elementType, argument, diagnostics);
+                    }
+                    else
+                    {
+                        argument = BindToTypeForErrorRecovery(argument);
+                    }
+
+                    arguments.Add(argument);
+                }
+            }
             // NOTE: it's possible that more than one of these conditions is satisfied and that
             // we won't report the syntactically innermost.  However, dev11 appears to check
             // them in this order, regardless of syntactic nesting (StatementBinder::bindYield).
@@ -269,7 +280,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             CheckRequiredLangVersionForAsyncIteratorMethods(diagnostics);
-            return new BoundYieldReturnStatement(node, argument);
+            return new BoundMultipleYieldReturnStatement(node, arguments.ToImmutable());
         }
 
         private BoundStatement BindYieldBreakStatement(YieldStatementSyntax node, BindingDiagnosticBag diagnostics)

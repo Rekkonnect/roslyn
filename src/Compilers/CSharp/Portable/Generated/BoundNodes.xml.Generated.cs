@@ -97,6 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         LocalFunctionStatement,
         NoOpStatement,
         ReturnStatement,
+        MultipleYieldReturnStatement,
         YieldReturnStatement,
         YieldBreakStatement,
         ThrowStatement,
@@ -3152,6 +3153,34 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (refKind != this.RefKind || expressionOpt != this.ExpressionOpt)
             {
                 var result = new BoundReturnStatement(this.Syntax, refKind, expressionOpt, this.HasErrors);
+                result.CopyAttributes(this);
+                return result;
+            }
+            return this;
+        }
+    }
+
+    internal sealed partial class BoundMultipleYieldReturnStatement : BoundStatement
+    {
+        public BoundMultipleYieldReturnStatement(SyntaxNode syntax, ImmutableArray<BoundExpression> expressionList, bool hasErrors = false)
+            : base(BoundKind.MultipleYieldReturnStatement, syntax, hasErrors || expressionList.HasErrors())
+        {
+
+            RoslynDebug.Assert(!expressionList.IsDefault, "Field 'expressionList' cannot be null (use Null=\"allow\" in BoundNodes.xml to remove this check)");
+
+            this.ExpressionList = expressionList;
+        }
+
+
+        public ImmutableArray<BoundExpression> ExpressionList { get; }
+        [DebuggerStepThrough]
+        public override BoundNode? Accept(BoundTreeVisitor visitor) => visitor.VisitMultipleYieldReturnStatement(this);
+
+        public BoundMultipleYieldReturnStatement Update(ImmutableArray<BoundExpression> expressionList)
+        {
+            if (expressionList != this.ExpressionList)
+            {
+                var result = new BoundMultipleYieldReturnStatement(this.Syntax, expressionList, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8330,6 +8359,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return VisitNoOpStatement((BoundNoOpStatement)node, arg);
                 case BoundKind.ReturnStatement:
                     return VisitReturnStatement((BoundReturnStatement)node, arg);
+                case BoundKind.MultipleYieldReturnStatement:
+                    return VisitMultipleYieldReturnStatement((BoundMultipleYieldReturnStatement)node, arg);
                 case BoundKind.YieldReturnStatement:
                     return VisitYieldReturnStatement((BoundYieldReturnStatement)node, arg);
                 case BoundKind.YieldBreakStatement:
@@ -8673,6 +8704,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public virtual R VisitLocalFunctionStatement(BoundLocalFunctionStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitNoOpStatement(BoundNoOpStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitReturnStatement(BoundReturnStatement node, A arg) => this.DefaultVisit(node, arg);
+        public virtual R VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitYieldReturnStatement(BoundYieldReturnStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitYieldBreakStatement(BoundYieldBreakStatement node, A arg) => this.DefaultVisit(node, arg);
         public virtual R VisitThrowStatement(BoundThrowStatement node, A arg) => this.DefaultVisit(node, arg);
@@ -8883,6 +8915,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public virtual BoundNode? VisitLocalFunctionStatement(BoundLocalFunctionStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitNoOpStatement(BoundNoOpStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitReturnStatement(BoundReturnStatement node) => this.DefaultVisit(node);
+        public virtual BoundNode? VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitYieldBreakStatement(BoundYieldBreakStatement node) => this.DefaultVisit(node);
         public virtual BoundNode? VisitThrowStatement(BoundThrowStatement node) => this.DefaultVisit(node);
@@ -9328,6 +9361,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode? VisitReturnStatement(BoundReturnStatement node)
         {
             this.Visit(node.ExpressionOpt);
+            return null;
+        }
+        public override BoundNode? VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node)
+        {
+            this.VisitList(node.ExpressionList);
             return null;
         }
         public override BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node)
@@ -10388,6 +10426,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             BoundExpression? expressionOpt = (BoundExpression?)this.Visit(node.ExpressionOpt);
             return node.Update(node.RefKind, expressionOpt);
+        }
+        public override BoundNode? VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node)
+        {
+            ImmutableArray<BoundExpression> expressionList = this.VisitList(node.ExpressionList);
+            return node.Update(expressionList);
         }
         public override BoundNode? VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
@@ -14283,6 +14326,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             new TreeDumperNode("refKind", node.RefKind, null),
             new TreeDumperNode("expressionOpt", null, new TreeDumperNode[] { Visit(node.ExpressionOpt, null) }),
+            new TreeDumperNode("hasErrors", node.HasErrors, null)
+        }
+        );
+        public override TreeDumperNode VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node, object? arg) => new TreeDumperNode("multipleYieldReturnStatement", null, new TreeDumperNode[]
+        {
+            new TreeDumperNode("expressionList", null, from x in node.ExpressionList select Visit(x, null)),
             new TreeDumperNode("hasErrors", node.HasErrors, null)
         }
         );

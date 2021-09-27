@@ -1734,7 +1734,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue; // a tracked exception
                     }
 
-                    if (pend.Branch.Kind != BoundKind.YieldReturnStatement)
+                    if (pend.Branch.Kind is not BoundKind.YieldReturnStatement
+                                        and not BoundKind.MultipleYieldReturnStatement)
                     {
                         updatePendingBranchState(ref pend.State, ref stateMovedUpInFinally);
 
@@ -3274,8 +3275,23 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
-            VisitRvalue(node.Expression);
-            PendingBranches.Add(new PendingBranch(node, this.State, null));
+            return VisitYieldReturnStatementExpression(node, node.Expression);
+        }
+
+        public override BoundNode VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node)
+        {
+            foreach (var expression in node.ExpressionList)
+            {
+                _ = VisitYieldReturnStatementExpression(expression, expression);
+            }
+            return null;
+        }
+
+        // TODO: Ensure there is no need for branching?
+        private BoundNode VisitYieldReturnStatementExpression(BoundNode branch, BoundExpression expression)
+        {
+            VisitRvalue(expression);
+            PendingBranches.Add(new PendingBranch(branch, this.State, null));
             return null;
         }
 

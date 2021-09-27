@@ -770,8 +770,8 @@ namespace Microsoft.CodeAnalysis.CSharp.ConvertLinq
                     var statements = GenerateStatements((ExpressionSyntax expression)
                         => SyntaxFactory.YieldStatement(SyntaxKind.YieldReturnStatement, expression), queryExpressionProcessingInfo);
 
-                    // add an yield break to avoid throws after the return.
-                    var yieldBreakStatement = SyntaxFactory.YieldStatement(SyntaxKind.YieldBreakStatement);
+                    // add a yield break to avoid throws after the return.
+                    var yieldBreakStatement = SyntaxFactory.YieldBreakStatement();
                     documentUpdateInfo = new DocumentUpdateInfo(returnStatement, statements.Concat(new[] { yieldBreakStatement }));
                     return true;
                 }

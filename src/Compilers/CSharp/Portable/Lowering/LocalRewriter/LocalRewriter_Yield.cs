@@ -36,5 +36,22 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             return result;
         }
+
+        public override BoundNode VisitMultipleYieldReturnStatement(BoundMultipleYieldReturnStatement node)
+        {
+            var rewritten = (BoundStatement)base.VisitMultipleYieldReturnStatement(node)!;
+            if (rewritten.Kind != BoundKind.MultipleYieldReturnStatement)
+            {
+                return rewritten;
+            }
+
+            var rewrittenMultiple = (BoundMultipleYieldReturnStatement)rewritten;
+            return _factory.StatementList(rewrittenMultiple.ExpressionList.SelectAsArray(Yield).As<BoundStatement>());
+        }
+
+        private static BoundYieldReturnStatement Yield(BoundExpression expression)
+        {
+            return new BoundYieldReturnStatement(expression.Syntax, expression, expression.HasErrors);
+        }
     }
 }

@@ -7001,7 +7001,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     public sealed partial class YieldStatementSyntax : StatementSyntax
     {
         private SyntaxNode? attributeLists;
-        private ExpressionSyntax? expression;
+        private SyntaxNode? expressionList;
 
         internal YieldStatementSyntax(InternalSyntax.CSharpSyntaxNode green, SyntaxNode? parent, int position)
           : base(green, parent, position)
@@ -7014,7 +7014,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public SyntaxToken ReturnOrBreakKeyword => new SyntaxToken(this, ((Syntax.InternalSyntax.YieldStatementSyntax)this.Green).returnOrBreakKeyword, GetChildPosition(2), GetChildIndex(2));
 
-        public ExpressionSyntax? Expression => GetRed(ref this.expression, 3);
+        public SeparatedSyntaxList<ExpressionSyntax> ExpressionList
+        {
+            get
+            {
+                var red = GetRed(ref this.expressionList, 3);
+                return red != null ? new SeparatedSyntaxList<ExpressionSyntax>(red, GetChildIndex(3)) : default;
+            }
+        }
 
         public SyntaxToken SemicolonToken => new SyntaxToken(this, ((Syntax.InternalSyntax.YieldStatementSyntax)this.Green).semicolonToken, GetChildPosition(4), GetChildIndex(4));
 
@@ -7022,7 +7029,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             => index switch
             {
                 0 => GetRedAtZero(ref this.attributeLists)!,
-                3 => GetRed(ref this.expression, 3),
+                3 => GetRed(ref this.expressionList, 3)!,
                 _ => null,
             };
 
@@ -7030,18 +7037,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             => index switch
             {
                 0 => this.attributeLists,
-                3 => this.expression,
+                3 => this.expressionList,
                 _ => null,
             };
 
         public override void Accept(CSharpSyntaxVisitor visitor) => visitor.VisitYieldStatement(this);
         public override TResult? Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor) where TResult : default => visitor.VisitYieldStatement(this);
 
-        public YieldStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken)
+        public YieldStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, SeparatedSyntaxList<ExpressionSyntax> expressionList, SyntaxToken semicolonToken)
         {
-            if (attributeLists != this.AttributeLists || yieldKeyword != this.YieldKeyword || returnOrBreakKeyword != this.ReturnOrBreakKeyword || expression != this.Expression || semicolonToken != this.SemicolonToken)
+            if (attributeLists != this.AttributeLists || yieldKeyword != this.YieldKeyword || returnOrBreakKeyword != this.ReturnOrBreakKeyword || expressionList != this.ExpressionList || semicolonToken != this.SemicolonToken)
             {
-                var newNode = SyntaxFactory.YieldStatement(this.Kind(), attributeLists, yieldKeyword, returnOrBreakKeyword, expression, semicolonToken);
+                var newNode = SyntaxFactory.YieldStatement(this.Kind(), attributeLists, yieldKeyword, returnOrBreakKeyword, expressionList, semicolonToken);
                 var annotations = GetAnnotations();
                 return annotations?.Length > 0 ? newNode.WithAnnotations(annotations) : newNode;
             }
@@ -7050,14 +7057,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         }
 
         internal override StatementSyntax WithAttributeListsCore(SyntaxList<AttributeListSyntax> attributeLists) => WithAttributeLists(attributeLists);
-        public new YieldStatementSyntax WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists) => Update(attributeLists, this.YieldKeyword, this.ReturnOrBreakKeyword, this.Expression, this.SemicolonToken);
-        public YieldStatementSyntax WithYieldKeyword(SyntaxToken yieldKeyword) => Update(this.AttributeLists, yieldKeyword, this.ReturnOrBreakKeyword, this.Expression, this.SemicolonToken);
-        public YieldStatementSyntax WithReturnOrBreakKeyword(SyntaxToken returnOrBreakKeyword) => Update(this.AttributeLists, this.YieldKeyword, returnOrBreakKeyword, this.Expression, this.SemicolonToken);
-        public YieldStatementSyntax WithExpression(ExpressionSyntax? expression) => Update(this.AttributeLists, this.YieldKeyword, this.ReturnOrBreakKeyword, expression, this.SemicolonToken);
-        public YieldStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken) => Update(this.AttributeLists, this.YieldKeyword, this.ReturnOrBreakKeyword, this.Expression, semicolonToken);
+        public new YieldStatementSyntax WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists) => Update(attributeLists, this.YieldKeyword, this.ReturnOrBreakKeyword, this.ExpressionList, this.SemicolonToken);
+        public YieldStatementSyntax WithYieldKeyword(SyntaxToken yieldKeyword) => Update(this.AttributeLists, yieldKeyword, this.ReturnOrBreakKeyword, this.ExpressionList, this.SemicolonToken);
+        public YieldStatementSyntax WithReturnOrBreakKeyword(SyntaxToken returnOrBreakKeyword) => Update(this.AttributeLists, this.YieldKeyword, returnOrBreakKeyword, this.ExpressionList, this.SemicolonToken);
+        public YieldStatementSyntax WithExpressionList(SeparatedSyntaxList<ExpressionSyntax> expressionList) => Update(this.AttributeLists, this.YieldKeyword, this.ReturnOrBreakKeyword, expressionList, this.SemicolonToken);
+        public YieldStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken) => Update(this.AttributeLists, this.YieldKeyword, this.ReturnOrBreakKeyword, this.ExpressionList, semicolonToken);
 
         internal override StatementSyntax AddAttributeListsCore(params AttributeListSyntax[] items) => AddAttributeLists(items);
         public new YieldStatementSyntax AddAttributeLists(params AttributeListSyntax[] items) => WithAttributeLists(this.AttributeLists.AddRange(items));
+        public YieldStatementSyntax AddExpressionList(params ExpressionSyntax[] items) => WithExpressionList(this.ExpressionList.AddRange(items));
     }
 
     /// <remarks>
