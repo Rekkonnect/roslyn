@@ -24,10 +24,10 @@ Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithCommaToken(
 Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithLine(Microsoft.CodeAnalysis.SyntaxToken line) -> Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax
 Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax
 *REMOVED*Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.File.get -> Microsoft.CodeAnalysis.SyntaxToken
-Microsoft.CodeAnalysis.CSharp.SyntaxKind.AmpersandAmpersandEqualsToken = 9201 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
-Microsoft.CodeAnalysis.CSharp.SyntaxKind.BarBarEqualsToken = 9200 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
-Microsoft.CodeAnalysis.CSharp.SyntaxKind.LogicalAndAssignmentExpression = 9202 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
-Microsoft.CodeAnalysis.CSharp.SyntaxKind.LogicalOrAssignmentExpression = 9203 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.AmpersandAmpersandEqualsToken = 8286 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.BarBarEqualsToken = 8285 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.LogicalAndAssignmentExpression = 9200 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.LogicalOrAssignmentExpression = 9201 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 override Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.File.get -> Microsoft.CodeAnalysis.SyntaxToken
 *REMOVED*Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.LineKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken
 override Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectiveTriviaSyntax.LineKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken

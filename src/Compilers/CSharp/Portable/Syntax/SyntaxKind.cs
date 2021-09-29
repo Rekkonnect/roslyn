@@ -143,6 +143,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         PercentEqualsToken = 8283,
         /// <summary>Represents <c>??=</c> token.</summary>
         QuestionQuestionEqualsToken = 8284,
+        /// <summary>Represents <c>||=</c> token.</summary>
+        BarBarEqualsToken = 8285,
+        /// <summary>Represents <c>&amp;&amp;=</c> token.</summary>
+        AmpersandAmpersandEqualsToken = 8286,
 
         // Keywords
         /// <summary>Represents <see langword="bool"/>.</summary>
@@ -863,11 +867,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         LineDirectivePosition = 9070,
         LineSpanDirectiveTrivia = 9071,
 
-        /// <summary>Represents <c>||=</c> token.</summary>
-        BarBarEqualsToken = 9200,
-        /// <summary>Represents <c>&amp;&amp;=</c> token.</summary>
-        AmpersandAmpersandEqualsToken,
-        LogicalAndAssignmentExpression,
+        LogicalAndAssignmentExpression = 9200,
         LogicalOrAssignmentExpression,
     }
 }

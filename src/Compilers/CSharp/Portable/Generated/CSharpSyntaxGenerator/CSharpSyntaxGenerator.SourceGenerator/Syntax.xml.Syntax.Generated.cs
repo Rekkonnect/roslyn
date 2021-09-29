@@ -1721,6 +1721,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     /// <item><description><see cref="SyntaxKind.LeftShiftAssignmentExpression"/></description></item>
     /// <item><description><see cref="SyntaxKind.RightShiftAssignmentExpression"/></description></item>
     /// <item><description><see cref="SyntaxKind.CoalesceAssignmentExpression"/></description></item>
+    /// <item><description><see cref="SyntaxKind.LogicalAndAssignmentExpression"/></description></item>
+    /// <item><description><see cref="SyntaxKind.LogicalOrAssignmentExpression"/></description></item>
     /// </list>
     /// </remarks>
     public sealed partial class AssignmentExpressionSyntax : ExpressionSyntax
