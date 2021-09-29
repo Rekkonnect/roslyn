@@ -756,6 +756,8 @@
       <Kind Name="LeftShiftAssignmentExpression"/>
       <Kind Name="RightShiftAssignmentExpression"/>
       <Kind Name="CoalesceAssignmentExpression" />
+      <Kind Name="LogicalAndAssignmentExpression"/>
+      <Kind Name="LogicalOrAssignmentExpression"/>
       <Field Name="Left" Type="ExpressionSyntax">
         <PropertyComment>
           <summary>ExpressionSyntax node representing the expression on the left of the assignment operator.</summary>
@@ -774,6 +776,8 @@
         <Kind Name="LessThanLessThanEqualsToken"/>
         <Kind Name="GreaterThanGreaterThanEqualsToken"/>
         <Kind Name="QuestionQuestionEqualsToken" />
+        <Kind Name="AmpersandAmpersandEqualsToken"/>
+        <Kind Name="BarBarEqualsToken"/>
         <PropertyComment>
           <summary>SyntaxToken representing the operator of the assignment expression.</summary>
         </PropertyComment>

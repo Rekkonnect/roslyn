@@ -21,6 +21,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UseCompoundAssignment
                 (SyntaxKind.BitwiseAndExpression, SyntaxKind.AndAssignmentExpression),
                 (SyntaxKind.ExclusiveOrExpression, SyntaxKind.ExclusiveOrAssignmentExpression),
                 (SyntaxKind.BitwiseOrExpression, SyntaxKind.OrAssignmentExpression),
+                (SyntaxKind.LogicalOrExpression, SyntaxKind.LogicalOrAssignmentExpression),
+                (SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalAndAssignmentExpression),
                 (SyntaxKind.LeftShiftExpression, SyntaxKind.LeftShiftAssignmentExpression),
                 (SyntaxKind.RightShiftExpression, SyntaxKind.RightShiftAssignmentExpression),
                 (SyntaxKind.CoalesceExpression, SyntaxKind.CoalesceAssignmentExpression)).SelectAsArray(

@@ -423,23 +423,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions
 
         public static bool IsCompoundAssignExpression(this SyntaxNode node)
         {
-            switch (node.Kind())
-            {
-                case SyntaxKind.CoalesceAssignmentExpression:
-                case SyntaxKind.AddAssignmentExpression:
-                case SyntaxKind.SubtractAssignmentExpression:
-                case SyntaxKind.MultiplyAssignmentExpression:
-                case SyntaxKind.DivideAssignmentExpression:
-                case SyntaxKind.ModuloAssignmentExpression:
-                case SyntaxKind.AndAssignmentExpression:
-                case SyntaxKind.ExclusiveOrAssignmentExpression:
-                case SyntaxKind.OrAssignmentExpression:
-                case SyntaxKind.LeftShiftAssignmentExpression:
-                case SyntaxKind.RightShiftAssignmentExpression:
-                    return true;
-            }
-
-            return false;
+            return node.Kind().MapCompoundAssignmentKindToBinaryExpressionKind() is not SyntaxKind.None;
         }
 
         public static bool IsLeftSideOfAssignExpression([NotNullWhen(returnValue: true)] this SyntaxNode? node)

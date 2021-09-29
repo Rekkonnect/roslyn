@@ -678,7 +678,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     else if (TextWindow.PeekChar() == '&')
                     {
                         TextWindow.AdvanceChar();
-                        info.Kind = SyntaxKind.AmpersandAmpersandToken;
+                        if (TextWindow.PeekChar() == '=')
+                        {
+                            TextWindow.AdvanceChar();
+                            info.Kind = SyntaxKind.AmpersandAmpersandEqualsToken;
+                        }
+                        else
+                        {
+                            info.Kind = SyntaxKind.AmpersandAmpersandToken;
+                        }
                     }
                     else
                     {
@@ -711,7 +719,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     else if (TextWindow.PeekChar() == '|')
                     {
                         TextWindow.AdvanceChar();
-                        info.Kind = SyntaxKind.BarBarToken;
+                        if (TextWindow.PeekChar() == '=')
+                        {
+                            TextWindow.AdvanceChar();
+                            info.Kind = SyntaxKind.BarBarEqualsToken;
+                        }
+                        else
+                        {
+                            info.Kind = SyntaxKind.BarBarToken;
+                        }
                     }
                     else
                     {

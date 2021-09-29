@@ -446,6 +446,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Classification
                 case SyntaxKind.CaretEqualsToken:
                 case SyntaxKind.PercentEqualsToken:
                 case SyntaxKind.QuestionQuestionEqualsToken:
+                case SyntaxKind.BarBarEqualsToken:
+                case SyntaxKind.AmpersandAmpersandEqualsToken:
                     return true;
 
                 default:

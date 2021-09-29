@@ -2158,22 +2158,26 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             // q %= |
             // q &= |
             // q |= |
+            // q &&= |
+            // q ||= |
             // q <<= |
             // q >>= |
             // q ??= |
-            if (token.IsKind(SyntaxKind.EqualsToken) ||
-                token.IsKind(SyntaxKind.MinusEqualsToken) ||
-                token.IsKind(SyntaxKind.AsteriskEqualsToken) ||
-                token.IsKind(SyntaxKind.PlusEqualsToken) ||
-                token.IsKind(SyntaxKind.SlashEqualsToken) ||
-                token.IsKind(SyntaxKind.ExclamationEqualsToken) ||
-                token.IsKind(SyntaxKind.CaretEqualsToken) ||
-                token.IsKind(SyntaxKind.AmpersandEqualsToken) ||
-                token.IsKind(SyntaxKind.BarEqualsToken) ||
-                token.IsKind(SyntaxKind.PercentEqualsToken) ||
-                token.IsKind(SyntaxKind.LessThanLessThanEqualsToken) ||
-                token.IsKind(SyntaxKind.GreaterThanGreaterThanEqualsToken) ||
-                token.IsKind(SyntaxKind.QuestionQuestionEqualsToken))
+            if (token.Kind() is SyntaxKind.EqualsToken
+                             or SyntaxKind.AsteriskEqualsToken
+                             or SyntaxKind.MinusEqualsToken
+                             or SyntaxKind.PlusEqualsToken
+                             or SyntaxKind.SlashEqualsToken
+                             or SyntaxKind.ExclamationEqualsToken
+                             or SyntaxKind.CaretEqualsToken
+                             or SyntaxKind.AmpersandEqualsToken
+                             or SyntaxKind.BarEqualsToken
+                             or SyntaxKind.AmpersandAmpersandEqualsToken
+                             or SyntaxKind.BarBarEqualsToken
+                             or SyntaxKind.PercentEqualsToken
+                             or SyntaxKind.GreaterThanGreaterThanEqualsToken
+                             or SyntaxKind.LessThanLessThanEqualsToken
+                             or SyntaxKind.QuestionQuestionEqualsToken)
             {
                 return true;
             }

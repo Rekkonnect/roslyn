@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp.RemoveUnusedParametersAndValues
             else
             {
                 // Case 3. Compound assignment not parented by an expression statement.
-                var mappedBinaryExpressionKind = originalCompoundAssignment.Kind().MapCompoundAssignmentKindToBinaryExpressionKind();
+                var mappedBinaryExpressionKind = originalCompoundAssignment.Kind().MapCompoundAssignmentKindToBinaryExpressionKindWithFailAssertion();
                 if (mappedBinaryExpressionKind == SyntaxKind.None)
                 {
                     return originalCompoundAssignment;

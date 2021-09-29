@@ -10126,6 +10126,10 @@ tryAgain:
 
         internal static bool IsRightAssociative(SyntaxKind op)
         {
+            // CONSIDER: Since all assignment operators are right-associative,
+            //           the statement could be simplified down to determining
+            //           assignment kind, or matching one of the other kinds
+            //           (`??`)
             switch (op)
             {
                 case SyntaxKind.SimpleAssignmentExpression:
@@ -10137,6 +10141,8 @@ tryAgain:
                 case SyntaxKind.AndAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
                 case SyntaxKind.RightShiftAssignmentExpression:
                 case SyntaxKind.CoalesceAssignmentExpression:
@@ -10192,6 +10198,8 @@ tryAgain:
                 case SyntaxKind.AndAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
                 case SyntaxKind.RightShiftAssignmentExpression:
                 case SyntaxKind.CoalesceAssignmentExpression:
@@ -11896,6 +11904,8 @@ tryAgain:
                 case SyntaxKind.AmpersandEqualsToken:
                 case SyntaxKind.CaretEqualsToken:
                 case SyntaxKind.BarEqualsToken:
+                case SyntaxKind.AmpersandAmpersandEqualsToken:
+                case SyntaxKind.BarBarEqualsToken:
                 case SyntaxKind.LessThanLessThanEqualsToken:
                 case SyntaxKind.GreaterThanGreaterThanEqualsToken:
                 case SyntaxKind.QuestionToken:

@@ -34,45 +34,32 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions
 
         public static SyntaxKind MapCompoundAssignmentKindToBinaryExpressionKind(this SyntaxKind syntaxKind)
         {
-            switch (syntaxKind)
+            return syntaxKind switch
             {
-                case SyntaxKind.AddAssignmentExpression:
-                    return SyntaxKind.AddExpression;
-
-                case SyntaxKind.SubtractAssignmentExpression:
-                    return SyntaxKind.SubtractExpression;
-
-                case SyntaxKind.MultiplyAssignmentExpression:
-                    return SyntaxKind.MultiplyExpression;
-
-                case SyntaxKind.DivideAssignmentExpression:
-                    return SyntaxKind.DivideExpression;
-
-                case SyntaxKind.ModuloAssignmentExpression:
-                    return SyntaxKind.ModuloExpression;
-
-                case SyntaxKind.AndAssignmentExpression:
-                    return SyntaxKind.BitwiseAndExpression;
-
-                case SyntaxKind.ExclusiveOrAssignmentExpression:
-                    return SyntaxKind.ExclusiveOrExpression;
-
-                case SyntaxKind.OrAssignmentExpression:
-                    return SyntaxKind.BitwiseOrExpression;
-
-                case SyntaxKind.LeftShiftAssignmentExpression:
-                    return SyntaxKind.LeftShiftExpression;
-
-                case SyntaxKind.RightShiftAssignmentExpression:
-                    return SyntaxKind.RightShiftExpression;
-
-                case SyntaxKind.CoalesceAssignmentExpression:
-                    return SyntaxKind.CoalesceExpression;
-
-                default:
-                    Debug.Fail($"Unhandled compound assignment kind: {syntaxKind}");
-                    return SyntaxKind.None;
-            }
+                SyntaxKind.AddAssignmentExpression => SyntaxKind.AddExpression,
+                SyntaxKind.SubtractAssignmentExpression => SyntaxKind.SubtractExpression,
+                SyntaxKind.MultiplyAssignmentExpression => SyntaxKind.MultiplyExpression,
+                SyntaxKind.DivideAssignmentExpression => SyntaxKind.DivideExpression,
+                SyntaxKind.ModuloAssignmentExpression => SyntaxKind.ModuloExpression,
+                SyntaxKind.AndAssignmentExpression => SyntaxKind.BitwiseAndExpression,
+                SyntaxKind.ExclusiveOrAssignmentExpression => SyntaxKind.ExclusiveOrExpression,
+                SyntaxKind.OrAssignmentExpression => SyntaxKind.BitwiseOrExpression,
+                SyntaxKind.LogicalAndAssignmentExpression => SyntaxKind.LogicalAndExpression,
+                SyntaxKind.LogicalOrAssignmentExpression => SyntaxKind.LogicalOrExpression,
+                SyntaxKind.LeftShiftAssignmentExpression => SyntaxKind.LeftShiftExpression,
+                SyntaxKind.RightShiftAssignmentExpression => SyntaxKind.RightShiftExpression,
+                SyntaxKind.CoalesceAssignmentExpression => SyntaxKind.CoalesceExpression,
+                _ => SyntaxKind.None,
+            };
+        }
+        public static SyntaxKind MapCompoundAssignmentKindToBinaryExpressionKindWithFailAssertion(this SyntaxKind syntaxKind)
+        {
+            var result = MapCompoundAssignmentKindToBinaryExpressionKind(syntaxKind);
+#if DEBUG
+            if (result is SyntaxKind.None)
+                Debug.Fail($"Unhandled compound assignment kind: {syntaxKind}");
+#endif
+            return result;
         }
     }
 }

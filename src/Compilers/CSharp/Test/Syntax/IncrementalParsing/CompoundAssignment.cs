@@ -76,6 +76,18 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests.IncrementalParsing
             MakeAssignmentChange(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.OrAssignmentExpression);
         }
 
+        [Fact]
+        public void AssignToLogicalAnd()
+        {
+            MakeAssignmentChange(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.LogicalAndAssignmentExpression);
+        }
+
+        [Fact]
+        public void AssignToLogicalOr()
+        {
+            MakeAssignmentChange(SyntaxKind.SimpleAssignmentExpression, SyntaxKind.LogicalOrAssignmentExpression);
+        }
+
         #region Helper Methods
         private static void MakeAssignmentChange(SyntaxKind oldStyle, SyntaxKind newStyle)
         {
@@ -104,6 +116,8 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests.IncrementalParsing
 
         private static string GetExpressionString(SyntaxKind oldStyle)
         {
+            // CONSIDER: Use the MapCompoundAssignmentKindToBinaryExpressionKind extension
+            //           and the SyntaxFacts.GetText method
             switch (oldStyle)
             {
                 case SyntaxKind.SimpleAssignmentExpression:
@@ -124,6 +138,10 @@ namespace Microsoft.CodeAnalysis.CSharp.UnitTests.IncrementalParsing
                     return "^=";
                 case SyntaxKind.OrAssignmentExpression:
                     return "|=";
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                    return "&&=";
+                case SyntaxKind.LogicalOrAssignmentExpression:
+                    return "||=";
                 case SyntaxKind.LeftShiftAssignmentExpression:
                     return "<<=";
                 case SyntaxKind.RightShiftAssignmentExpression:

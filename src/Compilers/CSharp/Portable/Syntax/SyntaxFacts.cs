@@ -401,6 +401,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case AndAssignmentExpression:
                 case OrAssignmentExpression:
                 case ExclusiveOrAssignmentExpression:
+                case LogicalAndAssignmentExpression:
+                case LogicalOrAssignmentExpression:
                 case LeftShiftAssignmentExpression:
                 case RightShiftAssignmentExpression:
                 case CoalesceAssignmentExpression:

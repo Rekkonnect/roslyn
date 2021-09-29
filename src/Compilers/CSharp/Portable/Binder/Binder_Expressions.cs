@@ -698,6 +698,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.DivideAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.ModuloAssignmentExpression:
                 case SyntaxKind.MultiplyAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:

@@ -2137,7 +2137,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.BitwiseOrExpression: return BinaryOperatorKind.Or;
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.ExclusiveOrExpression: return BinaryOperatorKind.Xor;
+                case SyntaxKind.LogicalAndAssignmentExpression:
                 case SyntaxKind.LogicalAndExpression: return BinaryOperatorKind.LogicalAnd;
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.LogicalOrExpression: return BinaryOperatorKind.LogicalOr;
                 default: throw ExceptionUtilities.UnexpectedValue(kind);
             }
@@ -2873,6 +2875,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.RightShiftAssignmentExpression:
                 case SyntaxKind.SubtractAssignmentExpression:
                 case SyntaxKind.CoalesceAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                     return BindValueKind.CompoundAssignment;
                 default:
                     return BindValueKind.RValue;

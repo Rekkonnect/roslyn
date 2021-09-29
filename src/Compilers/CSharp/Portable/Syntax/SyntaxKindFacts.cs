@@ -638,6 +638,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.OrAssignmentExpression:
                 case SyntaxKind.AndAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
                 case SyntaxKind.RightShiftAssignmentExpression:
                 case SyntaxKind.AddAssignmentExpression:
@@ -660,6 +662,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.BarEqualsToken:
                 case SyntaxKind.AmpersandEqualsToken:
                 case SyntaxKind.CaretEqualsToken:
+                case SyntaxKind.BarBarEqualsToken:
+                case SyntaxKind.AmpersandAmpersandEqualsToken:
                 case SyntaxKind.LessThanLessThanEqualsToken:
                 case SyntaxKind.GreaterThanGreaterThanEqualsToken:
                 case SyntaxKind.PlusEqualsToken:
@@ -684,6 +688,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return SyntaxKind.AndAssignmentExpression;
                 case SyntaxKind.CaretEqualsToken:
                     return SyntaxKind.ExclusiveOrAssignmentExpression;
+                case SyntaxKind.BarBarEqualsToken:
+                    return SyntaxKind.LogicalOrAssignmentExpression;
+                case SyntaxKind.AmpersandAmpersandEqualsToken:
+                    return SyntaxKind.LogicalAndAssignmentExpression;
                 case SyntaxKind.LessThanLessThanEqualsToken:
                     return SyntaxKind.LeftShiftAssignmentExpression;
                 case SyntaxKind.GreaterThanGreaterThanEqualsToken:
@@ -1384,6 +1392,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return "??=";
                 case SyntaxKind.DotDotToken:
                     return "..";
+                case SyntaxKind.BarBarEqualsToken:
+                    return "||=";
+                case SyntaxKind.AmpersandAmpersandEqualsToken:
+                    return "&&=";
 
                 // Keywords
                 case SyntaxKind.BoolKeyword:

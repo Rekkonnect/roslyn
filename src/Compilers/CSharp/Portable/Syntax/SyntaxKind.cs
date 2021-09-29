@@ -862,5 +862,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         ExpressionColon = 9069,
         LineDirectivePosition = 9070,
         LineSpanDirectiveTrivia = 9071,
+
+        /// <summary>Represents <c>||=</c> token.</summary>
+        BarBarEqualsToken = 9200,
+        /// <summary>Represents <c>&amp;&amp;=</c> token.</summary>
+        AmpersandAmpersandEqualsToken,
+        LogicalAndAssignmentExpression,
+        LogicalOrAssignmentExpression,
     }
 }

@@ -1038,10 +1038,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case SyntaxKind.GreaterThanGreaterThanToken:
                     case SyntaxKind.LessThanLessThanEqualsToken:
                     case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-                        return CreateResult(this.Compilation.GetSpecialType(SpecialType.System_Int32));
+                        return CreateResult(SpecialType.System_Int32);
 
                     case SyntaxKind.BarEqualsToken:
                     case SyntaxKind.AmpersandEqualsToken:
+                    case SyntaxKind.BarBarEqualsToken:
+                    case SyntaxKind.AmpersandAmpersandEqualsToken:
                         // NOTE(cyrusn): |= and &= can be used for both ints and bools  However, in the
                         // case where there isn't enough information to determine which the user wanted,
                         // I'm just defaulting to bool based on personal preference.

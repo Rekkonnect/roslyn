@@ -1223,10 +1223,11 @@ public class Cls
 
         private static bool IsRead(IdentifierNameSyntax reference)
         {
-            switch (reference.Parent.Kind())
+            var parent = reference.Parent;
+            switch (parent.Kind())
             {
                 case SyntaxKind.Argument:
-                    if (((ArgumentSyntax)reference.Parent).RefOrOutKeyword.Kind() != SyntaxKind.OutKeyword)
+                    if (((ArgumentSyntax)parent).RefOrOutKeyword.Kind() != SyntaxKind.OutKeyword)
                     {
                         return true;
                     }
@@ -1238,12 +1239,14 @@ public class Cls
                 case SyntaxKind.DivideAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.ModuloAssignmentExpression:
                 case SyntaxKind.MultiplyAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:
                 case SyntaxKind.RightShiftAssignmentExpression:
                 case SyntaxKind.SubtractAssignmentExpression:
-                    if (((AssignmentExpressionSyntax)reference.Parent).Left != reference)
+                    if (((AssignmentExpressionSyntax)parent).Left != reference)
                     {
                         return true;
                     }
@@ -1332,10 +1335,11 @@ public class Cls
 
         private static bool IsWrite(IdentifierNameSyntax reference)
         {
-            switch (reference.Parent.Kind())
+            var parent = reference.Parent;
+            switch (parent.Kind())
             {
                 case SyntaxKind.Argument:
-                    if (((ArgumentSyntax)reference.Parent).RefOrOutKeyword.Kind() != SyntaxKind.None)
+                    if (((ArgumentSyntax)parent).RefOrOutKeyword.Kind() != SyntaxKind.None)
                     {
                         return true;
                     }
@@ -1347,12 +1351,14 @@ public class Cls
                 case SyntaxKind.DivideAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.LeftShiftAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.ModuloAssignmentExpression:
                 case SyntaxKind.MultiplyAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:
                 case SyntaxKind.RightShiftAssignmentExpression:
                 case SyntaxKind.SubtractAssignmentExpression:
-                    if (((AssignmentExpressionSyntax)reference.Parent).Left == reference)
+                    if (((AssignmentExpressionSyntax)parent).Left == reference)
                     {
                         return true;
                     }

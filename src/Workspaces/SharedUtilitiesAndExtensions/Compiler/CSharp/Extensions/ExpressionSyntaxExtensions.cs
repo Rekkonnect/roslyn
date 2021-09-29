@@ -833,6 +833,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions
                 case SyntaxKind.AndAssignmentExpression:
                 case SyntaxKind.ExclusiveOrAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:
+                case SyntaxKind.LogicalAndAssignmentExpression:
+                case SyntaxKind.LogicalOrAssignmentExpression:
                 case SyntaxKind.SimpleLambdaExpression:
                 case SyntaxKind.ParenthesizedLambdaExpression:
                     // From C# spec, 7.3.1:
