@@ -30,6 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isChecked = kind.IsChecked();
             bool isDynamic = kind.IsDynamic();
             var binaryOperator = kind.Operator();
+            var logicalBinaryOperator = kind.OperatorWithLogical();
 
             // This will be filled in with the LHS that uses temporaries to prevent
             // double-evaluation of side effects.
@@ -97,7 +98,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                rewrittenAssignment = rewriteAssignment(lhsRead);
+                if (logicalBinaryOperator is BinaryOperatorKind.LogicalAnd or BinaryOperatorKind.LogicalOr)
+                {
+                    rewrittenAssignment = rewriteShortCircuitAssignment(lhsRead);
+                }
+                else
+                {
+                    rewrittenAssignment = rewriteAssignment(lhsRead);
+                }
             }
 
             Debug.Assert(rewrittenAssignment.Type is { });
@@ -136,16 +144,58 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 BoundExpression operand = MakeBinaryOperator(syntax, node.Operator.Kind, opLHS, loweredRight, node.Operator.ReturnType, node.Operator.Method, node.Operator.ConstrainedToTypeOpt, isCompoundAssignment: true);
 
-                Debug.Assert(node.Left.Type is { });
-                BoundExpression opFinal = MakeConversionNode(
+                var opFinal = makeFinalConversion(operand);
+
+                return MakeAssignmentOperator(syntax, transformedLHS, opFinal, node.Left.Type!, used: used, isChecked: isChecked, isCompoundAssignment: true);
+            }
+            BoundExpression rewriteShortCircuitAssignment(BoundExpression leftRead)
+            {
+                SyntaxNode syntax = node.Syntax;
+
+                // We need to generate
+                //
+                // (bool)xlhs ? (xlhs = (FINAL)rhs) : (FINAL)false
+                //   or
+                // (bool)xlhs ? (FINAL)true : (xlhs = (FINAL)rhs)
+                //
+                // for &&= or ||= respectively
+                //
+                // And then wrap it up with the generated temporaries.
+                //
+                // (The right hand side will have to be converted to the target type of the LHS.)
+
+                BoundExpression convertedCondition = isDynamic ? leftRead : MakeConversionNode(
                     syntax: syntax,
-                    rewrittenOperand: operand,
+                    rewrittenOperand: leftRead,
+                    conversion: node.LeftConversion,
+                    rewrittenType: node.Operator.LeftType,
+                    @checked: false);
+
+                var trueCondition = makeFinalConversion(MakeBooleanConstant(syntax, true));
+                var falseCondition = makeFinalConversion(MakeBooleanConstant(syntax, false));
+                ref var assignmentCondition = ref trueCondition;
+                if (logicalBinaryOperator is BinaryOperatorKind.LogicalOr)
+                {
+                    assignmentCondition = ref falseCondition;
+                }
+
+                var rightFinal = makeFinalConversion(loweredRight);
+
+                var assignment = MakeAssignmentOperator(syntax, transformedLHS, rightFinal, node.Left.Type!, used: used, isChecked: isChecked, isCompoundAssignment: true);
+                assignmentCondition = assignment;
+
+                return _factory.Conditional(convertedCondition, trueCondition, falseCondition, node.Left.Type!);
+            }
+            BoundExpression makeFinalConversion(BoundExpression rewrittenOperand)
+            {
+                Debug.Assert(node.Left.Type is { });
+                return MakeConversionNode(
+                    node.Syntax,
+                    rewrittenOperand,
                     conversion: node.FinalConversion,
                     rewrittenType: node.Left.Type,
                     explicitCastInCode: isDynamic,
                     @checked: isChecked);
-
-                return MakeAssignmentOperator(syntax, transformedLHS, opFinal, node.Left.Type, used: used, isChecked: isChecked, isCompoundAssignment: true);
             }
         }
 

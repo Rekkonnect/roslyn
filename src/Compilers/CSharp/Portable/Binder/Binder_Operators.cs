@@ -173,13 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (CheckOverflowAtRuntime)
             {
-                bestSignature = new BinaryOperatorSignature(
-                    bestSignature.Kind.WithOverflowChecksIfApplicable(CheckOverflowAtRuntime),
-                    bestSignature.LeftType,
-                    bestSignature.RightType,
-                    bestSignature.ReturnType,
-                    bestSignature.Method,
-                    bestSignature.ConstrainedToTypeOpt);
+                bestSignature = bestSignature.WithKind(bestSignature.Kind.WithOverflowChecksIfApplicable(CheckOverflowAtRuntime));
             }
 
             BoundExpression rightConverted = CreateConversion(right, best.RightConversion, bestSignature.RightType, diagnostics);
@@ -227,6 +221,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             Conversion leftConversion = best.LeftConversion;
             ReportDiagnosticsIfObsolete(diagnostics, leftConversion, node, hasBaseReceiver: false);
             CheckConstraintLanguageVersionAndRuntimeSupportForConversion(node, leftConversion, diagnostics);
+
+            // Recover the logical operator kind
+            if (kind.IsLogical())
+            {
+                bestSignature = bestSignature.WithKind(bestSignature.Kind | BinaryOperatorKind.Logical);
+            }
 
             return new BoundCompoundAssignmentOperator(node, bestSignature, left, rightConverted,
                 leftConversion, finalConversion, resultKind, originalUserDefinedOperators, leftType, hasError);

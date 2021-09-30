@@ -51,6 +51,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             this.Priority = null;
         }
 
+        public BinaryOperatorSignature WithKind(BinaryOperatorKind kind)
+        {
+            return new(kind, this.LeftType, this.RightType, this.ReturnType, this.Method, this.ConstrainedToTypeOpt);
+        }
+
         public override string ToString()
         {
             return $"kind: {this.Kind} leftType: {this.LeftType} leftRefKind: {this.LeftRefKind} rightType: {this.RightType} rightRefKind: {this.RightRefKind} return: {this.ReturnType}";

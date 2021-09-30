@@ -941,6 +941,325 @@ False
         }
 
         [Fact]
+        public void TestCompoundShortCircuitOperators()
+        {
+            var source = @"
+class C
+{
+    public static void Write(char ch, bool result)
+    {
+        System.Console.WriteLine($""{ch} - {result}"");
+    }
+    public static bool Test(char ch, bool result)
+    {
+        Write(ch, result);
+        return result;
+    }
+    public static ref bool Test(char ch, ref bool result)
+    {
+        Write(ch, result);
+        return ref result;
+    }
+
+    public static void Main() 
+    {
+        bool v1 = false;
+        bool v2 = true;
+
+        // &&=
+        System.Console.WriteLine(Test('A', ref v1) &&= Test('B', v1));
+        System.Console.WriteLine(Test('A', ref v1) &&= Test('B', v2));
+        System.Console.WriteLine(Test('A', ref v2) &&= Test('B', v2));
+        System.Console.WriteLine(Test('A', ref v2) &&= Test('B', v1));
+        System.Console.WriteLine(Test('A', ref v2) &&= Test('B', v1));
+        System.Console.WriteLine(Test('A', ref v2) &&= Test('B', v2));
+
+        v1 = false;
+        v2 = true;
+
+        System.Console.WriteLine();
+
+        // ||=
+        System.Console.WriteLine(Test('A', ref v2) ||= Test('B', v1));
+        System.Console.WriteLine(Test('A', ref v2) ||= Test('B', v2));
+        System.Console.WriteLine(Test('A', ref v1) ||= Test('B', v1));
+        System.Console.WriteLine(Test('A', ref v1) ||= Test('B', v2));
+        System.Console.WriteLine(Test('A', ref v1) ||= Test('B', v2));
+        System.Console.WriteLine(Test('A', ref v1) ||= Test('B', v1));
+    }
+}
+";
+            var compilation = CompileAndVerify(source, expectedOutput:
+@"A - False
+False
+A - False
+False
+A - True
+B - True
+True
+A - True
+B - False
+False
+A - False
+False
+A - False
+False
+
+A - True
+True
+A - True
+True
+A - False
+B - False
+False
+A - False
+B - True
+True
+A - True
+True
+A - True
+True
+");
+
+            compilation.VerifyIL("C.Main", @"
+{
+    // Code size      434 (0x1b2)
+    .maxstack  3
+    .locals init (bool V_0, //v1
+                bool V_1, //v2
+                bool& V_2,
+                bool V_3)
+    IL_0000:  ldc.i4.0
+    IL_0001:  stloc.0
+    IL_0002:  ldc.i4.1
+    IL_0003:  stloc.1
+    IL_0004:  ldc.i4.s   65
+    IL_0006:  ldloca.s   V_0
+    IL_0008:  call       ""ref bool C.Test(char, ref bool)""
+    IL_000d:  stloc.2
+    IL_000e:  ldloc.2
+    IL_000f:  ldind.u1
+    IL_0010:  brtrue.s   IL_0015
+    IL_0012:  ldc.i4.0
+    IL_0013:  br.s       IL_0022
+    IL_0015:  ldloc.2
+    IL_0016:  ldc.i4.s   66
+    IL_0018:  ldloc.0
+    IL_0019:  call       ""bool C.Test(char, bool)""
+    IL_001e:  dup
+    IL_001f:  stloc.3
+    IL_0020:  stind.i1
+    IL_0021:  ldloc.3
+    IL_0022:  call       ""void System.Console.WriteLine(bool)""
+    IL_0027:  ldc.i4.s   65
+    IL_0029:  ldloca.s   V_0
+    IL_002b:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0030:  stloc.2
+    IL_0031:  ldloc.2
+    IL_0032:  ldind.u1
+    IL_0033:  brtrue.s   IL_0038
+    IL_0035:  ldc.i4.0
+    IL_0036:  br.s       IL_0045
+    IL_0038:  ldloc.2
+    IL_0039:  ldc.i4.s   66
+    IL_003b:  ldloc.1
+    IL_003c:  call       ""bool C.Test(char, bool)""
+    IL_0041:  dup
+    IL_0042:  stloc.3
+    IL_0043:  stind.i1
+    IL_0044:  ldloc.3
+    IL_0045:  call       ""void System.Console.WriteLine(bool)""
+    IL_004a:  ldc.i4.s   65
+    IL_004c:  ldloca.s   V_1
+    IL_004e:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0053:  stloc.2
+    IL_0054:  ldloc.2
+    IL_0055:  ldind.u1
+    IL_0056:  brtrue.s   IL_005b
+    IL_0058:  ldc.i4.0
+    IL_0059:  br.s       IL_0068
+    IL_005b:  ldloc.2
+    IL_005c:  ldc.i4.s   66
+    IL_005e:  ldloc.1
+    IL_005f:  call       ""bool C.Test(char, bool)""
+    IL_0064:  dup
+    IL_0065:  stloc.3
+    IL_0066:  stind.i1
+    IL_0067:  ldloc.3
+    IL_0068:  call       ""void System.Console.WriteLine(bool)""
+    IL_006d:  ldc.i4.s   65
+    IL_006f:  ldloca.s   V_1
+    IL_0071:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0076:  stloc.2
+    IL_0077:  ldloc.2
+    IL_0078:  ldind.u1
+    IL_0079:  brtrue.s   IL_007e
+    IL_007b:  ldc.i4.0
+    IL_007c:  br.s       IL_008b
+    IL_007e:  ldloc.2
+    IL_007f:  ldc.i4.s   66
+    IL_0081:  ldloc.0
+    IL_0082:  call       ""bool C.Test(char, bool)""
+    IL_0087:  dup
+    IL_0088:  stloc.3
+    IL_0089:  stind.i1
+    IL_008a:  ldloc.3
+    IL_008b:  call       ""void System.Console.WriteLine(bool)""
+    IL_0090:  ldc.i4.s   65
+    IL_0092:  ldloca.s   V_1
+    IL_0094:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0099:  stloc.2
+    IL_009a:  ldloc.2
+    IL_009b:  ldind.u1
+    IL_009c:  brtrue.s   IL_00a1
+    IL_009e:  ldc.i4.0
+    IL_009f:  br.s       IL_00ae
+    IL_00a1:  ldloc.2
+    IL_00a2:  ldc.i4.s   66
+    IL_00a4:  ldloc.0
+    IL_00a5:  call       ""bool C.Test(char, bool)""
+    IL_00aa:  dup
+    IL_00ab:  stloc.3
+    IL_00ac:  stind.i1
+    IL_00ad:  ldloc.3
+    IL_00ae:  call       ""void System.Console.WriteLine(bool)""
+    IL_00b3:  ldc.i4.s   65
+    IL_00b5:  ldloca.s   V_1
+    IL_00b7:  call       ""ref bool C.Test(char, ref bool)""
+    IL_00bc:  stloc.2
+    IL_00bd:  ldloc.2
+    IL_00be:  ldind.u1
+    IL_00bf:  brtrue.s   IL_00c4
+    IL_00c1:  ldc.i4.0
+    IL_00c2:  br.s       IL_00d1
+    IL_00c4:  ldloc.2
+    IL_00c5:  ldc.i4.s   66
+    IL_00c7:  ldloc.1
+    IL_00c8:  call       ""bool C.Test(char, bool)""
+    IL_00cd:  dup
+    IL_00ce:  stloc.3
+    IL_00cf:  stind.i1
+    IL_00d0:  ldloc.3
+    IL_00d1:  call       ""void System.Console.WriteLine(bool)""
+    IL_00d6:  ldc.i4.0
+    IL_00d7:  stloc.0
+    IL_00d8:  ldc.i4.1
+    IL_00d9:  stloc.1
+    IL_00da:  call       ""void System.Console.WriteLine()""
+    IL_00df:  ldc.i4.s   65
+    IL_00e1:  ldloca.s   V_1
+    IL_00e3:  call       ""ref bool C.Test(char, ref bool)""
+    IL_00e8:  stloc.2
+    IL_00e9:  ldloc.2
+    IL_00ea:  ldind.u1
+    IL_00eb:  brtrue.s   IL_00fc
+    IL_00ed:  ldloc.2
+    IL_00ee:  ldc.i4.s   66
+    IL_00f0:  ldloc.0
+    IL_00f1:  call       ""bool C.Test(char, bool)""
+    IL_00f6:  dup
+    IL_00f7:  stloc.3
+    IL_00f8:  stind.i1
+    IL_00f9:  ldloc.3
+    IL_00fa:  br.s       IL_00fd
+    IL_00fc:  ldc.i4.1
+    IL_00fd:  call       ""void System.Console.WriteLine(bool)""
+    IL_0102:  ldc.i4.s   65
+    IL_0104:  ldloca.s   V_1
+    IL_0106:  call       ""ref bool C.Test(char, ref bool)""
+    IL_010b:  stloc.2
+    IL_010c:  ldloc.2
+    IL_010d:  ldind.u1
+    IL_010e:  brtrue.s   IL_011f
+    IL_0110:  ldloc.2
+    IL_0111:  ldc.i4.s   66
+    IL_0113:  ldloc.1
+    IL_0114:  call       ""bool C.Test(char, bool)""
+    IL_0119:  dup
+    IL_011a:  stloc.3
+    IL_011b:  stind.i1
+    IL_011c:  ldloc.3
+    IL_011d:  br.s       IL_0120
+    IL_011f:  ldc.i4.1
+    IL_0120:  call       ""void System.Console.WriteLine(bool)""
+    IL_0125:  ldc.i4.s   65
+    IL_0127:  ldloca.s   V_0
+    IL_0129:  call       ""ref bool C.Test(char, ref bool)""
+    IL_012e:  stloc.2
+    IL_012f:  ldloc.2
+    IL_0130:  ldind.u1
+    IL_0131:  brtrue.s   IL_0142
+    IL_0133:  ldloc.2
+    IL_0134:  ldc.i4.s   66
+    IL_0136:  ldloc.0
+    IL_0137:  call       ""bool C.Test(char, bool)""
+    IL_013c:  dup
+    IL_013d:  stloc.3
+    IL_013e:  stind.i1
+    IL_013f:  ldloc.3
+    IL_0140:  br.s       IL_0143
+    IL_0142:  ldc.i4.1
+    IL_0143:  call       ""void System.Console.WriteLine(bool)""
+    IL_0148:  ldc.i4.s   65
+    IL_014a:  ldloca.s   V_0
+    IL_014c:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0151:  stloc.2
+    IL_0152:  ldloc.2
+    IL_0153:  ldind.u1
+    IL_0154:  brtrue.s   IL_0165
+    IL_0156:  ldloc.2
+    IL_0157:  ldc.i4.s   66
+    IL_0159:  ldloc.1
+    IL_015a:  call       ""bool C.Test(char, bool)""
+    IL_015f:  dup
+    IL_0160:  stloc.3
+    IL_0161:  stind.i1
+    IL_0162:  ldloc.3
+    IL_0163:  br.s       IL_0166
+    IL_0165:  ldc.i4.1
+    IL_0166:  call       ""void System.Console.WriteLine(bool)""
+    IL_016b:  ldc.i4.s   65
+    IL_016d:  ldloca.s   V_0
+    IL_016f:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0174:  stloc.2
+    IL_0175:  ldloc.2
+    IL_0176:  ldind.u1
+    IL_0177:  brtrue.s   IL_0188
+    IL_0179:  ldloc.2
+    IL_017a:  ldc.i4.s   66
+    IL_017c:  ldloc.1
+    IL_017d:  call       ""bool C.Test(char, bool)""
+    IL_0182:  dup
+    IL_0183:  stloc.3
+    IL_0184:  stind.i1
+    IL_0185:  ldloc.3
+    IL_0186:  br.s       IL_0189
+    IL_0188:  ldc.i4.1
+    IL_0189:  call       ""void System.Console.WriteLine(bool)""
+    IL_018e:  ldc.i4.s   65
+    IL_0190:  ldloca.s   V_0
+    IL_0192:  call       ""ref bool C.Test(char, ref bool)""
+    IL_0197:  stloc.2
+    IL_0198:  ldloc.2
+    IL_0199:  ldind.u1
+    IL_019a:  brtrue.s   IL_01ab
+    IL_019c:  ldloc.2
+    IL_019d:  ldc.i4.s   66
+    IL_019f:  ldloc.0
+    IL_01a0:  call       ""bool C.Test(char, bool)""
+    IL_01a5:  dup
+    IL_01a6:  stloc.3
+    IL_01a7:  stind.i1
+    IL_01a8:  ldloc.3
+    IL_01a9:  br.s       IL_01ac
+    IL_01ab:  ldc.i4.1
+    IL_01ac:  call       ""void System.Console.WriteLine(bool)""
+    IL_01b1:  ret
+}
+");
+        }
+
+        [Fact]
         public void TestConditionalMemberAccess001()
         {
             var source = @"
