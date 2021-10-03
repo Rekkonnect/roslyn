@@ -3258,7 +3258,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     internal sealed partial class BoundBreakStatement : BoundStatement
     {
-        public BoundBreakStatement(SyntaxNode syntax, GeneratedLabelSymbol label, bool hasErrors)
+        public BoundBreakStatement(SyntaxNode syntax, LabelSymbol label, bool hasErrors)
             : base(BoundKind.BreakStatement, syntax, hasErrors)
         {
 
@@ -3267,7 +3267,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             this.Label = label;
         }
 
-        public BoundBreakStatement(SyntaxNode syntax, GeneratedLabelSymbol label)
+        public BoundBreakStatement(SyntaxNode syntax, LabelSymbol label)
             : base(BoundKind.BreakStatement, syntax)
         {
 
@@ -3277,11 +3277,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
 
-        public GeneratedLabelSymbol Label { get; }
+        public LabelSymbol Label { get; }
         [DebuggerStepThrough]
         public override BoundNode? Accept(BoundTreeVisitor visitor) => visitor.VisitBreakStatement(this);
 
-        public BoundBreakStatement Update(GeneratedLabelSymbol label)
+        public BoundBreakStatement Update(LabelSymbol label)
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
@@ -3295,7 +3295,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
     internal sealed partial class BoundContinueStatement : BoundStatement
     {
-        public BoundContinueStatement(SyntaxNode syntax, GeneratedLabelSymbol label, bool hasErrors)
+        public BoundContinueStatement(SyntaxNode syntax, LabelSymbol label, bool hasErrors)
             : base(BoundKind.ContinueStatement, syntax, hasErrors)
         {
 
@@ -3304,7 +3304,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             this.Label = label;
         }
 
-        public BoundContinueStatement(SyntaxNode syntax, GeneratedLabelSymbol label)
+        public BoundContinueStatement(SyntaxNode syntax, LabelSymbol label)
             : base(BoundKind.ContinueStatement, syntax)
         {
 
@@ -3314,11 +3314,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
 
-        public GeneratedLabelSymbol Label { get; }
+        public LabelSymbol Label { get; }
         [DebuggerStepThrough]
         public override BoundNode? Accept(BoundTreeVisitor visitor) => visitor.VisitContinueStatement(this);
 
-        public BoundContinueStatement Update(GeneratedLabelSymbol label)
+        public BoundContinueStatement Update(LabelSymbol label)
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {

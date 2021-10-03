@@ -6772,6 +6772,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     public sealed partial class BreakStatementSyntax : StatementSyntax
     {
         private SyntaxNode? attributeLists;
+        private ExpressionSyntax? expression;
 
         internal BreakStatementSyntax(InternalSyntax.CSharpSyntaxNode green, SyntaxNode? parent, int position)
           : base(green, parent, position)
@@ -6782,20 +6783,34 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public SyntaxToken BreakKeyword => new SyntaxToken(this, ((Syntax.InternalSyntax.BreakStatementSyntax)this.Green).breakKeyword, GetChildPosition(1), GetChildIndex(1));
 
-        public SyntaxToken SemicolonToken => new SyntaxToken(this, ((Syntax.InternalSyntax.BreakStatementSyntax)this.Green).semicolonToken, GetChildPosition(2), GetChildIndex(2));
+        public ExpressionSyntax? Expression => GetRed(ref this.expression, 2);
 
-        internal override SyntaxNode? GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this.attributeLists)! : null;
+        public SyntaxToken SemicolonToken => new SyntaxToken(this, ((Syntax.InternalSyntax.BreakStatementSyntax)this.Green).semicolonToken, GetChildPosition(3), GetChildIndex(3));
 
-        internal override SyntaxNode? GetCachedSlot(int index) => index == 0 ? this.attributeLists : null;
+        internal override SyntaxNode? GetNodeSlot(int index)
+            => index switch
+            {
+                0 => GetRedAtZero(ref this.attributeLists)!,
+                2 => GetRed(ref this.expression, 2),
+                _ => null,
+            };
+
+        internal override SyntaxNode? GetCachedSlot(int index)
+            => index switch
+            {
+                0 => this.attributeLists,
+                2 => this.expression,
+                _ => null,
+            };
 
         public override void Accept(CSharpSyntaxVisitor visitor) => visitor.VisitBreakStatement(this);
         public override TResult? Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor) where TResult : default => visitor.VisitBreakStatement(this);
 
-        public BreakStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken breakKeyword, SyntaxToken semicolonToken)
+        public BreakStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken breakKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken)
         {
-            if (attributeLists != this.AttributeLists || breakKeyword != this.BreakKeyword || semicolonToken != this.SemicolonToken)
+            if (attributeLists != this.AttributeLists || breakKeyword != this.BreakKeyword || expression != this.Expression || semicolonToken != this.SemicolonToken)
             {
-                var newNode = SyntaxFactory.BreakStatement(attributeLists, breakKeyword, semicolonToken);
+                var newNode = SyntaxFactory.BreakStatement(attributeLists, breakKeyword, expression, semicolonToken);
                 var annotations = GetAnnotations();
                 return annotations?.Length > 0 ? newNode.WithAnnotations(annotations) : newNode;
             }
@@ -6804,9 +6819,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         }
 
         internal override StatementSyntax WithAttributeListsCore(SyntaxList<AttributeListSyntax> attributeLists) => WithAttributeLists(attributeLists);
-        public new BreakStatementSyntax WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists) => Update(attributeLists, this.BreakKeyword, this.SemicolonToken);
-        public BreakStatementSyntax WithBreakKeyword(SyntaxToken breakKeyword) => Update(this.AttributeLists, breakKeyword, this.SemicolonToken);
-        public BreakStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken) => Update(this.AttributeLists, this.BreakKeyword, semicolonToken);
+        public new BreakStatementSyntax WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists) => Update(attributeLists, this.BreakKeyword, this.Expression, this.SemicolonToken);
+        public BreakStatementSyntax WithBreakKeyword(SyntaxToken breakKeyword) => Update(this.AttributeLists, breakKeyword, this.Expression, this.SemicolonToken);
+        public BreakStatementSyntax WithExpression(ExpressionSyntax? expression) => Update(this.AttributeLists, this.BreakKeyword, expression, this.SemicolonToken);
+        public BreakStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken) => Update(this.AttributeLists, this.BreakKeyword, this.Expression, semicolonToken);
 
         internal override StatementSyntax AddAttributeListsCore(params AttributeListSyntax[] items) => AddAttributeLists(items);
         public new BreakStatementSyntax AddAttributeLists(params AttributeListSyntax[] items) => WithAttributeLists(this.AttributeLists.AddRange(items));
@@ -6821,6 +6837,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     public sealed partial class ContinueStatementSyntax : StatementSyntax
     {
         private SyntaxNode? attributeLists;
+        private ExpressionSyntax? expression;
 
         internal ContinueStatementSyntax(InternalSyntax.CSharpSyntaxNode green, SyntaxNode? parent, int position)
           : base(green, parent, position)
@@ -6831,20 +6848,34 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public SyntaxToken ContinueKeyword => new SyntaxToken(this, ((Syntax.InternalSyntax.ContinueStatementSyntax)this.Green).continueKeyword, GetChildPosition(1), GetChildIndex(1));
 
-        public SyntaxToken SemicolonToken => new SyntaxToken(this, ((Syntax.InternalSyntax.ContinueStatementSyntax)this.Green).semicolonToken, GetChildPosition(2), GetChildIndex(2));
+        public ExpressionSyntax? Expression => GetRed(ref this.expression, 2);
 
-        internal override SyntaxNode? GetNodeSlot(int index) => index == 0 ? GetRedAtZero(ref this.attributeLists)! : null;
+        public SyntaxToken SemicolonToken => new SyntaxToken(this, ((Syntax.InternalSyntax.ContinueStatementSyntax)this.Green).semicolonToken, GetChildPosition(3), GetChildIndex(3));
 
-        internal override SyntaxNode? GetCachedSlot(int index) => index == 0 ? this.attributeLists : null;
+        internal override SyntaxNode? GetNodeSlot(int index)
+            => index switch
+            {
+                0 => GetRedAtZero(ref this.attributeLists)!,
+                2 => GetRed(ref this.expression, 2),
+                _ => null,
+            };
+
+        internal override SyntaxNode? GetCachedSlot(int index)
+            => index switch
+            {
+                0 => this.attributeLists,
+                2 => this.expression,
+                _ => null,
+            };
 
         public override void Accept(CSharpSyntaxVisitor visitor) => visitor.VisitContinueStatement(this);
         public override TResult? Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor) where TResult : default => visitor.VisitContinueStatement(this);
 
-        public ContinueStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken continueKeyword, SyntaxToken semicolonToken)
+        public ContinueStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken continueKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken)
         {
-            if (attributeLists != this.AttributeLists || continueKeyword != this.ContinueKeyword || semicolonToken != this.SemicolonToken)
+            if (attributeLists != this.AttributeLists || continueKeyword != this.ContinueKeyword || expression != this.Expression || semicolonToken != this.SemicolonToken)
             {
-                var newNode = SyntaxFactory.ContinueStatement(attributeLists, continueKeyword, semicolonToken);
+                var newNode = SyntaxFactory.ContinueStatement(attributeLists, continueKeyword, expression, semicolonToken);
                 var annotations = GetAnnotations();
                 return annotations?.Length > 0 ? newNode.WithAnnotations(annotations) : newNode;
             }
@@ -6853,9 +6884,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         }
 
         internal override StatementSyntax WithAttributeListsCore(SyntaxList<AttributeListSyntax> attributeLists) => WithAttributeLists(attributeLists);
-        public new ContinueStatementSyntax WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists) => Update(attributeLists, this.ContinueKeyword, this.SemicolonToken);
-        public ContinueStatementSyntax WithContinueKeyword(SyntaxToken continueKeyword) => Update(this.AttributeLists, continueKeyword, this.SemicolonToken);
-        public ContinueStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken) => Update(this.AttributeLists, this.ContinueKeyword, semicolonToken);
+        public new ContinueStatementSyntax WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists) => Update(attributeLists, this.ContinueKeyword, this.Expression, this.SemicolonToken);
+        public ContinueStatementSyntax WithContinueKeyword(SyntaxToken continueKeyword) => Update(this.AttributeLists, continueKeyword, this.Expression, this.SemicolonToken);
+        public ContinueStatementSyntax WithExpression(ExpressionSyntax? expression) => Update(this.AttributeLists, this.ContinueKeyword, expression, this.SemicolonToken);
+        public ContinueStatementSyntax WithSemicolonToken(SyntaxToken semicolonToken) => Update(this.AttributeLists, this.ContinueKeyword, this.Expression, semicolonToken);
 
         internal override StatementSyntax AddAttributeListsCore(params AttributeListSyntax[] items) => AddAttributeLists(items);
         public new ContinueStatementSyntax AddAttributeLists(params AttributeListSyntax[] items) => WithAttributeLists(this.AttributeLists.AddRange(items));

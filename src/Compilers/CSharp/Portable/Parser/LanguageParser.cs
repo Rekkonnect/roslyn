@@ -8545,16 +8545,31 @@ done:;
 
         private BreakStatementSyntax ParseBreakStatement(SyntaxList<AttributeListSyntax> attributes)
         {
-            var breakKeyword = this.EatToken(SyntaxKind.BreakKeyword);
-            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
-            return _syntaxFactory.BreakStatement(attributes, breakKeyword, semicolon);
+            ParseBreakOrContinueStatementComponents(SyntaxKind.BreakKeyword, out var breakKeyword, out var expression, out var semicolon);
+            return _syntaxFactory.BreakStatement(attributes, breakKeyword, expression, semicolon);
         }
 
         private ContinueStatementSyntax ParseContinueStatement(SyntaxList<AttributeListSyntax> attributes)
         {
-            var continueKeyword = this.EatToken(SyntaxKind.ContinueKeyword);
-            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
-            return _syntaxFactory.ContinueStatement(attributes, continueKeyword, semicolon);
+            ParseBreakOrContinueStatementComponents(SyntaxKind.ContinueKeyword, out var continueKeyword, out var expression, out var semicolon);
+            return _syntaxFactory.ContinueStatement(attributes, continueKeyword, expression, semicolon);
+        }
+
+        private void ParseBreakOrContinueStatementComponents(SyntaxKind keywordKind, out SyntaxToken keyword, out ExpressionSyntax expression, out SyntaxToken semicolon)
+        {
+            keyword = this.EatToken(keywordKind);
+            expression = null;
+            if (this.CurrentToken.Kind != SyntaxKind.SemicolonToken)
+            {
+                expression = ParseIdentifierName();
+            }
+            while (this.CurrentToken.Kind != SyntaxKind.SemicolonToken)
+            {
+                // We should eat the extra expression tokens and report an error
+                WithAdditionalDiagnostics(this.CurrentToken, GetExpectedTokenError(SyntaxKind.SemicolonToken, this.CurrentToken.Kind));
+                this.EatToken();
+            }
+            semicolon = this.EatToken(SyntaxKind.SemicolonToken);
         }
 
         private TryStatementSyntax ParseTryStatement(SyntaxList<AttributeListSyntax> attributes)

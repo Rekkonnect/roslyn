@@ -1774,10 +1774,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             => node.Update(VisitList(node.AttributeLists), VisitToken(node.GotoKeyword), VisitToken(node.CaseOrDefaultKeyword), (ExpressionSyntax?)Visit(node.Expression), VisitToken(node.SemicolonToken));
 
         public override SyntaxNode? VisitBreakStatement(BreakStatementSyntax node)
-            => node.Update(VisitList(node.AttributeLists), VisitToken(node.BreakKeyword), VisitToken(node.SemicolonToken));
+            => node.Update(VisitList(node.AttributeLists), VisitToken(node.BreakKeyword), (ExpressionSyntax?)Visit(node.Expression), VisitToken(node.SemicolonToken));
 
         public override SyntaxNode? VisitContinueStatement(ContinueStatementSyntax node)
-            => node.Update(VisitList(node.AttributeLists), VisitToken(node.ContinueKeyword), VisitToken(node.SemicolonToken));
+            => node.Update(VisitList(node.AttributeLists), VisitToken(node.ContinueKeyword), (ExpressionSyntax?)Visit(node.Expression), VisitToken(node.SemicolonToken));
 
         public override SyntaxNode? VisitReturnStatement(ReturnStatementSyntax node)
             => node.Update(VisitList(node.AttributeLists), VisitToken(node.ReturnKeyword), (ExpressionSyntax?)Visit(node.Expression), VisitToken(node.SemicolonToken));
@@ -4003,36 +4003,40 @@ namespace Microsoft.CodeAnalysis.CSharp
 #pragma warning restore RS0027
 
         /// <summary>Creates a new BreakStatementSyntax instance.</summary>
-        public static BreakStatementSyntax BreakStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken breakKeyword, SyntaxToken semicolonToken)
+        public static BreakStatementSyntax BreakStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken breakKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken)
         {
             if (breakKeyword.Kind() != SyntaxKind.BreakKeyword) throw new ArgumentException(nameof(breakKeyword));
             if (semicolonToken.Kind() != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
-            return (BreakStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.BreakStatement(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), (Syntax.InternalSyntax.SyntaxToken)breakKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node!).CreateRed();
+            return (BreakStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.BreakStatement(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), (Syntax.InternalSyntax.SyntaxToken)breakKeyword.Node!, expression == null ? null : (Syntax.InternalSyntax.ExpressionSyntax)expression.Green, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node!).CreateRed();
         }
 
         /// <summary>Creates a new BreakStatementSyntax instance.</summary>
-        public static BreakStatementSyntax BreakStatement(SyntaxList<AttributeListSyntax> attributeLists)
-            => SyntaxFactory.BreakStatement(attributeLists, SyntaxFactory.Token(SyntaxKind.BreakKeyword), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        public static BreakStatementSyntax BreakStatement(SyntaxList<AttributeListSyntax> attributeLists, ExpressionSyntax? expression)
+            => SyntaxFactory.BreakStatement(attributeLists, SyntaxFactory.Token(SyntaxKind.BreakKeyword), expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
+#pragma warning disable RS0027
         /// <summary>Creates a new BreakStatementSyntax instance.</summary>
-        public static BreakStatementSyntax BreakStatement()
-            => SyntaxFactory.BreakStatement(default, SyntaxFactory.Token(SyntaxKind.BreakKeyword), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        public static BreakStatementSyntax BreakStatement(ExpressionSyntax? expression = default)
+            => SyntaxFactory.BreakStatement(default, SyntaxFactory.Token(SyntaxKind.BreakKeyword), expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+#pragma warning restore RS0027
 
         /// <summary>Creates a new ContinueStatementSyntax instance.</summary>
-        public static ContinueStatementSyntax ContinueStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken continueKeyword, SyntaxToken semicolonToken)
+        public static ContinueStatementSyntax ContinueStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken continueKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken)
         {
             if (continueKeyword.Kind() != SyntaxKind.ContinueKeyword) throw new ArgumentException(nameof(continueKeyword));
             if (semicolonToken.Kind() != SyntaxKind.SemicolonToken) throw new ArgumentException(nameof(semicolonToken));
-            return (ContinueStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.ContinueStatement(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), (Syntax.InternalSyntax.SyntaxToken)continueKeyword.Node!, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node!).CreateRed();
+            return (ContinueStatementSyntax)Syntax.InternalSyntax.SyntaxFactory.ContinueStatement(attributeLists.Node.ToGreenList<Syntax.InternalSyntax.AttributeListSyntax>(), (Syntax.InternalSyntax.SyntaxToken)continueKeyword.Node!, expression == null ? null : (Syntax.InternalSyntax.ExpressionSyntax)expression.Green, (Syntax.InternalSyntax.SyntaxToken)semicolonToken.Node!).CreateRed();
         }
 
         /// <summary>Creates a new ContinueStatementSyntax instance.</summary>
-        public static ContinueStatementSyntax ContinueStatement(SyntaxList<AttributeListSyntax> attributeLists)
-            => SyntaxFactory.ContinueStatement(attributeLists, SyntaxFactory.Token(SyntaxKind.ContinueKeyword), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        public static ContinueStatementSyntax ContinueStatement(SyntaxList<AttributeListSyntax> attributeLists, ExpressionSyntax? expression)
+            => SyntaxFactory.ContinueStatement(attributeLists, SyntaxFactory.Token(SyntaxKind.ContinueKeyword), expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
+#pragma warning disable RS0027
         /// <summary>Creates a new ContinueStatementSyntax instance.</summary>
-        public static ContinueStatementSyntax ContinueStatement()
-            => SyntaxFactory.ContinueStatement(default, SyntaxFactory.Token(SyntaxKind.ContinueKeyword), SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        public static ContinueStatementSyntax ContinueStatement(ExpressionSyntax? expression = default)
+            => SyntaxFactory.ContinueStatement(default, SyntaxFactory.Token(SyntaxKind.ContinueKeyword), expression, SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+#pragma warning restore RS0027
 
         /// <summary>Creates a new ReturnStatementSyntax instance.</summary>
         public static ReturnStatementSyntax ReturnStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken returnKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken)

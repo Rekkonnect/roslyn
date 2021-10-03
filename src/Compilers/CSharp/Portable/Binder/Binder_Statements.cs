@@ -2634,24 +2634,79 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement BindBreak(BreakStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            var target = this.BreakLabel;
-            if ((object)target == null)
+            LabelSymbol target = this.BreakLabel;
+            if (target is null)
             {
                 Error(diagnostics, ErrorCode.ERR_NoBreakOrCont, node);
                 return new BoundBadStatement(node, ImmutableArray<BoundNode>.Empty, hasErrors: true);
+            }
+            else
+            {
+                target = BinderForLabel(node, node.Expression, diagnostics).BreakLabel;
             }
             return new BoundBreakStatement(node, target);
         }
 
         private BoundStatement BindContinue(ContinueStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            var target = this.ContinueLabel;
-            if ((object)target == null)
+            LabelSymbol target = this.ContinueLabel;
+            if (target is null)
             {
                 Error(diagnostics, ErrorCode.ERR_NoBreakOrCont, node);
                 return new BoundBadStatement(node, ImmutableArray<BoundNode>.Empty, hasErrors: true);
             }
+            else
+            {
+                target = BinderForLabel(node, node.Expression, diagnostics).ContinueLabel;
+            }
             return new BoundContinueStatement(node, target);
+        }
+
+        private Binder BinderForLabel(StatementSyntax node, ExpressionSyntax targetLabelExpression, BindingDiagnosticBag diagnostics)
+        {
+            if (targetLabelExpression is null)
+            {
+                return this;
+            }
+
+            var candidateTargetLabelExpression = BindLabel(targetLabelExpression, diagnostics);
+            if (candidateTargetLabelExpression is null)
+            {
+                Error(diagnostics, ErrorCode.ERR_LabelNotFound, node);
+                return this;
+            }
+
+            var candidateTargetLabel = ((BoundLabel)candidateTargetLabelExpression).Label;
+
+            var labeledStatementBinder = this;
+            while (true)
+            {
+                var next = labeledStatementBinder.Next;
+
+                // Attempt to find the label in the parent binder
+                // if the parent binder cannot find that label, we've gone out of its viable scope
+                // in which case we have found the binder that the label refers to
+                // This approach does not directly identify the statement the label refers to
+                // A refactoring could be required
+                if (next.Labels.Contains(candidateTargetLabel))
+                {
+                    break;
+                }
+
+                // Only labeled loops are allowed; not switch statements
+                // Only loops have a continue label, so use that
+                // If breaking labeled switch statements is enabled in the future,
+                // this must be changed
+                var nextLabel = next?.ContinueLabel;
+                if (nextLabel is null)
+                {
+                    break;
+                }
+
+                labeledStatementBinder = next;
+            }
+
+            return labeledStatementBinder;
         }
 
         private static SwitchBinder GetSwitchBinder(Binder binder)

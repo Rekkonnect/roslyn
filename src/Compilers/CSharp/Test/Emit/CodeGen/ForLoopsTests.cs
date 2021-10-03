@@ -1932,5 +1932,136 @@ class Program
   IL_0012:  br.s       IL_0003
 }");
         }
+
+        [Fact]
+        public void ForLoopBreakContinueLabel()
+        {
+            string source =
+@"class C
+{
+    static void Main()
+    {
+        int breakIterations = TestBreakLabel();
+        int continueIterations = TestContinueLabel();
+        System.Console.Write($""{breakIterations} - {continueIterations}"");
+    }
+
+    static int TestBreakLabel()
+    {
+        int iterations = 0;
+    outer:
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                iterations++;
+                if (iterations == 17)
+                    break outer;
+            }
+        }
+
+        return iterations;
+    }
+    static int TestContinueLabel()
+    {
+        int iterations = 0;
+    outer:
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                if (j > i)
+                    continue outer;
+
+                iterations++;
+            }
+        }
+
+        return iterations;
+    }
+}";
+            var compilation = CompileAndVerify(source, expectedOutput: "17 - 15");
+
+            compilation.VerifyIL("C.TestBreakLabel", @"
+{
+    // Code size       39 (0x27)
+    .maxstack  2
+    .locals init (int V_0, //iterations
+                int V_1, //i
+                int V_2) //j
+    IL_0000:  ldc.i4.0
+    IL_0001:  stloc.0
+    IL_0002:  ldc.i4.0
+    IL_0003:  stloc.1
+    IL_0004:  br.s       IL_0020
+    IL_0006:  ldc.i4.0
+    IL_0007:  stloc.2
+    IL_0008:  br.s       IL_0017
+    IL_000a:  ldloc.0
+    IL_000b:  ldc.i4.1
+    IL_000c:  add
+    IL_000d:  stloc.0
+    IL_000e:  ldloc.0
+    IL_000f:  ldc.i4.s   17
+    IL_0011:  beq.s      IL_0025
+    IL_0013:  ldloc.2
+    IL_0014:  ldc.i4.1
+    IL_0015:  add
+    IL_0016:  stloc.2
+    IL_0017:  ldloc.2
+    IL_0018:  ldc.i4.s   10
+    IL_001a:  blt.s      IL_000a
+    IL_001c:  ldloc.1
+    IL_001d:  ldc.i4.1
+    IL_001e:  add
+    IL_001f:  stloc.1
+    IL_0020:  ldloc.1
+    IL_0021:  ldc.i4.s   10
+    IL_0023:  blt.s      IL_0006
+    IL_0025:  ldloc.0
+    IL_0026:  ret
+}
+");
+            compilation.VerifyIL("C.TestContinueLabel", @"
+{
+    // Code size       37 (0x25)
+    .maxstack  2
+    .locals init (int V_0, //iterations
+                int V_1, //i
+                int V_2) //j
+    IL_0000:  ldc.i4.0
+    IL_0001:  stloc.0
+    IL_0002:  ldc.i4.0
+    IL_0003:  stloc.1
+    IL_0004:  br.s       IL_001f
+    IL_0006:  ldc.i4.0
+    IL_0007:  stloc.2
+    IL_0008:  br.s       IL_0016
+    IL_000a:  ldloc.2
+    IL_000b:  ldloc.1
+    IL_000c:  bgt.s      IL_001b
+    IL_000e:  ldloc.0
+    IL_000f:  ldc.i4.1
+    IL_0010:  add
+    IL_0011:  stloc.0
+    IL_0012:  ldloc.2
+    IL_0013:  ldc.i4.1
+    IL_0014:  add
+    IL_0015:  stloc.2
+    IL_0016:  ldloc.2
+    IL_0017:  ldc.i4.s   10
+    IL_0019:  blt.s      IL_000a
+    IL_001b:  ldloc.1
+    IL_001c:  ldc.i4.1
+    IL_001d:  add
+    IL_001e:  stloc.1
+    IL_001f:  ldloc.1
+    IL_0020:  ldc.i4.5
+    IL_0021:  blt.s      IL_0006
+    IL_0023:  ldloc.0
+    IL_0024:  ret
+}
+");
+        }
     }
 }

@@ -978,11 +978,11 @@
   </Node>
 
   <Node Name="BoundBreakStatement" Base="BoundStatement">
-    <Field Name="Label" Type="GeneratedLabelSymbol" />
+    <Field Name="Label" Type="LabelSymbol" />
   </Node>
 
   <Node Name="BoundContinueStatement" Base="BoundStatement">
-    <Field Name="Label" Type="GeneratedLabelSymbol" />
+    <Field Name="Label" Type="LabelSymbol" />
   </Node>
 
   <Node Name="BoundSwitchStatement" Base="BoundStatement">

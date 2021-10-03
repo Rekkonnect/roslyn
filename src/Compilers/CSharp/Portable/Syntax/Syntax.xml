@@ -2363,6 +2363,7 @@
     <Field Name="BreakKeyword" Type="SyntaxToken">
       <Kind Name="BreakKeyword"/>
     </Field>
+    <Field Name="Expression" Type="ExpressionSyntax" Optional="true"/>
     <Field Name="SemicolonToken" Type="SyntaxToken">
       <Kind Name="SemicolonToken"/>
     </Field>
@@ -2373,6 +2374,7 @@
     <Field Name="ContinueKeyword" Type="SyntaxToken">
       <Kind Name="ContinueKeyword"/>
     </Field>
+    <Field Name="Expression" Type="ExpressionSyntax" Optional="true"/>
     <Field Name="SemicolonToken" Type="SyntaxToken">
       <Kind Name="SemicolonToken"/>
     </Field>

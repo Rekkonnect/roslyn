@@ -10,6 +10,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
     {
         public BreakStatementSyntax Update(SyntaxToken breakKeyword, SyntaxToken semicolonToken)
             => Update(AttributeLists, breakKeyword, semicolonToken);
+        public BreakStatementSyntax Update(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken breakKeyword, SyntaxToken semicolonToken)
+            => Update(attributeLists, breakKeyword, Expression, semicolonToken);
     }
 }
 
@@ -19,5 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public static BreakStatementSyntax BreakStatement(SyntaxToken breakKeyword, SyntaxToken semicolonToken)
             => BreakStatement(attributeLists: default, breakKeyword, semicolonToken);
+        public static BreakStatementSyntax BreakStatement(SyntaxList<AttributeListSyntax> attributeLists, SyntaxToken breakKeyword, SyntaxToken semicolonToken)
+            => BreakStatement(attributeLists, breakKeyword, null, semicolonToken);
     }
 }

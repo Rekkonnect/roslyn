@@ -456,7 +456,7 @@ statement
   ;
 
 break_statement
-  : attribute_list* 'break' ';'
+  : attribute_list* 'break' expression? ';'
   ;
 
 checked_statement
@@ -477,7 +477,7 @@ for_each_variable_statement
   ;
 
 continue_statement
-  : attribute_list* 'continue' ';'
+  : attribute_list* 'continue' expression? ';'
   ;
 
 do_statement
