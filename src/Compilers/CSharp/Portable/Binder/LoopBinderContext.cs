@@ -37,5 +37,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return _continueLabel;
             }
         }
+
+        public void AssociateLoopLabel(SourceLabelSymbol sourceLabel)
+        {
+            _breakLabel.AssociateSourceLabelSymbol(sourceLabel);
+            _continueLabel.AssociateSourceLabelSymbol(sourceLabel);
+        }
     }
 }

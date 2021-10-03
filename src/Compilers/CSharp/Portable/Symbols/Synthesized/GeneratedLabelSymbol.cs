@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -13,12 +14,26 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     {
         private readonly string _name;
 
+        public SourceLabelSymbol? AssociatedSourceLabel { get; private set; }
+
         public GeneratedLabelSymbol(string name)
         {
             _name = LabelName(name);
 #if DEBUG
             NameNoSequence = $"<{name}>";
 #endif
+        }
+
+        public void AssociateSourceLabelSymbol(SourceLabelSymbol associated)
+        {
+            Debug.Assert(associated is not null);
+            if (AssociatedSourceLabel == associated)
+            {
+                return;
+            }
+
+            Debug.Assert(AssociatedSourceLabel is null);
+            AssociatedSourceLabel = associated;
         }
 
         public override string Name
@@ -48,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                return ImmutableArray<SyntaxReference>.Empty;
+                return AssociatedSourceLabel?.DeclaringSyntaxReferences ?? ImmutableArray<SyntaxReference>.Empty;
             }
         }
 

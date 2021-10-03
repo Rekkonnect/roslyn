@@ -887,6 +887,11 @@
         <target state="translated">'{0}' non è un metodo di istanza. Il ricevitore non può essere un argomento del gestore di stringhe interpolate.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_NotLoopLabel">
+        <source>Expected a label for a loop.</source>
+        <target state="new">Expected a label for a loop.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_NotOverridableAPIInRecord">
         <source>'{0}' must allow overriding because the containing record is not sealed.</source>
         <target state="translated">'{0}' deve consentire l'override perché il record contenitore non è sealed.</target>

@@ -330,6 +330,26 @@ namespace Microsoft.CodeAnalysis.CSharp
             return null;
         }
 
+        public override BoundNode VisitBreakStatement(BoundBreakStatement node)
+        {
+            if (node.Label.AssociatedSourceLabel is var associated)
+            {
+                _labelsUsed.Add(associated);
+            }
+
+            return base.VisitBreakStatement(node);
+        }
+
+        public override BoundNode VisitContinueStatement(BoundContinueStatement node)
+        {
+            if (node.Label.AssociatedSourceLabel is var associated)
+            {
+                _labelsUsed.Add(associated);
+            }
+
+            return base.VisitContinueStatement(node);
+        }
+
         public override BoundNode VisitGotoStatement(BoundGotoStatement node)
         {
             _labelsUsed.Add(node.Label);

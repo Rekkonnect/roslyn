@@ -887,6 +887,11 @@
         <target state="translated">“{0}”不是实例方法，接收器不能是内插字符串处理程序参数。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_NotLoopLabel">
+        <source>Expected a label for a loop.</source>
+        <target state="new">Expected a label for a loop.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_NotOverridableAPIInRecord">
         <source>'{0}' must allow overriding because the containing record is not sealed.</source>
         <target state="translated">“{0}”必须允许替代，因为包含的记录未密封。</target>

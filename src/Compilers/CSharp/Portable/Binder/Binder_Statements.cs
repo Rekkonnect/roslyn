@@ -2634,7 +2634,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement BindBreak(BreakStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            LabelSymbol target = this.BreakLabel;
+            var target = this.BreakLabel;
             if (target is null)
             {
                 Error(diagnostics, ErrorCode.ERR_NoBreakOrCont, node);
@@ -2649,7 +2649,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement BindContinue(ContinueStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            LabelSymbol target = this.ContinueLabel;
+            var target = this.ContinueLabel;
             if (target is null)
             {
                 Error(diagnostics, ErrorCode.ERR_NoBreakOrCont, node);
@@ -2681,26 +2681,31 @@ namespace Microsoft.CodeAnalysis.CSharp
             var labeledStatementBinder = this;
             while (true)
             {
-                var next = labeledStatementBinder.Next;
+                var next = labeledStatementBinder.Next!;
+                Debug.Assert(next is not null, "The current binder should always be within a method binder.");
+                var nextLabel = next.ContinueLabel;
 
-                // Attempt to find the label in the parent binder
-                // if the parent binder cannot find that label, we've gone out of its viable scope
-                // in which case we have found the binder that the label refers to
+                // Attempt to find the label in the parent binder's parent statement
                 // This approach does not directly identify the statement the label refers to
-                // A refactoring could be required
-                if (next.Labels.Contains(candidateTargetLabel))
+                // and uses a recursive approach, relying on syntax instead of bound nodes/operations
+                // A refactoring could be desirable
+                if (next.ScopeDesignator?.Parent is LabeledStatementSyntax labeledStatementSyntax)
                 {
-                    break;
-                }
-
-                // Only labeled loops are allowed; not switch statements
-                // Only loops have a continue label, so use that
-                // If breaking labeled switch statements is enabled in the future,
-                // this must be changed
-                var nextLabel = next?.ContinueLabel;
-                if (nextLabel is null)
-                {
-                    break;
+                    // It's okay to not compare the symbols, since the label identifier must be unique
+                    if (labeledStatementSyntax.Identifier == candidateTargetLabel.IdentifierNodeOrToken)
+                    {
+                        if (nextLabel is null)
+                        {
+                            Error(diagnostics, ErrorCode.ERR_NotLoopLabel, node);
+                        }
+                        else if (candidateTargetLabel is SourceLabelSymbol targetSourceLabel)
+                        {
+                            var loopBinder = next as LoopBinder;
+                            Debug.Assert(loopBinder is not null);
+                            loopBinder.AssociateLoopLabel(targetSourceLabel);
+                        }
+                        break;
+                    }
                 }
 
                 labeledStatementBinder = next;

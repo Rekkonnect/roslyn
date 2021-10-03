@@ -887,6 +887,11 @@
         <target state="translated">« {0} » n’est pas une méthode d’instance, le récepteur ne peut pas être un argument de gestionnaire de chaîne interpolé.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_NotLoopLabel">
+        <source>Expected a label for a loop.</source>
+        <target state="new">Expected a label for a loop.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_NotOverridableAPIInRecord">
         <source>'{0}' must allow overriding because the containing record is not sealed.</source>
         <target state="translated">'{0}' doit autoriser la substitution, car l'enregistrement contenant n'est pas sealed.</target>
