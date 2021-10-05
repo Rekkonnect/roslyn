@@ -942,6 +942,11 @@
         <target state="translated">方法 "{0}" 为类型参数 "{1}" 指定了 "struct" 约束，但重写的或显式实现的方法 "{3}" 的相应类型参数 "{2}" 不是不可为 null 的值类型。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_PartialEnumFirstMember">
+        <source>Missing explicit value declaration on the first member of a partial enum.</source>
+        <target state="new">Missing explicit value declaration on the first member of a partial enum.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_PartialMethodAccessibilityDifference">
         <source>Both partial method declarations must have identical accessibility modifiers.</source>
         <target state="translated">两个分部方法声明必须具有相同的可访问性修饰符。</target>
@@ -1290,6 +1295,11 @@
       <trans-unit id="IDS_FeatureParameterlessStructConstructors">
         <source>parameterless struct constructors</source>
         <target state="translated">参数结构构造函数</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IDS_FeaturePartialEnums">
+        <source>partial enums</source>
+        <target state="new">partial enums</target>
         <note />
       </trans-unit>
       <trans-unit id="IDS_FeaturePositionalFieldsInRecords">
@@ -4632,8 +4642,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialTypeKindConflict">
-        <source>Partial declarations of '{0}' must be all classes, all record classes, all structs, all record structs, or all interfaces</source>
-        <target state="translated">'{0}' 的部分声明必须为所有类、所有记录、所有结构、所有记录结构或所有接口</target>
+        <source>Partial declarations of '{0}' must be all classes, all record classes, all structs, all record structs, all interfaces, or all enums</source>
+        <target state="needs-review-translation">'{0}' 的部分声明必须为所有类、所有记录、所有结构、所有记录结构或所有接口</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialModifierConflict">
@@ -4662,8 +4672,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialMisplaced">
-        <source>The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.</source>
-        <target state="translated">"partial" 修饰符的后面只能紧跟 "class"、"record"、"struct"、"interface" 或方法返回类型。</target>
+        <source>The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', 'enum', or a method return type.</source>
+        <target state="translated">"partial" 修饰符的后面只能紧跟 "class"、"record"、"struct"、"interface"、"enum" 或方法返回类型。</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_ImportedCircularBase">

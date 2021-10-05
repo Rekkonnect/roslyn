@@ -1192,13 +1192,12 @@ tryAgain:
                             modTok = CheckFeatureAvailability(modTok,
                                 isPartialType ? MessageID.IDS_FeaturePartialTypes : MessageID.IDS_FeaturePartialMethod);
                         }
-                        else if (nextToken.Kind == SyntaxKind.NamespaceKeyword)
+                        else if (nextToken.Kind is SyntaxKind.NamespaceKeyword or SyntaxKind.EnumKeyword)
                         {
-                            // Error reported in binding
+                            // Respective error reported in binding
                             modTok = ConvertToKeyword(this.EatToken());
                         }
                         else if (
-                            nextToken.Kind == SyntaxKind.EnumKeyword ||
                             nextToken.Kind == SyntaxKind.DelegateKeyword ||
                             (IsPossibleStartOfTypeDeclaration(nextToken.Kind) && GetModifier(nextToken) != DeclarationModifiers.None))
                         {
@@ -1414,6 +1413,9 @@ tryAgain:
                 case SyntaxKind.ClassKeyword:
                 case SyntaxKind.InterfaceKeyword:
                     return true;
+
+                case SyntaxKind.EnumKeyword:
+                    return IsFeatureEnabled(MessageID.IDS_FeaturePartialEnums);
             }
 
             if (nextToken.ContextualKind == SyntaxKind.RecordKeyword)
@@ -1495,7 +1497,7 @@ tryAgain:
             switch (this.CurrentToken.Kind)
             {
                 case SyntaxKind.ClassKeyword:
-                    // report use of "static class" if feature is unsupported 
+                    // report use of "static class" if feature is unsupported
                     CheckForVersionSpecificModifiers(modifiers, SyntaxKind.StaticKeyword, MessageID.IDS_FeatureStaticClasses);
                     return this.ParseClassOrStructOrInterfaceDeclaration(attributes, modifiers);
 
@@ -1511,6 +1513,8 @@ tryAgain:
                     return this.ParseDelegateDeclaration(attributes, modifiers);
 
                 case SyntaxKind.EnumKeyword:
+                    // report use of "partial enum" if feature is unsupported
+                    CheckForVersionSpecificModifiers(modifiers, SyntaxKind.PartialKeyword, MessageID.IDS_FeaturePartialEnums);
                     return this.ParseEnumDeclaration(attributes, modifiers);
 
                 case SyntaxKind.IdentifierToken:
@@ -5325,7 +5329,7 @@ tryAgain:
                 var builder = _pool.AllocateSeparated<EnumMemberDeclarationSyntax>();
                 try
                 {
-                    this.ParseEnumMemberDeclarations(ref openBrace, builder);
+                    this.ParseEnumMemberDeclarations(ref openBrace, builder, modifiers.Any((int)SyntaxKind.PartialKeyword));
                     members = builder.ToList();
                 }
                 finally
@@ -5351,7 +5355,8 @@ tryAgain:
 
         private void ParseEnumMemberDeclarations(
             ref SyntaxToken openBrace,
-            SeparatedSyntaxListBuilder<EnumMemberDeclarationSyntax> members)
+            SeparatedSyntaxListBuilder<EnumMemberDeclarationSyntax> members,
+            bool isPartial)
         {
             if (this.CurrentToken.Kind != SyntaxKind.CloseBraceToken)
             {
@@ -5360,7 +5365,7 @@ tryAgain:
                 if (this.IsPossibleEnumMemberDeclaration() || this.CurrentToken.Kind == SyntaxKind.CommaToken || this.CurrentToken.Kind == SyntaxKind.SemicolonToken)
                 {
                     // first member
-                    members.Add(this.ParseEnumMemberDeclaration());
+                    members.Add(this.ParseEnumMemberDeclaration(isPartial, ErrorCode.ERR_PartialEnumFirstMember));
 
                     // additional members
                     while (true)
@@ -5415,7 +5420,7 @@ tryAgain:
                 expected);
         }
 
-        private EnumMemberDeclarationSyntax ParseEnumMemberDeclaration()
+        private EnumMemberDeclarationSyntax ParseEnumMemberDeclaration(bool requireValueDeclaration = false, ErrorCode missingValueDeclarationError = ErrorCode.Void)
         {
             if (this.IsIncrementalAndFactoryContextMatches && this.CurrentNodeKind == SyntaxKind.EnumMemberDeclaration)
             {
@@ -5442,7 +5447,13 @@ tryAgain:
                 equalsValue = _syntaxFactory.EqualsValueClause(equals, value: value);
             }
 
-            return _syntaxFactory.EnumMemberDeclaration(memberAttrs, modifiers: default, memberName, equalsValue);
+            var memberDeclaration = _syntaxFactory.EnumMemberDeclaration(memberAttrs, modifiers: default, memberName, equalsValue);
+
+            if (requireValueDeclaration && equalsValue is null)
+            {
+                memberDeclaration = this.AddError(memberDeclaration, missingValueDeclarationError);
+            }
+            return memberDeclaration;
         }
 
         private bool IsPossibleEnumMemberDeclaration()

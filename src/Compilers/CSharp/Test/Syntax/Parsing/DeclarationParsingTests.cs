@@ -5789,13 +5789,107 @@ partial class PartialPartial
         public void TestPartialEnum()
         {
             var text = @"partial enum E{}";
-            CreateCompilationWithMscorlib45(text).VerifyDiagnostics(
-                // (1,1): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
+            CreateCompilation(text, parseOptions: new CSharpParseOptions(LanguageVersion.CSharp9)).VerifyDiagnostics(
+                // (1,1): error CS8652: The feature 'partial enums' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version.
                 // partial enum E{}
-                Diagnostic(ErrorCode.ERR_PartialMisplaced, "partial").WithLocation(1, 1),
-                // (1,14): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
-                // partial enum E{}
-                Diagnostic(ErrorCode.ERR_PartialMisplaced, "E").WithLocation(1, 14));
+                Diagnostic(ErrorCode.ERR_FeatureInPreview, "partial").WithArguments("partial enums").WithLocation(1, 1));
+            CompileAndVerify(text);
+        }
+
+        [Fact]
+        public void TestPartialEnumWithoutFirstMember()
+        {
+            var text = @"
+partial enum E
+{
+    Value1 = 0,
+}
+partial enum E
+{
+    Value2,
+}
+
+partial enum F
+{
+    Value1,
+}
+partial enum F
+{
+    Value2 = 0,
+}
+";
+            CreateCompilation(text).VerifyDiagnostics(
+                // (8,5): error CS9220: Missing explicit value declaration on the first member of a partial enum.
+                //     Value2,
+                Diagnostic(ErrorCode.ERR_PartialEnumFirstMember, "Value2").WithLocation(8, 5),
+                // (13,5): error CS9220: Missing explicit value declaration on the first member of a partial enum.
+                //     Value1,
+                Diagnostic(ErrorCode.ERR_PartialEnumFirstMember, "Value1").WithLocation(13, 5));
+        }
+
+        [Fact]
+        public void TestPartialEnumMemberValueDeclaration()
+        {
+            var text = @"
+using System;
+
+partial enum E
+{
+    None = 0,
+    Value1 = 1,
+    Value2,
+    Value3,
+    Value4,
+}
+partial enum E
+{
+    OtherValue1 = 1,
+    OtherValue2
+}
+partial enum E
+{
+    Max = int.MaxValue,
+}
+";
+            CompileAndVerify(text);
+        }
+
+        [Fact]
+        public void TestPartialEnumMemberReference()
+        {
+            var text = @"
+using System;
+
+partial enum E
+{
+    Value1 = 0,
+}
+partial enum E
+{
+    Value2 = 1,
+}
+partial enum E
+{
+    None = int.MaxValue,
+}
+
+class Program
+{
+    static void Main()
+    {
+        var values = new[] { E.Value1, E.Value2, E.None };
+        var expected = new[] { 0, 1, int.MaxValue };
+        for (int i = 0; i < values.Length; i++)
+        {
+            if ((int)values[i] != expected[i])
+            {
+                Console.WriteLine(""Invalid"");
+            }
+        }
+    }
+}
+";
+            CompileAndVerify(text, expectedOutput: "");
         }
 
         [WorkItem(539120, "http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/539120")]

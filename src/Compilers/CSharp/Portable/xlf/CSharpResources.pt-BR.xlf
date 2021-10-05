@@ -942,6 +942,11 @@
         <target state="translated">O método '{0}' especifica uma restrição 'struct' para o parâmetro de tipo '{1}', mas o parâmetro de tipo correspondente '{2}' do método substituído ou implementado explicitamente '{3}' não é um tipo de valor não anulável.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_PartialEnumFirstMember">
+        <source>Missing explicit value declaration on the first member of a partial enum.</source>
+        <target state="new">Missing explicit value declaration on the first member of a partial enum.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_PartialMethodAccessibilityDifference">
         <source>Both partial method declarations must have identical accessibility modifiers.</source>
         <target state="translated">As duas declarações de métodos parciais precisam ter modificadores de acessibilidade idênticos.</target>
@@ -1290,6 +1295,11 @@
       <trans-unit id="IDS_FeatureParameterlessStructConstructors">
         <source>parameterless struct constructors</source>
         <target state="translated">construtores struct sem parâmetros</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IDS_FeaturePartialEnums">
+        <source>partial enums</source>
+        <target state="new">partial enums</target>
         <note />
       </trans-unit>
       <trans-unit id="IDS_FeaturePositionalFieldsInRecords">
@@ -4627,8 +4637,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialTypeKindConflict">
-        <source>Partial declarations of '{0}' must be all classes, all record classes, all structs, all record structs, or all interfaces</source>
-        <target state="translated">As declarações parciais de '{0}' precisam ser todas classes, todas classes de registros, structs, todos registros de structs ou todas as interfaces</target>
+        <source>Partial declarations of '{0}' must be all classes, all record classes, all structs, all record structs, all interfaces, or all enums</source>
+        <target state="needs-review-translation">As declarações parciais de '{0}' precisam ser todas classes, todas classes de registros, structs, todos registros de structs ou todas as interfaces</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialModifierConflict">
@@ -4657,8 +4667,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ERR_PartialMisplaced">
-        <source>The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.</source>
-        <target state="translated">O modificador 'partial' só pode aparecer imediatamente antes de 'class', de 'record', de 'struct', de 'interface' ou de um tipo de retorno de método.</target>
+        <source>The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', 'enum', or a method return type.</source>
+        <target state="translated">O modificador 'partial' só pode aparecer imediatamente antes de 'class', de 'record', de 'struct', de 'interface', de 'enum' ou de um tipo de retorno de método.</target>
         <note />
       </trans-unit>
       <trans-unit id="ERR_ImportedCircularBase">

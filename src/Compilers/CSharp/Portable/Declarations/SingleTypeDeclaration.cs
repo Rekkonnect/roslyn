@@ -237,9 +237,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return false;
                 }
 
-                if (thisDecl._kind == DeclarationKind.Enum || thisDecl._kind == DeclarationKind.Delegate)
+                if (thisDecl._kind == DeclarationKind.Delegate)
                 {
-                    // oh, so close, but enums and delegates cannot be partial
+                    // oh, so close, but delegates cannot be partial
                     return false;
                 }
 
