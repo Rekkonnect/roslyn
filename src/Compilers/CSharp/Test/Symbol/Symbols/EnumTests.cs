@@ -5,9 +5,12 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.Test.Utilities;
+using Microsoft.CodeAnalysis.Symbols;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -398,6 +401,104 @@ public class C
                 //         var x = ~C.F;
                 Diagnostic(ErrorCode.ERR_NoTypeDef, "F").WithArguments("A", "UseSiteError_sourceA, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null").WithLocation(5, 20)
                 );
+        }
+
+        [Fact]
+        public void PartialEnumUnderlyingType()
+        {
+            var sourceA = @"
+using System;
+
+partial enum E : uint
+{
+}
+partial enum E : UInt32
+{
+}
+partial enum E
+{
+}
+";
+
+            var sourceB = @"
+partial enum E { }
+partial enum E { }
+partial enum E { }
+";
+
+            AssertUnderlyingType(sourceA, SpecialType.System_UInt32);
+            AssertUnderlyingType(sourceB, SpecialType.System_Int32);
+        }
+
+        private void AssertUnderlyingType(string source, SpecialType underlyingType)
+        {
+            var compilation = CreateCompilation(source);
+            compilation.VerifyDiagnostics();
+
+            var tree = compilation.SyntaxTrees.Single();
+            var model = compilation.GetSemanticModel(tree);
+
+            var enumDeclaration = tree.GetCompilationUnitRoot().DescendantNodes().OfType<EnumDeclarationSyntax>().First();
+            var enumSymbol = model.GetDeclaredSymbol(enumDeclaration);
+            var uintType = compilation.GetSpecialType(underlyingType);
+            Assert.Equal("E", enumSymbol.Name);
+            Assert.True(SymbolEqualityComparer.IgnoreAll.Equals(uintType.ISymbol, enumSymbol.EnumUnderlyingType));
+        }
+
+        [Fact]
+        public void PartialEnumUnderlyingTypeMismatch()
+        {
+            var text = @"
+using System;
+
+partial enum E : short
+{
+}
+partial enum E : UInt64
+{
+}
+partial enum E
+{
+}
+";
+
+            CreateCompilation(text).VerifyDiagnostics(
+                // (7,18): error CS9221: The underlying type of all declarations of the enum type must either match, or be omitted.
+                // partial enum E : UInt64
+                Diagnostic(ErrorCode.ERR_PartialEnumUnderlying, "UInt64").WithLocation(7, 18));
+        }
+
+        [Fact]
+        public void PartialEnumMemberReference()
+        {
+            var text = @"
+partial enum E
+{
+    Value1 = 0,
+}
+partial enum E
+{
+    Value2 = 1,
+}
+partial enum E
+{
+    None = int.MaxValue,
+}
+";
+
+            var compilation = CreateCompilation(text);
+            compilation.VerifyDiagnostics();
+
+            var tree = compilation.SyntaxTrees.Single();
+            var model = compilation.GetSemanticModel(tree);
+
+            var enumDeclaration = tree.GetCompilationUnitRoot().DescendantNodes().OfType<EnumDeclarationSyntax>().First();
+            var enumSymbol = (ITypeSymbol)model.GetDeclaredSymbol(enumDeclaration);
+            Assert.Equal("E", enumSymbol.Name);
+            var members = enumSymbol.GetMembers().OfType<IFieldSymbol>().ToImmutableDictionary(f => f.Name, f => f.ConstantValue);
+            Assert.Equal(0, members["Value1"]);
+            Assert.Equal(1, members["Value2"]);
+            Assert.Equal(int.MaxValue, members["None"]);
         }
     }
 }

@@ -947,6 +947,11 @@
         <target state="new">Missing explicit value declaration on the first member of a partial enum.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_PartialEnumUnderlying">
+        <source>The underlying type of all declarations of the enum type must either match, or be omitted.</source>
+        <target state="new">The underlying type of all declarations of the enum type must either match, or be omitted.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_PartialMethodAccessibilityDifference">
         <source>Both partial method declarations must have identical accessibility modifiers.</source>
         <target state="translated">I modificatori di accessibilità devono essere identici in entrambe le dichiarazioni di metodo parziale.</target>

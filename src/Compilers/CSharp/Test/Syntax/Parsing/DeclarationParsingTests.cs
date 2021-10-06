@@ -5854,44 +5854,6 @@ partial enum E
             CompileAndVerify(text);
         }
 
-        [Fact]
-        public void TestPartialEnumMemberReference()
-        {
-            var text = @"
-using System;
-
-partial enum E
-{
-    Value1 = 0,
-}
-partial enum E
-{
-    Value2 = 1,
-}
-partial enum E
-{
-    None = int.MaxValue,
-}
-
-class Program
-{
-    static void Main()
-    {
-        var values = new[] { E.Value1, E.Value2, E.None };
-        var expected = new[] { 0, 1, int.MaxValue };
-        for (int i = 0; i < values.Length; i++)
-        {
-            if ((int)values[i] != expected[i])
-            {
-                Console.WriteLine(""Invalid"");
-            }
-        }
-    }
-}
-";
-            CompileAndVerify(text, expectedOutput: "");
-        }
-
         [WorkItem(539120, "http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/539120")]
         [Fact]
         public void TestEscapedConstructor()

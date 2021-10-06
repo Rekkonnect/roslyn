@@ -2005,6 +2005,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         #region diagnostics introduced for C# X.X
 
         ERR_PartialEnumFirstMember = 9220,
+        ERR_PartialEnumUnderlying = 9221,
 
         #endregion
 

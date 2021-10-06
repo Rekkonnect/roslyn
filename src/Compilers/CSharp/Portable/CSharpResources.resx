@@ -6878,4 +6878,7 @@ To remove the warning, you can use /reference instead (set the Embed Interop Typ
   <data name="IDS_FeaturePartialEnums" xml:space="preserve">
     <value>partial enums</value>
   </data>
+  <data name="ERR_PartialEnumUnderlying" xml:space="preserve">
+    <value>The underlying type of all declarations of the enum type must either match, or be omitted.</value>
+  </data>
 </root>
