@@ -1317,6 +1317,11 @@
         <target state="translated">inicializadores de campo de struct</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureThisTypeOperatorArgument">
+        <source>this type operator argument</source>
+        <target state="new">this type operator argument</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureWithOnAnonymousTypes">
         <source>with on anonymous types</source>
         <target state="translated">com tipos anônimos</target>

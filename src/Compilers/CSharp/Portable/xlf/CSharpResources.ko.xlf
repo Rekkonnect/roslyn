@@ -1317,6 +1317,11 @@
         <target state="translated">구조체 필드 이니셜라이저</target>
         <note />
       </trans-unit>
+      <trans-unit id="IDS_FeatureThisTypeOperatorArgument">
+        <source>this type operator argument</source>
+        <target state="new">this type operator argument</target>
+        <note />
+      </trans-unit>
       <trans-unit id="IDS_FeatureWithOnAnonymousTypes">
         <source>with on anonymous types</source>
         <target state="translated">무명 형식에서 사용</target>
