@@ -406,6 +406,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.NullableType:
                     return bindNullable();
 
+                case SyntaxKind.ThisType:
+                    return bindThis();
+
                 case SyntaxKind.PredefinedType:
                     return bindPredefined();
 
@@ -544,6 +547,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 return constructedType;
+            }
+
+            NamespaceOrTypeOrAliasSymbolWithAnnotations bindThis()
+            {
+                var thisType = (ThisTypeSyntax)syntax;
+                var type = BindThisTypeSymbol(thisType, diagnostics);
+                return TypeWithAnnotations.Create(AreNullableAnnotationsEnabled(thisType.Keyword), type);
             }
 
             NamespaceOrTypeOrAliasSymbolWithAnnotations bindPredefined()
@@ -783,6 +793,22 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
             return true;
+        }
+
+        private NamedTypeSymbol BindThisTypeSymbol(ThisTypeSyntax node, BindingDiagnosticBag diagnostics)
+        {
+            if (!MessageID.IDS_FeatureThisTypeOperatorArgument.CheckFeatureAvailability(diagnostics, Compilation, node.Location))
+            {
+                return null;
+            }
+
+            var bound = ContainingType;
+            if (bound is null)
+            {
+                Error(diagnostics, ErrorCode.ERR_ThisInBadContext, node.Location);
+            }
+
+            return bound;
         }
 
         private NamedTypeSymbol BindPredefinedTypeSymbol(PredefinedTypeSyntax node, BindingDiagnosticBag diagnostics)

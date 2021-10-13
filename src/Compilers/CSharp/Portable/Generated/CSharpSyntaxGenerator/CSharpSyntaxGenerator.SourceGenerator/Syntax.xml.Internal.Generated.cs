@@ -623,6 +623,91 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         }
     }
 
+    /// <summary>Class which represents the syntax node for the self types.</summary>
+    internal sealed partial class ThisTypeSyntax : TypeSyntax
+    {
+        internal readonly SyntaxToken keyword;
+
+        internal ThisTypeSyntax(SyntaxKind kind, SyntaxToken keyword, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations)
+          : base(kind, diagnostics, annotations)
+        {
+            this.SlotCount = 1;
+            this.AdjustFlagsAndWidth(keyword);
+            this.keyword = keyword;
+        }
+
+        internal ThisTypeSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxFactoryContext context)
+          : base(kind)
+        {
+            this.SetFactoryContext(context);
+            this.SlotCount = 1;
+            this.AdjustFlagsAndWidth(keyword);
+            this.keyword = keyword;
+        }
+
+        internal ThisTypeSyntax(SyntaxKind kind, SyntaxToken keyword)
+          : base(kind)
+        {
+            this.SlotCount = 1;
+            this.AdjustFlagsAndWidth(keyword);
+            this.keyword = keyword;
+        }
+
+        /// <summary>SyntaxToken which represents the 'this' keyword corresponding to the self type.</summary>
+        public SyntaxToken Keyword => this.keyword;
+
+        internal override GreenNode? GetSlot(int index)
+            => index == 0 ? this.keyword : null;
+
+        internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new CSharp.Syntax.ThisTypeSyntax(this, parent, position);
+
+        public override void Accept(CSharpSyntaxVisitor visitor) => visitor.VisitThisType(this);
+        public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor) => visitor.VisitThisType(this);
+
+        public ThisTypeSyntax Update(SyntaxToken keyword)
+        {
+            if (keyword != this.Keyword)
+            {
+                var newNode = SyntaxFactory.ThisType(keyword);
+                var diags = GetDiagnostics();
+                if (diags?.Length > 0)
+                    newNode = newNode.WithDiagnosticsGreen(diags);
+                var annotations = GetAnnotations();
+                if (annotations?.Length > 0)
+                    newNode = newNode.WithAnnotationsGreen(annotations);
+                return newNode;
+            }
+
+            return this;
+        }
+
+        internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
+            => new ThisTypeSyntax(this.Kind, this.keyword, diagnostics, GetAnnotations());
+
+        internal override GreenNode SetAnnotations(SyntaxAnnotation[]? annotations)
+            => new ThisTypeSyntax(this.Kind, this.keyword, GetDiagnostics(), annotations);
+
+        internal ThisTypeSyntax(ObjectReader reader)
+          : base(reader)
+        {
+            this.SlotCount = 1;
+            var keyword = (SyntaxToken)reader.ReadValue();
+            AdjustFlagsAndWidth(keyword);
+            this.keyword = keyword;
+        }
+
+        internal override void WriteTo(ObjectWriter writer)
+        {
+            base.WriteTo(writer);
+            writer.WriteValue(this.keyword);
+        }
+
+        static ThisTypeSyntax()
+        {
+            ObjectBinder.RegisterTypeReader(typeof(ThisTypeSyntax), r => new ThisTypeSyntax(r));
+        }
+    }
+
     /// <summary>Class which represents the syntax node for predefined types.</summary>
     internal sealed partial class PredefinedTypeSyntax : TypeSyntax
     {
@@ -33884,6 +33969,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         public virtual TResult VisitGenericName(GenericNameSyntax node) => this.DefaultVisit(node);
         public virtual TResult VisitTypeArgumentList(TypeArgumentListSyntax node) => this.DefaultVisit(node);
         public virtual TResult VisitAliasQualifiedName(AliasQualifiedNameSyntax node) => this.DefaultVisit(node);
+        public virtual TResult VisitThisType(ThisTypeSyntax node) => this.DefaultVisit(node);
         public virtual TResult VisitPredefinedType(PredefinedTypeSyntax node) => this.DefaultVisit(node);
         public virtual TResult VisitArrayType(ArrayTypeSyntax node) => this.DefaultVisit(node);
         public virtual TResult VisitArrayRankSpecifier(ArrayRankSpecifierSyntax node) => this.DefaultVisit(node);
@@ -34123,6 +34209,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         public virtual void VisitGenericName(GenericNameSyntax node) => this.DefaultVisit(node);
         public virtual void VisitTypeArgumentList(TypeArgumentListSyntax node) => this.DefaultVisit(node);
         public virtual void VisitAliasQualifiedName(AliasQualifiedNameSyntax node) => this.DefaultVisit(node);
+        public virtual void VisitThisType(ThisTypeSyntax node) => this.DefaultVisit(node);
         public virtual void VisitPredefinedType(PredefinedTypeSyntax node) => this.DefaultVisit(node);
         public virtual void VisitArrayType(ArrayTypeSyntax node) => this.DefaultVisit(node);
         public virtual void VisitArrayRankSpecifier(ArrayRankSpecifierSyntax node) => this.DefaultVisit(node);
@@ -34371,6 +34458,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         public override CSharpSyntaxNode VisitAliasQualifiedName(AliasQualifiedNameSyntax node)
             => node.Update((IdentifierNameSyntax)Visit(node.Alias), (SyntaxToken)Visit(node.ColonColonToken), (SimpleNameSyntax)Visit(node.Name));
+
+        public override CSharpSyntaxNode VisitThisType(ThisTypeSyntax node)
+            => node.Update((SyntaxToken)Visit(node.Keyword));
 
         public override CSharpSyntaxNode VisitPredefinedType(PredefinedTypeSyntax node)
             => node.Update((SyntaxToken)Visit(node.Keyword));
@@ -35175,6 +35265,26 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             if (cached != null) return (AliasQualifiedNameSyntax)cached;
 
             var result = new AliasQualifiedNameSyntax(SyntaxKind.AliasQualifiedName, alias, colonColonToken, name, this.context);
+            if (hash >= 0)
+            {
+                SyntaxNodeCache.AddNode(result, hash);
+            }
+
+            return result;
+        }
+
+        public ThisTypeSyntax ThisType(SyntaxToken keyword)
+        {
+#if DEBUG
+            if (keyword == null) throw new ArgumentNullException(nameof(keyword));
+            if (keyword.Kind != SyntaxKind.ThisKeyword) throw new ArgumentException(nameof(keyword));
+#endif
+
+            int hash;
+            var cached = CSharpSyntaxNodeCache.TryGetNode((int)SyntaxKind.ThisType, keyword, this.context, out hash);
+            if (cached != null) return (ThisTypeSyntax)cached;
+
+            var result = new ThisTypeSyntax(SyntaxKind.ThisType, keyword, this.context);
             if (hash >= 0)
             {
                 SyntaxNodeCache.AddNode(result, hash);
@@ -40156,6 +40266,26 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             return result;
         }
 
+        public static ThisTypeSyntax ThisType(SyntaxToken keyword)
+        {
+#if DEBUG
+            if (keyword == null) throw new ArgumentNullException(nameof(keyword));
+            if (keyword.Kind != SyntaxKind.ThisKeyword) throw new ArgumentException(nameof(keyword));
+#endif
+
+            int hash;
+            var cached = SyntaxNodeCache.TryGetNode((int)SyntaxKind.ThisType, keyword, out hash);
+            if (cached != null) return (ThisTypeSyntax)cached;
+
+            var result = new ThisTypeSyntax(SyntaxKind.ThisType, keyword);
+            if (hash >= 0)
+            {
+                SyntaxNodeCache.AddNode(result, hash);
+            }
+
+            return result;
+        }
+
         public static PredefinedTypeSyntax PredefinedType(SyntaxToken keyword)
         {
 #if DEBUG
@@ -45021,6 +45151,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 typeof(GenericNameSyntax),
                 typeof(TypeArgumentListSyntax),
                 typeof(AliasQualifiedNameSyntax),
+                typeof(ThisTypeSyntax),
                 typeof(PredefinedTypeSyntax),
                 typeof(ArrayTypeSyntax),
                 typeof(ArrayRankSpecifierSyntax),

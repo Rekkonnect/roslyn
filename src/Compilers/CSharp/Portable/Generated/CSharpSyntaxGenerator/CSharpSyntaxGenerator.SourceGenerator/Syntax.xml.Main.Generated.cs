@@ -30,6 +30,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>Called when the visitor visits a AliasQualifiedNameSyntax node.</summary>
         public virtual TResult? VisitAliasQualifiedName(AliasQualifiedNameSyntax node) => this.DefaultVisit(node);
 
+        /// <summary>Called when the visitor visits a ThisTypeSyntax node.</summary>
+        public virtual TResult? VisitThisType(ThisTypeSyntax node) => this.DefaultVisit(node);
+
         /// <summary>Called when the visitor visits a PredefinedTypeSyntax node.</summary>
         public virtual TResult? VisitPredefinedType(PredefinedTypeSyntax node) => this.DefaultVisit(node);
 
@@ -738,6 +741,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>Called when the visitor visits a AliasQualifiedNameSyntax node.</summary>
         public virtual void VisitAliasQualifiedName(AliasQualifiedNameSyntax node) => this.DefaultVisit(node);
 
+        /// <summary>Called when the visitor visits a ThisTypeSyntax node.</summary>
+        public virtual void VisitThisType(ThisTypeSyntax node) => this.DefaultVisit(node);
+
         /// <summary>Called when the visitor visits a PredefinedTypeSyntax node.</summary>
         public virtual void VisitPredefinedType(PredefinedTypeSyntax node) => this.DefaultVisit(node);
 
@@ -1445,6 +1451,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override SyntaxNode? VisitAliasQualifiedName(AliasQualifiedNameSyntax node)
             => node.Update((IdentifierNameSyntax?)Visit(node.Alias) ?? throw new ArgumentNullException("alias"), VisitToken(node.ColonColonToken), (SimpleNameSyntax?)Visit(node.Name) ?? throw new ArgumentNullException("name"));
+
+        public override SyntaxNode? VisitThisType(ThisTypeSyntax node)
+            => node.Update(VisitToken(node.Keyword));
 
         public override SyntaxNode? VisitPredefinedType(PredefinedTypeSyntax node)
             => node.Update(VisitToken(node.Keyword));
@@ -2209,6 +2218,17 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>Creates a new AliasQualifiedNameSyntax instance.</summary>
         public static AliasQualifiedNameSyntax AliasQualifiedName(string alias, SimpleNameSyntax name)
             => SyntaxFactory.AliasQualifiedName(SyntaxFactory.IdentifierName(alias), SyntaxFactory.Token(SyntaxKind.ColonColonToken), name);
+
+        /// <summary>Creates a new ThisTypeSyntax instance.</summary>
+        public static ThisTypeSyntax ThisType(SyntaxToken keyword)
+        {
+            if (keyword.Kind() != SyntaxKind.ThisKeyword) throw new ArgumentException(nameof(keyword));
+            return (ThisTypeSyntax)Syntax.InternalSyntax.SyntaxFactory.ThisType((Syntax.InternalSyntax.SyntaxToken)keyword.Node!).CreateRed();
+        }
+
+        /// <summary>Creates a new ThisTypeSyntax instance.</summary>
+        public static ThisTypeSyntax ThisType()
+            => SyntaxFactory.ThisType(SyntaxFactory.Token(SyntaxKind.ThisKeyword));
 
         /// <summary>Creates a new PredefinedTypeSyntax instance.</summary>
         public static PredefinedTypeSyntax PredefinedType(SyntaxToken keyword)

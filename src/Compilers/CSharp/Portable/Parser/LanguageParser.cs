@@ -6984,7 +6984,33 @@ done:
             return ParseType();
         }
 
+        private TypeSyntax ParseTypeOrThisOrVoid()
+        {
+            return this.TryParseThisType() ?? this.ParseTypeOrVoid();
+        }
+
+        private TypeSyntax ParseTypeOrThis()
+        {
+            return this.TryParseThisType() ?? this.ParseType();
+        }
+
         private TypeSyntax ParseTypeOrVoid()
+        {
+            return this.TryParseVoidType() ?? this.ParseType();
+        }
+
+        private TypeSyntax TryParseThisType()
+        {
+            if (this.CurrentToken.Kind == SyntaxKind.ThisKeyword)
+            {
+                // Refers to the self type with the this keyword
+                return _syntaxFactory.ThisType(this.EatToken());
+            }
+
+            return null;
+        }
+
+        private TypeSyntax TryParseVoidType()
         {
             if (this.CurrentToken.Kind == SyntaxKind.VoidKeyword && this.PeekToken(1).Kind != SyntaxKind.AsteriskToken)
             {
@@ -6992,7 +7018,7 @@ done:
                 return _syntaxFactory.PredefinedType(this.EatToken());
             }
 
-            return this.ParseType();
+            return null;
         }
 
         private enum ParseTypeMode
@@ -11346,7 +11372,7 @@ tryAgain:
         {
             var keyword = this.EatToken();
             var openParen = this.EatToken(SyntaxKind.OpenParenToken);
-            var type = this.ParseTypeOrVoid();
+            var type = this.ParseTypeOrThisOrVoid();
             var closeParen = this.EatToken(SyntaxKind.CloseParenToken);
 
             return _syntaxFactory.TypeOfExpression(keyword, openParen, type, closeParen);
@@ -11375,7 +11401,7 @@ tryAgain:
         {
             var keyword = this.EatToken();
             var openParen = this.EatToken(SyntaxKind.OpenParenToken);
-            var type = this.ParseType();
+            var type = this.ParseTypeOrThis();
             var closeParen = this.EatToken(SyntaxKind.CloseParenToken);
 
             return _syntaxFactory.SizeOfExpression(keyword, openParen, type, closeParen);

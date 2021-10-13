@@ -144,6 +144,21 @@
       <summary>Provides the base class from which the classes that represent type syntax nodes are derived. This is an abstract class.</summary>
     </TypeComment>
   </AbstractNode>
+  <Node Name="ThisTypeSyntax" Base="TypeSyntax">
+    <Kind Name="ThisType"/>
+    <Field Name="Keyword" Type="SyntaxToken">
+      <Kind Name="ThisKeyword"/>
+      <PropertyComment>
+        <summary>SyntaxToken which represents the 'this' keyword corresponding to the self type.</summary>
+      </PropertyComment>
+    </Field>
+    <TypeComment>
+      <summary>Class which represents the syntax node for the self types.</summary>
+    </TypeComment>
+    <FactoryComment>
+      <summary>Creates a ThisTypeSyntax node.</summary>
+    </FactoryComment>
+  </Node>
   <Node Name="PredefinedTypeSyntax" Base="TypeSyntax">
     <Kind Name="PredefinedType"/>
     <Field Name="Keyword" Type="SyntaxToken">

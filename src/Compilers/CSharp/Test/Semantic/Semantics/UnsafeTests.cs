@@ -7674,6 +7674,46 @@ struct Outer
             }
         }
 
+        [Fact]
+        public void SizeOfThis()
+        {
+            var text = @"
+using System;
+
+unsafe class C
+{
+    static void Main()
+    {
+        Console.WriteLine(sizeof(S1) == S1.Size);
+        Console.WriteLine(sizeof(S1.S2) == S1.S2.Size);
+        Console.WriteLine(sizeof(S1) != S1.S2.Size);
+        Console.WriteLine(sizeof(S1.S2) != S1.Size);
+    }
+}
+
+unsafe struct S1
+{
+    int field;
+
+    public static int Size => sizeof(this);
+
+    public unsafe struct S2
+    {
+        int field, other;
+
+        public static int Size => sizeof(this);
+    }
+}
+";
+            var expectedOutput = @"
+True
+True
+True
+True
+";
+            CompileAndVerify(text, options: TestOptions.UnsafeReleaseExe, expectedOutput: expectedOutput);
+        }
+
         #endregion sizeof semantic model tests
 
         #region stackalloc diagnostic tests

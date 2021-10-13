@@ -224,7 +224,6 @@ class Program
         string s;
         // parsed as invocation expression 
         s = nameof();
-        s = nameof(this);
         s = nameof(this.ParsedAsInvocation);
         s = nameof(int.ToString);
         s = nameof(typeof(string));
@@ -295,15 +294,12 @@ class Test<T>
                 // (43,13): error CS0103: The name 'nameof' does not exist in the current context
                 //         s = nameof();
                 Diagnostic(ErrorCode.ERR_NameNotInContext, "nameof").WithArguments("nameof").WithLocation(43, 13),
-                // (44,20): error CS8081: Expression does not have a name.
-                //         s = nameof(this);
-                Diagnostic(ErrorCode.ERR_ExpressionHasNoName, "this").WithLocation(44, 20),
-                // (47,20): error CS8081: Expression does not have a name.
+                // (46,20): error CS8081: Expression does not have a name.
                 //         s = nameof(typeof(string));
-                Diagnostic(ErrorCode.ERR_ExpressionHasNoName, "typeof(string)").WithLocation(47, 20),
-                // (49,20): error CS8082: Sub-expression cannot be used in an argument to nameof.
+                Diagnostic(ErrorCode.ERR_ExpressionHasNoName, "typeof(string)").WithLocation(46, 20),
+                // (48,20): error CS8082: Sub-expression cannot be used in an argument to nameof.
                 //         s = nameof(a[4].Equals);
-                Diagnostic(ErrorCode.ERR_SubexpressionNotInNameof, "a[4]").WithLocation(49, 20)
+                Diagnostic(ErrorCode.ERR_SubexpressionNotInNameof, "a[4]").WithLocation(48, 20)
             );
         }
 
@@ -1487,6 +1483,45 @@ public class C
 }";
             var option = TestOptions.ReleaseDll;
             CreateCompilation(source, options: option).VerifyDiagnostics();
+        }
+
+        [Fact]
+        public void TestThis()
+        {
+            var source = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        Console.WriteLine(M() == nameof(Program));
+    }
+    static string M() => nameof(this);
+}
+";
+            CompileAndVerify(source, expectedOutput: "True", options: TestOptions.ReleaseExe);
+        }
+
+        [Fact]
+        public void TestThisNested()
+        {
+            var source = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        Console.WriteLine(Nested.M() == nameof(Program.Nested));
+    }
+    class Nested
+    {
+        public static string M() => nameof(this);
+    }
+}
+";
+            CompileAndVerify(source, expectedOutput: "True", options: TestOptions.ReleaseExe);
         }
     }
 }

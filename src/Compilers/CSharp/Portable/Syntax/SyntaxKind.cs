@@ -553,6 +553,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         PointerType = 8624,
         NullableType = 8625,
         OmittedTypeArgument = 8626,
+        ThisType = 8627,
 
         // expressions
         ParenthesizedExpression = 8632,

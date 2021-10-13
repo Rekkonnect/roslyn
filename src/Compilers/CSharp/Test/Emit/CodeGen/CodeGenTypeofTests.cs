@@ -682,5 +682,58 @@ public class Program
             // NOTE: this is the Dev10 output.  Change to false if we decide to take a breaking change.
             CompileAndVerify(source, expectedOutput: @"True");
         }
+
+        [Fact]
+        public void TestTypeOfThis()
+        {
+            var source = @"
+using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        Console.WriteLine(typeof(this) == typeof(Program));
+        Console.WriteLine(typeof(this) != typeof(int));
+        Console.WriteLine(Nested.Type == typeof(Nested));
+    }
+
+    class Nested
+    {
+        public static Type Type => typeof(this);
+    }
+}
+";
+
+            var expectedOutput = @"
+True
+True
+True
+";
+            CompileAndVerify(source, expectedOutput: expectedOutput).VerifyIL("Program.Main", @"
+{
+  // Code size       86 (0x56)
+  .maxstack  2
+  IL_0000:  ldtoken    ""Program""
+  IL_0005:  call       ""System.Type System.Type.GetTypeFromHandle(System.RuntimeTypeHandle)""
+  IL_000a:  ldtoken    ""Program""
+  IL_000f:  call       ""System.Type System.Type.GetTypeFromHandle(System.RuntimeTypeHandle)""
+  IL_0014:  call       ""bool System.Type.op_Equality(System.Type, System.Type)""
+  IL_0019:  call       ""void System.Console.WriteLine(bool)""
+  IL_001e:  ldtoken    ""Program""
+  IL_0023:  call       ""System.Type System.Type.GetTypeFromHandle(System.RuntimeTypeHandle)""
+  IL_0028:  ldtoken    ""int""
+  IL_002d:  call       ""System.Type System.Type.GetTypeFromHandle(System.RuntimeTypeHandle)""
+  IL_0032:  call       ""bool System.Type.op_Inequality(System.Type, System.Type)""
+  IL_0037:  call       ""void System.Console.WriteLine(bool)""
+  IL_003c:  call       ""System.Type Program.Nested.Type.get""
+  IL_0041:  ldtoken    ""Program.Nested""
+  IL_0046:  call       ""System.Type System.Type.GetTypeFromHandle(System.RuntimeTypeHandle)""
+  IL_004b:  call       ""bool System.Type.op_Equality(System.Type, System.Type)""
+  IL_0050:  call       ""void System.Console.WriteLine(bool)""
+  IL_0055:  ret
+}
+");
+        }
     }
 }

@@ -315,6 +315,46 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         }
     }
 
+    /// <summary>Class which represents the syntax node for the self types.</summary>
+    /// <remarks>
+    /// <para>This node is associated with the following syntax kinds:</para>
+    /// <list type="bullet">
+    /// <item><description><see cref="SyntaxKind.ThisType"/></description></item>
+    /// </list>
+    /// </remarks>
+    public sealed partial class ThisTypeSyntax : TypeSyntax
+    {
+
+        internal ThisTypeSyntax(InternalSyntax.CSharpSyntaxNode green, SyntaxNode? parent, int position)
+          : base(green, parent, position)
+        {
+        }
+
+        /// <summary>SyntaxToken which represents the 'this' keyword corresponding to the self type.</summary>
+        public SyntaxToken Keyword => new SyntaxToken(this, ((Syntax.InternalSyntax.ThisTypeSyntax)this.Green).keyword, Position, 0);
+
+        internal override SyntaxNode? GetNodeSlot(int index) => null;
+
+        internal override SyntaxNode? GetCachedSlot(int index) => null;
+
+        public override void Accept(CSharpSyntaxVisitor visitor) => visitor.VisitThisType(this);
+        public override TResult? Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor) where TResult : default => visitor.VisitThisType(this);
+
+        public ThisTypeSyntax Update(SyntaxToken keyword)
+        {
+            if (keyword != this.Keyword)
+            {
+                var newNode = SyntaxFactory.ThisType(keyword);
+                var annotations = GetAnnotations();
+                return annotations?.Length > 0 ? newNode.WithAnnotations(annotations) : newNode;
+            }
+
+            return this;
+        }
+
+        public ThisTypeSyntax WithKeyword(SyntaxToken keyword) => Update(keyword);
+    }
+
     /// <summary>Class which represents the syntax node for predefined types.</summary>
     /// <remarks>
     /// <para>This node is associated with the following syntax kinds:</para>

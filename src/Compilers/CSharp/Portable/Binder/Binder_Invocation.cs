@@ -1839,6 +1839,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool TryBindNameofOperator(InvocationExpressionSyntax node, BindingDiagnosticBag diagnostics, out BoundExpression result)
         {
             result = null;
+
+            if (node.Expression.Kind() == SyntaxKind.ThisKeyword &&
+                MessageID.IDS_FeatureThisTypeOperatorArgument.CheckFeatureAvailability(diagnostics, Compilation, node.Location))
+            {
+                return false;
+            }
+
             if (node.Expression.Kind() != SyntaxKind.IdentifierName ||
                 ((IdentifierNameSyntax)node.Expression).Identifier.ContextualKind() != SyntaxKind.NameOfKeyword ||
                 node.ArgumentList.Arguments.Count != 1)
@@ -1949,6 +1956,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return ok;
                     }
                 case SyntaxKind.ThisExpression:
+                    if (MessageID.IDS_FeatureThisTypeOperatorArgument.CheckFeatureAvailability(diagnostics, Compilation, argument.Location))
+                    {
+                        name = ContainingType.Name;
+                        return true;
+                    }
+                    goto case SyntaxKind.BaseExpression;
                 case SyntaxKind.BaseExpression:
                 case SyntaxKind.PredefinedType:
                     name = "";
