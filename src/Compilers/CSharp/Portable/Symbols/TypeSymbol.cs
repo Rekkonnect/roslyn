@@ -613,6 +613,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         /// <summary>
+        /// Is this type an unmanaged type (true for enum, pointer, and
+        /// some struct types, if it has been computed or declared).
+        /// </summary>
+        /// <remarks>
+        /// See Type::computeManagedType.
+        /// </remarks>
+        internal bool IsUnmanagedType(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo) => GetManagedKind(ref useSiteInfo).IsUnmanaged();
+
+        internal bool IsUnmanagedTypeNoUseSiteDiagnostics
+        {
+            get
+            {
+                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                return IsUnmanagedType(ref discardedUseSiteInfo);
+            }
+        }
+
+        /// <summary>
         /// Indicates whether a type is managed or not (i.e. you can take a pointer to it).
         /// Contains additional cases to help implement FeatureNotAvailable diagnostics.
         /// </summary>

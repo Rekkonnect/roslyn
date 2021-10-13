@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         private CachedUseSiteInfo<AssemblySymbol> _lazyCachedUseSiteInfo = CachedUseSiteInfo<AssemblySymbol>.Uninitialized;
 
         public RetargetingNamedTypeSymbol(RetargetingModuleSymbol retargetingModule, NamedTypeSymbol underlyingType, TupleExtraData tupleData = null)
-            : base(underlyingType, tupleData)
+            : base(underlyingType, underlyingType.IsUnmanagedTypeNoUseSiteDiagnostics, tupleData)
         {
             Debug.Assert((object)retargetingModule != null);
             Debug.Assert(!(underlyingType is RetargetingNamedTypeSymbol));

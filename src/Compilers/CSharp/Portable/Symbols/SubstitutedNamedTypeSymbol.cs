@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private ConcurrentCache<string, ImmutableArray<Symbol>> _lazyMembersByNameCache;
 
         protected SubstitutedNamedTypeSymbol(Symbol newContainer, TypeMap map, NamedTypeSymbol originalDefinition, NamedTypeSymbol constructedFrom = null, bool unbound = false, TupleExtraData tupleData = null)
-            : base(originalDefinition, tupleData)
+            : base(originalDefinition, originalDefinition.IsUnmanagedTypeNoUseSiteDiagnostics, tupleData)
         {
             Debug.Assert(originalDefinition.IsDefinition);
             Debug.Assert(!originalDefinition.IsErrorType());

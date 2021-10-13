@@ -16,5 +16,15 @@ namespace Microsoft.CodeAnalysis
         Unmanaged = 1,
         UnmanagedWithGenerics = 2, // considered "managed" in C# 7.3 and earlier
         Managed = 3,
+
+        UnmanagedUnknownArity = byte.MaxValue, // internal value to denote enforced unmanaged kind, without knowing the arity yet
+    }
+
+    internal static class ManagedKindExtensions
+    {
+        public static bool IsUnmanaged(this ManagedKind kind)
+        {
+            return kind is ManagedKind.Unmanaged or ManagedKind.UnmanagedWithGenerics;
+        }
     }
 }

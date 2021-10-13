@@ -22,7 +22,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private ImmutableArray<Symbol> _lazyMembers;
         private NativeIntegerTypeMap? _lazyTypeMap;
 
-        internal NativeIntegerTypeSymbol(NamedTypeSymbol underlyingType) : base(underlyingType, tupleData: null)
+        internal NativeIntegerTypeSymbol(NamedTypeSymbol underlyingType)
+            : base(underlyingType, isUnmanaged: true, tupleData: null)
         {
             Debug.Assert(underlyingType.TupleData is null);
             Debug.Assert(!underlyingType.IsNativeIntegerType);

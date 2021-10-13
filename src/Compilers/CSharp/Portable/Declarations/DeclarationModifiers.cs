@@ -36,8 +36,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         Async = 1 << 20,
         Ref = 1 << 21, // used only for structs
 
-        All = (1 << 23) - 1, // all modifiers
-        Unset = 1 << 23, // used when a modifiers value hasn't yet been computed
+        Unmanaged = 1 << 22, // used only for structs
+
+        All = (1 << 24) - 1, // all modifiers
+        Unset = 1 << 24, // used when a modifiers value hasn't yet been computed
 
         AccessibilityMask = PrivateProtected | Private | Protected | Internal | ProtectedInternal | Public,
     }

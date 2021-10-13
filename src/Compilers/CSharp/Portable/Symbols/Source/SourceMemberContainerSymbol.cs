@@ -184,8 +184,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             NamespaceOrTypeSymbol containingSymbol,
             MergedTypeDeclaration declaration,
             BindingDiagnosticBag diagnostics,
+            bool isUnmanaged = false,
             TupleExtraData? tupleData = null)
-            : base(tupleData)
+            : base(isUnmanaged, tupleData)
         {
             // If we're dealing with a simple program, then we must be in the global namespace
             Debug.Assert(containingSymbol is NamespaceSymbol { IsGlobalNamespace: true } || !declaration.Declarations.Any(d => d.IsSimpleProgram));
@@ -283,7 +284,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     break;
                 case TypeKind.Struct:
-                    allowedModifiers |= DeclarationModifiers.Partial | DeclarationModifiers.ReadOnly | DeclarationModifiers.Unsafe;
+                    allowedModifiers |= DeclarationModifiers.Partial | DeclarationModifiers.ReadOnly | DeclarationModifiers.Unsafe | DeclarationModifiers.Unmanaged;
 
                     if (!this.IsRecordStruct)
                     {
@@ -774,6 +775,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override bool IsAbstract => HasFlag(DeclarationModifiers.Abstract);
 
+        internal bool IsUnmanaged => HasFlag(DeclarationModifiers.Unmanaged);
+
         internal bool IsPartial => HasFlag(DeclarationModifiers.Partial);
 
         internal bool IsNew => HasFlag(DeclarationModifiers.New);
@@ -1226,7 +1229,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 foreach (var childDeclaration in declaration.Children)
                 {
-                    var t = new SourceNamedTypeSymbol(this, childDeclaration, diagnostics);
+                    var t = new SourceNamedTypeSymbol(this, childDeclaration, diagnostics, (childDeclaration.UnifiedModifiers & DeclarationModifiers.Unmanaged) != 0);
                     this.CheckMemberNameDistinctFromType(t, diagnostics);
 
                     var key = (t.Name, t.Arity);

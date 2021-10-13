@@ -46,6 +46,19 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
+        public DeclarationModifiers UnifiedModifiers
+        {
+            get
+            {
+                var modifiers = DeclarationModifiers.None;
+                foreach (var decl in _declarations)
+                {
+                    modifiers |= decl.Modifiers;
+                }
+                return modifiers;
+            }
+        }
+
         /// <summary>
         /// Returns the original syntax nodes for this type declaration across all its parts.  If
         /// <paramref name="quickAttributes"/> is provided, attributes will not be returned if it

@@ -25,8 +25,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected readonly int arity;
         protected readonly bool mangleName;
 
-        private MissingMetadataTypeSymbol(string name, int arity, bool mangleName, TupleExtraData? tupleData = null)
-            : base(tupleData)
+        private MissingMetadataTypeSymbol(string name, int arity, bool mangleName, bool isUnmanaged = false, TupleExtraData? tupleData = null)
+            : base(isUnmanaged, tupleData)
         {
             RoslynDebug.Assert(name != null);
 
@@ -185,7 +185,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             private TopLevel(ModuleSymbol module, string @namespace, string name, int arity, bool mangleName, bool isNativeInt, DiagnosticInfo? errorInfo, NamespaceSymbol? containingNamespace, int typeId, TupleExtraData? tupleData)
-                : base(name, arity, mangleName, tupleData)
+                : base(name, arity, mangleName, isUnmanaged: false, tupleData)
             {
                 RoslynDebug.Assert((object)module != null);
                 RoslynDebug.Assert(@namespace != null);

@@ -27,8 +27,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             AssemblySymbol embeddingAssembly,
             NamedTypeSymbol firstCandidate,
             NamedTypeSymbol secondCandidate,
+            bool isUnmanaged = false,
             TupleExtraData? tupleData = null)
-            : base(tupleData)
+            : base(isUnmanaged, tupleData)
         {
             _embeddingAssembly = embeddingAssembly;
             _firstCandidate = firstCandidate;
@@ -37,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {
-            return new NoPiaAmbiguousCanonicalTypeSymbol(_embeddingAssembly, _firstCandidate, _secondCandidate, newData);
+            return new NoPiaAmbiguousCanonicalTypeSymbol(_embeddingAssembly, _firstCandidate, _secondCandidate, IsUnmanagedTypeNoUseSiteDiagnostics, newData);
         }
 
         internal override bool MangleName

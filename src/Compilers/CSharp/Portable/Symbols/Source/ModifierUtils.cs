@@ -281,6 +281,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return SyntaxFacts.GetText(SyntaxKind.AsyncKeyword);
                 case DeclarationModifiers.Ref:
                     return SyntaxFacts.GetText(SyntaxKind.RefKeyword);
+                case DeclarationModifiers.Unmanaged:
+                    return SyntaxFacts.GetText(SyntaxKind.UnmanagedKeyword);
                 default:
                     throw ExceptionUtilities.UnexpectedValue(modifier);
             }
@@ -328,6 +330,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return DeclarationModifiers.Volatile;
                 case SyntaxKind.RefKeyword:
                     return DeclarationModifiers.Ref;
+                case SyntaxKind.UnmanagedKeyword:
+                    return DeclarationModifiers.Unmanaged;
                 default:
                     throw ExceptionUtilities.UnexpectedValue(kind);
             }

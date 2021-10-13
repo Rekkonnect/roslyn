@@ -9302,5 +9302,40 @@ namespace Interop
             var comp = CreateCompilation(csharp, options: TestOptions.UnsafeDebugDll);
             comp.VerifyDiagnostics();
         }
+
+        [Fact]
+        public void UnmanagedTypeDeclarations()
+        {
+            CreateCompilation(@"
+unmanaged struct S { }
+partial unmanaged struct SPartial { }
+unmanaged partial struct SPartial { }
+
+unmanaged enum E { }
+unmanaged delegate void D();
+unmanaged interface I { }
+partial unmanaged interface IPartial { }
+unmanaged class C { }
+", options: TestOptions.UnsafeReleaseDll).VerifyDiagnostics(
+                // TODO: Reported errors should be cleaned up
+                // (3,1): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
+                // partial unmanaged struct SPartial { }
+                Diagnostic(ErrorCode.ERR_PartialMisplaced, "partial").WithLocation(3, 1),
+                // (6,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // unmanaged enum E { }
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(6, 1),
+                // (7,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // unmanaged delegate void D();
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(7, 1),
+                // (8,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // unmanaged interface I { }
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(8, 1),
+                // (9,1): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
+                // partial unmanaged interface IPartial { }
+                Diagnostic(ErrorCode.ERR_PartialMisplaced, "partial").WithLocation(9, 1),
+                // (10,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // unmanaged class C { }
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(10, 1));
+        }
     }
 }

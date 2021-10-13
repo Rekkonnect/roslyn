@@ -27,8 +27,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         protected readonly NamedTypeSymbol _underlyingType;
 
-        public WrappedNamedTypeSymbol(NamedTypeSymbol underlyingType, TupleExtraData tupleData)
-            : base(tupleData)
+        public WrappedNamedTypeSymbol(NamedTypeSymbol underlyingType, bool isUnmanaged, TupleExtraData tupleData)
+            : base(isUnmanaged, tupleData)
         {
             Debug.Assert((object)underlyingType != null);
             _underlyingType = underlyingType;

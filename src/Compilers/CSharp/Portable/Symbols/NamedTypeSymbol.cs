@@ -24,9 +24,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     {
         private bool _hasNoBaseCycles;
 
+        // CONSIDER: Remove the managed kind information from SourceMemberContainerSymbol.Flags
+        //           and use this field instead
+        private ManagedKind _managedKind;
+
         // Only the compiler can create NamedTypeSymbols.
-        internal NamedTypeSymbol(TupleExtraData tupleData = null)
+        internal NamedTypeSymbol(bool isUnmanaged = false, TupleExtraData tupleData = null)
         {
+            _managedKind = isUnmanaged ? ManagedKind.UnmanagedUnknownArity : ManagedKind.Unknown;
             _lazyTupleData = tupleData;
         }
 
@@ -400,10 +405,26 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override ManagedKind GetManagedKind(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            // CONSIDER: we could cache this, but it's only expensive for non-special struct types
-            // that are pointed to.  For now, only cache on SourceMemberContainerSymbol since it fits
-            // nicely into the flags variable.
-            return BaseTypeAnalysis.GetManagedKind(this, ref useSiteInfo);
+            if (_managedKind is ManagedKind.Unknown)
+            {
+                _managedKind = BaseTypeAnalysis.GetManagedKind(this, ref useSiteInfo);
+            }
+            else if (_managedKind is ManagedKind.UnmanagedUnknownArity)
+            {
+                _managedKind = GetUnmanagedKind();
+            }
+
+            return _managedKind;
+        }
+
+        public ManagedKind GetUnmanagedKind()
+        {
+            if (IsGenericType)
+            {
+                return ManagedKind.UnmanagedWithGenerics;
+            }
+
+            return ManagedKind.Unmanaged;
         }
 
         /// <summary>

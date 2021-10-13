@@ -32,8 +32,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             string guid,
             string scope,
             string identifier,
+            bool isUnmanaged = false,
             TupleExtraData? tupleData = null)
-            : base(tupleData)
+            : base(isUnmanaged, tupleData)
         {
             _embeddingAssembly = embeddingAssembly;
             _fullTypeName = fullTypeName;
@@ -44,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {
-            return new NoPiaMissingCanonicalTypeSymbol(_embeddingAssembly, _fullTypeName, _guid, _scope, _identifier, newData);
+            return new NoPiaMissingCanonicalTypeSymbol(_embeddingAssembly, _fullTypeName, _guid, _scope, _identifier, IsUnmanagedTypeNoUseSiteDiagnostics, newData);
         }
 
         public AssemblySymbol EmbeddingAssembly

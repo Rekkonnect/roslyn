@@ -62,8 +62,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly string _name;
         private readonly DiagnosticInfo _errorInfo;
 
-        private UnboundArgumentErrorTypeSymbol(string name, DiagnosticInfo errorInfo, TupleExtraData? tupleData = null)
-            : base(tupleData)
+        private UnboundArgumentErrorTypeSymbol(string name, DiagnosticInfo errorInfo, bool isUnmanaged = false, TupleExtraData? tupleData = null)
+            : base(isUnmanaged, tupleData)
         {
             _name = name;
             _errorInfo = errorInfo;
@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {
-            return new UnboundArgumentErrorTypeSymbol(_name, _errorInfo, newData);
+            return new UnboundArgumentErrorTypeSymbol(_name, _errorInfo, IsUnmanagedTypeNoUseSiteDiagnostics, newData);
         }
 
         public override string Name

@@ -358,8 +358,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         // Only the compiler should create error symbols.
-        internal ErrorTypeSymbol(TupleExtraData? tupleData = null)
-            : base(tupleData)
+        internal ErrorTypeSymbol(bool isUnmanaged = false, TupleExtraData? tupleData = null)
+            : base(isUnmanaged, tupleData)
         {
         }
 
@@ -560,8 +560,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly ErrorTypeSymbol _originalDefinition;
         private int _hashCode;
 
-        protected SubstitutedErrorTypeSymbol(ErrorTypeSymbol originalDefinition, TupleExtraData? tupleData = null)
-            : base(tupleData)
+        protected SubstitutedErrorTypeSymbol(ErrorTypeSymbol originalDefinition, bool isUnmanaged = false, TupleExtraData? tupleData = null)
+            : base(isUnmanaged, tupleData)
         {
             _originalDefinition = originalDefinition;
         }
@@ -627,8 +627,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private readonly ImmutableArray<TypeWithAnnotations> _typeArgumentsWithAnnotations;
         private readonly TypeMap _map;
 
-        public ConstructedErrorTypeSymbol(ErrorTypeSymbol constructedFrom, ImmutableArray<TypeWithAnnotations> typeArgumentsWithAnnotations, TupleExtraData? tupleData = null) :
-            base((ErrorTypeSymbol)constructedFrom.OriginalDefinition, tupleData)
+        public ConstructedErrorTypeSymbol(ErrorTypeSymbol constructedFrom, ImmutableArray<TypeWithAnnotations> typeArgumentsWithAnnotations, bool isUnmanaged = false, TupleExtraData? tupleData = null) :
+            base((ErrorTypeSymbol)constructedFrom.OriginalDefinition, isUnmanaged, tupleData)
         {
             _constructedFrom = constructedFrom;
             _typeArgumentsWithAnnotations = typeArgumentsWithAnnotations;
@@ -637,7 +637,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override NamedTypeSymbol WithTupleDataCore(TupleExtraData newData)
         {
-            return new ConstructedErrorTypeSymbol(_constructedFrom, _typeArgumentsWithAnnotations, tupleData: newData);
+            return new ConstructedErrorTypeSymbol(_constructedFrom, _typeArgumentsWithAnnotations, IsUnmanagedTypeNoUseSiteDiagnostics, tupleData: newData);
         }
 
         public override ImmutableArray<TypeParameterSymbol> TypeParameters

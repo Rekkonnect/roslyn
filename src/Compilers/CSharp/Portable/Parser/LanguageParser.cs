@@ -327,6 +327,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
         }
 
+        private static bool IsPossibleStartOfTypeDeclaration(SyntaxToken token)
+        {
+            if (IsPossibleStartOfTypeDeclaration(token.Kind))
+            {
+                return true;
+            }
+            return IsPossibleStartOfTypeDeclaration(token.ContextualKind);
+        }
         private static bool IsPossibleStartOfTypeDeclaration(SyntaxKind kind)
         {
             switch (kind)
@@ -339,6 +347,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 case SyntaxKind.AbstractKeyword:
                 case SyntaxKind.InternalKeyword:
                 case SyntaxKind.NewKeyword:
+                case SyntaxKind.UnmanagedKeyword:
                 case SyntaxKind.PrivateKeyword:
                 case SyntaxKind.ProtectedKeyword:
                 case SyntaxKind.PublicKeyword:
@@ -1153,6 +1162,8 @@ tryAgain:
                     return DeclarationModifiers.Async;
                 case SyntaxKind.RefKeyword:
                     return DeclarationModifiers.Ref;
+                case SyntaxKind.UnmanagedKeyword:
+                    return DeclarationModifiers.Unmanaged;
                 case SyntaxKind.IdentifierToken:
                     switch (contextualKind)
                     {
@@ -1160,6 +1171,8 @@ tryAgain:
                             return DeclarationModifiers.Partial;
                         case SyntaxKind.AsyncKeyword:
                             return DeclarationModifiers.Async;
+                        case SyntaxKind.UnmanagedKeyword:
+                            return DeclarationModifiers.Unmanaged;
                     }
 
                     goto default;
@@ -1200,7 +1213,7 @@ tryAgain:
                         else if (
                             nextToken.Kind == SyntaxKind.EnumKeyword ||
                             nextToken.Kind == SyntaxKind.DelegateKeyword ||
-                            (IsPossibleStartOfTypeDeclaration(nextToken.Kind) && GetModifier(nextToken) != DeclarationModifiers.None))
+                            (IsPossibleStartOfTypeDeclaration(nextToken) && GetModifier(nextToken) != DeclarationModifiers.None))
                         {
                             // Misplaced partial
                             // TODO(https://github.com/dotnet/roslyn/issues/22439):
@@ -1215,10 +1228,12 @@ tryAgain:
                         break;
 
                     case DeclarationModifiers.Ref:
-                        // 'ref' is only a modifier if used on a ref struct
+                    case DeclarationModifiers.Unmanaged:
+                        // 'ref' or 'unmanaged' is only a modifier if used on a
+                        // ref or unmanaged struct, with both being mutually exclusive
                         // it must be either immediately before the 'struct'
                         // keyword, or immediately before 'partial struct' if
-                        // this is a partial ref struct declaration
+                        // this is a partial ref/unmanaged struct declaration
                         {
                             var next = PeekToken(1);
                             if (isStructOrRecordKeyword(next) ||
@@ -1226,7 +1241,13 @@ tryAgain:
                                  isStructOrRecordKeyword(PeekToken(2))))
                             {
                                 modTok = this.EatToken();
-                                modTok = CheckFeatureAvailability(modTok, MessageID.IDS_FeatureRefStructs);
+                                var feature = newMod switch
+                                {
+                                    DeclarationModifiers.Ref => MessageID.IDS_FeatureRefStructs,
+                                    DeclarationModifiers.Unmanaged => MessageID.IDS_FeatureUnmanagedStructDeclarations,
+                                    _ => throw ExceptionUtilities.UnexpectedValue(newMod)
+                                };
+                                modTok = CheckFeatureAvailability(modTok, feature);
                             }
                             else if (forAccessors && this.IsPossibleAccessorModifier())
                             {
