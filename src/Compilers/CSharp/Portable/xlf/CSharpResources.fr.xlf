@@ -517,6 +517,11 @@
         <target state="translated">L'événement de type champ '{0}' ne peut pas être 'readonly'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FieldLikeEventInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain field-like events.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain field-like events.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FileScopedAndNormalNamespace">
         <source>Source file can not contain both file-scoped and normal namespace declarations.</source>
         <target state="translated">Le fichier source ne peut pas contenir à la fois des déclarations d'espace de nom de fichier et d'espace de nom normal.</target>

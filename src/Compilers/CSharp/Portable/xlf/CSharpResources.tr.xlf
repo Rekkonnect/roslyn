@@ -517,6 +517,11 @@
         <target state="translated">Alan benzeri '{0}' olayı 'readonly' olamaz.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FieldLikeEventInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain field-like events.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain field-like events.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FileScopedAndNormalNamespace">
         <source>Source file can not contain both file-scoped and normal namespace declarations.</source>
         <target state="translated">Kaynak dosya, hem dosya kapsamlı bildirimleri hem de normal ad alanı bildirimlerini içeremez.</target>

@@ -517,6 +517,11 @@
         <target state="translated">Подобное полю событие "{0}" не может быть readonly.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FieldLikeEventInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain field-like events.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain field-like events.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FileScopedAndNormalNamespace">
         <source>Source file can not contain both file-scoped and normal namespace declarations.</source>
         <target state="translated">Исходный файл не может содержать объявления пространства имен с файловой областью и объявления обычных пространств имен одновременно.</target>

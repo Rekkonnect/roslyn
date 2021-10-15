@@ -517,6 +517,11 @@
         <target state="translated">类似字段的事件 "{0}" 不能为 "readonly"。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FieldLikeEventInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain field-like events.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain field-like events.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FileScopedAndNormalNamespace">
         <source>Source file can not contain both file-scoped and normal namespace declarations.</source>
         <target state="translated">源文件不能同时包含文件范围内和普通命名空间的声明。</target>

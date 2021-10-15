@@ -517,6 +517,11 @@
         <target state="translated">フィールドに類似したイベント '{0}' を 'readonly' にすることはできません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_FieldLikeEventInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain field-like events.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain field-like events.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_FileScopedAndNormalNamespace">
         <source>Source file can not contain both file-scoped and normal namespace declarations.</source>
         <target state="translated">ソース ファイルには、ファイルスコープと通常の名前空間の両方の宣言を含めることはできません。</target>

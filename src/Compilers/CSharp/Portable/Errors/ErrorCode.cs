@@ -2005,6 +2005,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         #region diagnostics introduced for C# X.X
         ERR_ManagedMemberInUnmanagedStruct = 9230,
+        ERR_FieldLikeEventInUnmanagedStruct = 9231,
         #endregion
 
         // Note: you will need to re-generate compiler code after adding warnings (eng\generate-compiler-code.cmd)

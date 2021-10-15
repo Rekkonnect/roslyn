@@ -3510,24 +3510,53 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void CheckForUnmanagedStructInvalidFields(DeclaredMembersAndInitializers members, BindingDiagnosticBag diagnostics)
         {
+            // TODO: Avoid reporting multiple diagnostics on the same field declaration for multiple fields
             Debug.Assert(TypeKind == TypeKind.Struct);
+
+            var erroneousTypeSyntaxes = new ConcurrentSet<TypeSyntax>();
 
             foreach (FieldSymbol field in members.NonTypeMembers.Where(m => m.Kind is SymbolKind.Field))
             {
                 var memberType = field.Type;
-
-                if (!memberType.IsUnmanagedTypeNoUseSiteDiagnostics)
+                if (memberType.IsUnmanagedTypeNoUseSiteDiagnostics)
                 {
-                    var associated = field.AssociatedSymbol ?? field;
-                    var declarationSyntax = associated.DeclaringSyntaxReferences[0].GetSyntax();
-                    var declarationTypeSyntax = declarationSyntax.Kind() switch
-                    {
-                        SyntaxKind.VariableDeclarator => ((VariableDeclarationSyntax)declarationSyntax.Parent!).Type,
-                        SyntaxKind.PropertyDeclaration => ((PropertyDeclarationSyntax)declarationSyntax).Type,
-                        _ => throw ExceptionUtilities.UnexpectedValue(declarationSyntax.Kind()),
-                    };
-                    diagnostics.Add(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, declarationTypeSyntax.Location, memberType.Name);
+                    continue;
                 }
+
+                var associated = field.AssociatedSymbol ?? field;
+                var declarationSyntax = associated.DeclaringSyntaxReferences[0].GetSyntax();
+
+                var declarationTypeSyntax = declarationSyntax.Kind() switch
+                {
+                    SyntaxKind.VariableDeclarator => ((VariableDeclarationSyntax)declarationSyntax.Parent!).Type,
+                    SyntaxKind.PropertyDeclaration => ((PropertyDeclarationSyntax)declarationSyntax).Type,
+                    _ => throw ExceptionUtilities.UnexpectedValue(declarationSyntax.Kind()),
+                };
+
+                if (!erroneousTypeSyntaxes.Add(declarationTypeSyntax))
+                {
+                    continue;
+                }
+
+                diagnostics.Add(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, declarationTypeSyntax.Location, memberType.Name);
+            }
+
+            foreach (EventSymbol ev in members.NonTypeMembers.Where(m => m.Kind is SymbolKind.Event))
+            {
+                if (!ev.HasAssociatedField)
+                {
+                    continue;
+                }
+
+                var declarationSyntax = (VariableDeclarationSyntax)ev.DeclaringSyntaxReferences[0].GetSyntax().Parent!;
+                var declarationTypeSyntax = declarationSyntax.Type;
+
+                if (!erroneousTypeSyntaxes.Add(declarationTypeSyntax))
+                {
+                    continue;
+                }
+
+                diagnostics.Add(ErrorCode.ERR_FieldLikeEventInUnmanagedStruct, declarationTypeSyntax.Location);
             }
         }
 
