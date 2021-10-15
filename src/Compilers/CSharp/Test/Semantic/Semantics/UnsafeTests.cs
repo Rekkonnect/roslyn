@@ -9310,32 +9310,39 @@ namespace Interop
 unmanaged struct S { }
 partial unmanaged struct SPartial { }
 unmanaged partial struct SPartial { }
+unmanaged record struct RS;
+unmanaged partial record struct RSPartial;
+unmanaged partial record struct RSPartial;
 
 unmanaged enum E { }
 unmanaged delegate void D();
 unmanaged interface I { }
 partial unmanaged interface IPartial { }
 unmanaged class C { }
+unmanaged record R;
 ", options: TestOptions.UnsafeReleaseDll).VerifyDiagnostics(
                 // TODO: Reported errors should be cleaned up
                 // (3,1): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
                 // partial unmanaged struct SPartial { }
                 Diagnostic(ErrorCode.ERR_PartialMisplaced, "partial").WithLocation(3, 1),
-                // (6,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // (9,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
                 // unmanaged enum E { }
-                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(6, 1),
-                // (7,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
-                // unmanaged delegate void D();
-                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(7, 1),
-                // (8,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
-                // unmanaged interface I { }
-                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(8, 1),
-                // (9,1): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
-                // partial unmanaged interface IPartial { }
-                Diagnostic(ErrorCode.ERR_PartialMisplaced, "partial").WithLocation(9, 1),
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(9, 1),
                 // (10,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // unmanaged delegate void D();
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(10, 1),
+                // (11,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
+                // unmanaged interface I { }
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(11, 1),
+                // (12,1): error CS0267: The 'partial' modifier can only appear immediately before 'class', 'record', 'struct', 'interface', or a method return type.
+                // partial unmanaged interface IPartial { }
+                Diagnostic(ErrorCode.ERR_PartialMisplaced, "partial").WithLocation(12, 1),
+                // (13,1): error CS0116: A namespace cannot directly contain members such as fields, methods or statements
                 // unmanaged class C { }
-                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(10, 1));
+                Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(13, 1),
+                // (14,18): error CS0106: The modifier 'unmanaged' is not valid for this item
+                // unmanaged record R;
+                Diagnostic(ErrorCode.ERR_BadMemberFlag, "R").WithArguments("unmanaged").WithLocation(14, 18));
         }
 
         [Fact]
@@ -9364,6 +9371,10 @@ unmanaged struct SProperties
     object O1 { get; init; }
     object O2 { get; }
     int I { get; }
+
+    string Name => nameof(Name);
+    Type Type => typeof(SProperties);
+    object SynchronizationRoot => Type;
 }
 unmanaged struct SEvents
 {
@@ -9405,12 +9416,43 @@ class C<T>
                 // (22,5): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'Object'.
                 //     object O2 { get; }
                 Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "object").WithArguments("Object").WithLocation(22, 5),
-                // (28,11): error CS9231: An explicitly declared unmanaged struct may not contain field-like events.
+                // (32,11): error CS9231: An explicitly declared unmanaged struct may not contain field-like events.
                 //     event Action B, C, D;
-                Diagnostic(ErrorCode.ERR_FieldLikeEventInUnmanagedStruct, "Action").WithLocation(28, 11),
-                // (46,15): error CS8377: The type 'SManaged' must be a non-nullable value type, along with all fields at any level of nesting, in order to use it as parameter 'T' in the generic type or method 'C<T>'
+                Diagnostic(ErrorCode.ERR_FieldLikeEventInUnmanagedStruct, "Action").WithLocation(32, 11),
+                // (50,15): error CS8377: The type 'SManaged' must be a non-nullable value type, along with all fields at any level of nesting, in order to use it as parameter 'T' in the generic type or method 'C<T>'
                 //         new C<SManaged>();
-                Diagnostic(ErrorCode.ERR_UnmanagedConstraintNotSatisfied, "SManaged").WithArguments("C<T>", "T", "SManaged").WithLocation(46, 15));
+                Diagnostic(ErrorCode.ERR_UnmanagedConstraintNotSatisfied, "SManaged").WithArguments("C<T>", "T", "SManaged").WithLocation(50, 15));
+        }
+
+        [Fact]
+        public void UnmanagedRecordStructDeclarations()
+        {
+            CreateCompilation(new[] { @"
+#pragma warning disable CS0169
+
+unmanaged record struct Point(int X, int Y);
+unmanaged record struct Other(string S, object O, int I)
+{
+    string Property => S;
+    object Object => O;
+}
+
+class C<T>
+    where T : unmanaged
+{
+    void Use()
+    {
+        new C<Point>();
+        new C<Other>();
+    }
+}
+", IsExternalInitTypeDefinition }, options: TestOptions.UnsafeReleaseDll).VerifyDiagnostics(
+                // (5,31): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'String'.
+                // unmanaged record struct Other(string S, object O, int I);
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "string").WithArguments("String").WithLocation(5, 31),
+                // (5,41): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'Object'.
+                // unmanaged record struct Other(string S, object O, int I);
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "object").WithArguments("Object").WithLocation(5, 41));
         }
     }
 }

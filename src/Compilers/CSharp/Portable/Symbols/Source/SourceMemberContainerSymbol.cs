@@ -3513,6 +3513,23 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // TODO: Avoid reporting multiple diagnostics on the same field declaration for multiple fields
             Debug.Assert(TypeKind == TypeKind.Struct);
 
+            if (members.RecordPrimaryConstructor is not null)
+            {
+                var parameters = members.RecordPrimaryConstructor.Parameters;
+                foreach (var parameter in parameters)
+                {
+                    var parameterType = parameter.Type;
+                    if (parameterType.IsUnmanagedTypeNoUseSiteDiagnostics)
+                    {
+                        continue;
+                    }
+
+                    var declarationSyntax = parameter.DeclaringSyntaxReferences[0].GetSyntax();
+                    var parameterDeclarationSyntax = ((ParameterSyntax)declarationSyntax).Type!;
+                    diagnostics.Add(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, parameterDeclarationSyntax.Location, parameterType.Name);
+                }
+            }
+
             var erroneousTypeSyntaxes = new ConcurrentSet<TypeSyntax>();
 
             foreach (FieldSymbol field in members.NonTypeMembers.Where(m => m.Kind is SymbolKind.Field))
