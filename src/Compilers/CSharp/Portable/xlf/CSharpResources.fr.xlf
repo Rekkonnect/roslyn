@@ -767,6 +767,11 @@
         <target state="translated">La valeur de directive #line est manquante ou hors limites</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_ManagedMemberInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain fields or auto-properties of type '{0}'.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain fields or auto-properties of type '{0}'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_MethFuncPtrMismatch">
         <source>No overload for '{0}' matches function pointer '{1}'</source>
         <target state="translated">Aucune surcharge pour '{0}' ne correspond au pointeur de fonction '{1}'</target>

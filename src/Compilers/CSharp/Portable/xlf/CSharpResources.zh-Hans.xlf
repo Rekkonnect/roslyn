@@ -767,6 +767,11 @@
         <target state="translated">#line 指令值缺失或超出范围</target>
         <note />
       </trans-unit>
+      <trans-unit id="ERR_ManagedMemberInUnmanagedStruct">
+        <source>An explicitly declared unmanaged struct may not contain fields or auto-properties of type '{0}'.</source>
+        <target state="new">An explicitly declared unmanaged struct may not contain fields or auto-properties of type '{0}'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ERR_MethFuncPtrMismatch">
         <source>No overload for '{0}' matches function pointer '{1}'</source>
         <target state="translated">“{0}”没有与函数指针“{1}”匹配的重载</target>

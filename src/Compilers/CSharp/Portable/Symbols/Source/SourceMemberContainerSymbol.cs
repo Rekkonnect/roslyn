@@ -1229,7 +1229,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 foreach (var childDeclaration in declaration.Children)
                 {
-                    var t = new SourceNamedTypeSymbol(this, childDeclaration, diagnostics, (childDeclaration.UnifiedModifiers & DeclarationModifiers.Unmanaged) != 0);
+                    var t = new SourceNamedTypeSymbol(this, childDeclaration, diagnostics, (declaration.UnifiedModifiers & DeclarationModifiers.Unmanaged) != 0);
                     this.CheckMemberNameDistinctFromType(t, diagnostics);
 
                     var key = (t.Name, t.Arity);
@@ -2833,6 +2833,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
+            if (declaration.Kind is DeclarationKind.Struct or DeclarationKind.RecordStruct &&
+                (declaration.UnifiedModifiers & DeclarationModifiers.Unmanaged) != 0)
+            {
+                CheckForUnmanagedStructInvalidFields(declaredMembersAndInitializers, diagnostics);
+            }
+
             var membersAndInitializersBuilder = new MembersAndInitializersBuilder(declaredMembersAndInitializers);
             AddSynthesizedMembers(membersAndInitializersBuilder, declaredMembersAndInitializers, diagnostics);
 
@@ -3498,6 +3504,29 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             }
                         }
                     }
+                }
+            }
+        }
+
+        private void CheckForUnmanagedStructInvalidFields(DeclaredMembersAndInitializers members, BindingDiagnosticBag diagnostics)
+        {
+            Debug.Assert(TypeKind == TypeKind.Struct);
+
+            foreach (FieldSymbol field in members.NonTypeMembers.Where(m => m.Kind is SymbolKind.Field))
+            {
+                var memberType = field.Type;
+
+                if (!memberType.IsUnmanagedTypeNoUseSiteDiagnostics)
+                {
+                    var associated = field.AssociatedSymbol ?? field;
+                    var declarationSyntax = associated.DeclaringSyntaxReferences[0].GetSyntax();
+                    var declarationTypeSyntax = declarationSyntax.Kind() switch
+                    {
+                        SyntaxKind.VariableDeclarator => ((VariableDeclarationSyntax)declarationSyntax.Parent!).Type,
+                        SyntaxKind.PropertyDeclaration => ((PropertyDeclarationSyntax)declarationSyntax).Type,
+                        _ => throw ExceptionUtilities.UnexpectedValue(declarationSyntax.Kind()),
+                    };
+                    diagnostics.Add(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, declarationTypeSyntax.Location, memberType.Name);
                 }
             }
         }
@@ -4273,8 +4302,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     new SourceLocation(fieldSyntax.Declaration.Variables.First().Identifier));
                             }
 
-                            bool modifierErrors;
-                            var modifiers = SourceMemberFieldSymbol.MakeModifiers(this, fieldSyntax.Declaration.Variables[0].Identifier, fieldSyntax.Modifiers, diagnostics, out modifierErrors);
+                            var modifiers = SourceMemberFieldSymbol.MakeModifiers(this, fieldSyntax.Declaration.Variables[0].Identifier, fieldSyntax.Modifiers, diagnostics, out bool modifierErrors);
+                            
                             foreach (var variable in fieldSyntax.Declaration.Variables)
                             {
                                 var fieldSymbol = (modifiers & DeclarationModifiers.Fixed) == 0

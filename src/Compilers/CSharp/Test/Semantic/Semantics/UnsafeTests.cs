@@ -9337,5 +9337,69 @@ unmanaged class C { }
                 // unmanaged class C { }
                 Diagnostic(ErrorCode.ERR_NamespaceUnexpected, "unmanaged").WithLocation(10, 1));
         }
+
+        [Fact]
+        public void UnmanagedStructDeclarations()
+        {
+            CreateCompilation(new[] { @"
+#pragma warning disable CS0169
+
+unmanaged struct S1
+{
+    int a, b;
+    double c;
+    decimal d;
+}
+unmanaged struct S2
+{
+    string s;
+    object o;
+    int i;
+}
+unmanaged struct SProperties
+{
+    string S { get; set; }
+    object O1 { get; init; }
+    object O2 { get; }
+    int I { get; }
+}
+struct SManaged
+{
+    string s;
+    object o;
+    int i;
+}
+
+class C<T>
+    where T : unmanaged
+{
+    void Use()
+    {
+        new C<S1>();
+        new C<S2>();
+        new C<SProperties>();
+        new C<SManaged>();
+    }
+}
+", IsExternalInitTypeDefinition }, options: TestOptions.UnsafeReleaseDll).VerifyDiagnostics(
+                // (12,5): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'String'.
+                //     string s;
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "string").WithArguments("String").WithLocation(12, 5),
+                // (13,5): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'Object'.
+                //     object o;
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "object").WithArguments("Object").WithLocation(13, 5),
+                // (18,5): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'String'.
+                //     string S { get; set; }
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "string").WithArguments("String").WithLocation(18, 5),
+                // (19,5): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'Object'.
+                //     object O1 { get; init; }
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "object").WithArguments("Object").WithLocation(19, 5),
+                // (20,5): error CS9230: An explicitly declared unmanaged struct may not contain fields or auto-properties of type 'Object'.
+                //     object O2 { get; }
+                Diagnostic(ErrorCode.ERR_ManagedMemberInUnmanagedStruct, "object").WithArguments("Object").WithLocation(20, 5),
+                // (38,15): error CS8377: The type 'SManaged' must be a non-nullable value type, along with all fields at any level of nesting, in order to use it as parameter 'T' in the generic type or method 'C<T>'
+                //         new C<SManaged>();
+                Diagnostic(ErrorCode.ERR_UnmanagedConstraintNotSatisfied, "SManaged").WithArguments("C<T>", "T", "SManaged").WithLocation(38, 15));
+        }
     }
 }

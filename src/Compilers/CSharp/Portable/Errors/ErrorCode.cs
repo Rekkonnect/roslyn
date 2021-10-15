@@ -2003,6 +2003,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         #endregion
 
+        #region diagnostics introduced for C# X.X
+        ERR_ManagedMemberInUnmanagedStruct = 9230,
+        #endregion
+
         // Note: you will need to re-generate compiler code after adding warnings (eng\generate-compiler-code.cmd)
     }
 }
