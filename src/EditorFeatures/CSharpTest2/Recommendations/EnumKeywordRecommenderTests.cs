@@ -235,8 +235,8 @@ $$");
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
-        public async Task TestNotAfterPartial()
-            => await VerifyAbsenceAsync(@"partial $$");
+        public async Task TestAfterPartial()
+            => await VerifyKeywordAsync(@"partial $$");
 
         [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
         public async Task TestNotAfterAbstract()

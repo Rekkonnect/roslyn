@@ -618,4 +618,7 @@
   <data name="record_struct" xml:space="preserve">
     <value>record struct</value>
   </data>
+  <data name="enum_name" xml:space="preserve">
+    <value>&lt;enum name&gt;</value>
+  </data>
 </root>

@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
                 context.IsTypeDeclarationContext(
                     validModifiers: s_validModifiers,
                     validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations,
-                    canBePartial: false,
+                    canBePartial: true,
                     cancellationToken: cancellationToken);
         }
     }

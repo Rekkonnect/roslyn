@@ -74,16 +74,21 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers
                 }
                 else if (tree.IsPartialTypeDeclarationNameContext(position, cancellationToken, out var typeDeclaration))
                 {
-                    switch (typeDeclaration.Keyword.Kind())
+                    switch (typeDeclaration.Kind())
                     {
-                        case SyntaxKind.ClassKeyword:
+                        case SyntaxKind.ClassDeclaration:
+                        case SyntaxKind.RecordDeclaration:
                             return CreateSuggestionModeItem(CSharpFeaturesResources.class_name, CSharpFeaturesResources.Autoselect_disabled_due_to_type_declaration);
 
-                        case SyntaxKind.StructKeyword:
+                        case SyntaxKind.StructDeclaration:
+                        case SyntaxKind.RecordStructDeclaration:
                             return CreateSuggestionModeItem(CSharpFeaturesResources.struct_name, CSharpFeaturesResources.Autoselect_disabled_due_to_type_declaration);
 
-                        case SyntaxKind.InterfaceKeyword:
+                        case SyntaxKind.InterfaceDeclaration:
                             return CreateSuggestionModeItem(CSharpFeaturesResources.interface_name, CSharpFeaturesResources.Autoselect_disabled_due_to_type_declaration);
+
+                        case SyntaxKind.EnumDeclaration:
+                            return CreateSuggestionModeItem(CSharpFeaturesResources.enum_name, CSharpFeaturesResources.Autoselect_disabled_due_to_type_declaration);
                     }
                 }
                 else if (tree.IsPossibleDeconstructionDesignation(position, cancellationToken))

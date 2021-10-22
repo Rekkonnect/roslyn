@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
             if (context.IsMemberDeclarationContext(validModifiers: s_validMemberModifiers, validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations, canBePartial: false, cancellationToken: cancellationToken))
             {
                 var token = context.LeftToken;
-                var decl = token.GetAncestor<TypeDeclarationSyntax>();
+                var decl = token.GetAncestor<BaseTypeDeclarationSyntax>();
 
                 // partial methods must be in partial types
                 if (!decl.Modifiers.Any(t => t.IsKindOrHasMatchingText(SyntaxKind.PartialKeyword)))

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -678,7 +679,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             return declaration?.Name.Span.IntersectsWith(position) == true;
         }
 
-        public static bool IsPartialTypeDeclarationNameContext(this SyntaxTree syntaxTree, int position, CancellationToken cancellationToken, [NotNullWhen(true)] out TypeDeclarationSyntax? declarationSyntax)
+        public static bool IsPartialTypeDeclarationNameContext(this SyntaxTree syntaxTree, int position, CancellationToken cancellationToken, [NotNullWhen(true)] out BaseTypeDeclarationSyntax? declarationSyntax)
         {
             if (!syntaxTree.IsInNonUserCode(position, cancellationToken))
             {
@@ -687,11 +688,30 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
 
                 if ((token.IsKind(SyntaxKind.ClassKeyword) ||
                      token.IsKind(SyntaxKind.StructKeyword) ||
-                     token.IsKind(SyntaxKind.InterfaceKeyword)) &&
+                     token.IsKind(SyntaxKind.InterfaceKeyword) ||
+                     token.IsKind(SyntaxKind.EnumKeyword)) &&
                      token.GetPreviousToken().IsKind(SyntaxKind.PartialKeyword))
                 {
-                    declarationSyntax = token.GetAncestor<TypeDeclarationSyntax>();
-                    return declarationSyntax != null && declarationSyntax.Keyword == token;
+                    declarationSyntax = token.GetAncestor<BaseTypeDeclarationSyntax>();
+                    if (declarationSyntax is null)
+                    {
+                        return false;
+                    }
+
+                    SyntaxToken keyword;
+                    switch (declarationSyntax.Kind())
+                    {
+                        case SyntaxKind.EnumDeclaration:
+                            keyword = ((EnumDeclarationSyntax)declarationSyntax).EnumKeyword;
+                            break;
+
+                        default:
+                            Debug.Assert(declarationSyntax is TypeDeclarationSyntax);
+                            keyword = ((TypeDeclarationSyntax)declarationSyntax).Keyword;
+                            break;
+                    }
+
+                    return keyword == token;
                 }
             }
 
