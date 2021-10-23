@@ -2,11 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Completion.Providers;
 using Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery;
+using Microsoft.CodeAnalysis.CSharp.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
 {
@@ -55,6 +57,23 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
             return ShouldPreselect(context, cancellationToken)
                 ? _keywordPriorityRecommendedKeywords
                 : _defaultPriorityRecommendedKeywords;
+        }
+
+        protected static bool IsValidContextForTypeDeclarationKind(
+            ISet<SyntaxKind> validModifiers,
+            CSharpSyntaxContext context,
+            bool canBePartial = false,
+            bool canBeUnmanaged = false,
+            CancellationToken cancellationToken = default)
+        {
+            return
+                context.IsGlobalStatementContext ||
+                context.IsTypeDeclarationContext(
+                    validModifiers: validModifiers,
+                    validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations,
+                    canBePartial,
+                    canBeUnmanaged,
+                    cancellationToken: cancellationToken);
         }
 
         protected virtual bool ShouldPreselect(CSharpSyntaxContext context, CancellationToken cancellationToken) => false;

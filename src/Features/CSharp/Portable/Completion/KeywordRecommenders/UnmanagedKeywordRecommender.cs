@@ -4,6 +4,7 @@
 
 #nullable disable
 
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery;
 
@@ -11,6 +12,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
 {
     internal class UnmanagedKeywordRecommender : AbstractSyntacticSingleKeywordRecommender
     {
+        private static readonly ISet<SyntaxKind> s_validModifiers = new HashSet<SyntaxKind>(SyntaxFacts.EqualityComparer)
+            {
+                SyntaxKind.InternalKeyword,
+                SyntaxKind.PublicKeyword,
+                SyntaxKind.PrivateKeyword,
+                SyntaxKind.ProtectedKeyword,
+                SyntaxKind.UnsafeKeyword,
+                SyntaxKind.RefKeyword,
+                SyntaxKind.ReadOnlyKeyword
+            };
+
         public UnmanagedKeywordRecommender()
             : base(SyntaxKind.UnmanagedKeyword)
         {
@@ -18,8 +30,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
 
         protected override bool IsValidContext(int position, CSharpSyntaxContext context, CancellationToken cancellationToken)
         {
-            return context.SyntaxTree.IsTypeParameterConstraintContext(position, context.LeftToken) ||
-                   context.SyntaxTree.IsFunctionPointerCallingConventionContext(context.TargetToken);
+            return
+                IsValidContextForTypeDeclarationKind(s_validModifiers, context, canBePartial: true, cancellationToken: cancellationToken) ||
+                context.SyntaxTree.IsTypeParameterConstraintContext(position, context.LeftToken) ||
+                context.SyntaxTree.IsFunctionPointerCallingConventionContext(context.TargetToken);
         }
     }
 }

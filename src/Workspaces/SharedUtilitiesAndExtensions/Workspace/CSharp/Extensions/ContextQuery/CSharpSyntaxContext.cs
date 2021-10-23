@@ -296,7 +296,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             if (token.Kind() == SyntaxKind.OpenBracketToken &&
                 token.Parent.IsKind(SyntaxKind.AttributeList) &&
                 this.SyntaxTree.IsTypeDeclarationContext(
-                    token.SpanStart, contextOpt: null, validModifiers: null, validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations, canBePartial: false, cancellationToken: cancellationToken))
+                    token.SpanStart, contextOpt: null, validModifiers: null, validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations, canBePartial: false, canBeUnmanaged: false, cancellationToken: cancellationToken))
             {
                 return true;
             }
@@ -308,9 +308,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             ISet<SyntaxKind>? validModifiers = null,
             ISet<SyntaxKind>? validTypeDeclarations = null,
             bool canBePartial = false,
+            bool canBeUnmanaged = false,
             CancellationToken cancellationToken = default)
         {
-            return this.SyntaxTree.IsTypeDeclarationContext(this.Position, this, validModifiers, validTypeDeclarations, canBePartial, cancellationToken);
+            return this.SyntaxTree.IsTypeDeclarationContext(this.Position, this, validModifiers, validTypeDeclarations, canBePartial, canBeUnmanaged, cancellationToken);
         }
 
         public bool IsMemberAttributeContext(ISet<SyntaxKind> validTypeDeclarations, CancellationToken cancellationToken)

@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.Editor.CSharp.UnitTests.Recommendations
         [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
         public async Task TestAtRoot_Interactive()
         {
-            await VerifyAbsenceAsync(SourceCodeKind.Script,
+            await VerifyKeywordAsync(SourceCodeKind.Script,
 @"$$");
         }
 
@@ -245,6 +245,38 @@ namespace Microsoft.CodeAnalysis.Editor.CSharp.UnitTests.Recommendations
 @"class Test {
     unsafe void N() {
         delegate*$$");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterPublic()
+        {
+            await VerifyKeywordAsync(
+@"public $$");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestNotAfterPublicStatic()
+        {
+            await VerifyAbsenceAsync(
+@"public static $$");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterPublicInStaticClass()
+        {
+            await VerifyKeywordAsync(
+@"public static class C
+{
+    public $$");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestInMemberDeclarationInStaticClass()
+        {
+            await VerifyKeywordAsync(
+@"public static class C
+{
+    $$");
         }
     }
 }

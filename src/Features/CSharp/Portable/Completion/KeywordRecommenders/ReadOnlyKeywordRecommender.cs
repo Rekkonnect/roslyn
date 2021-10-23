@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
         private static bool IsValidContextForType(CSharpSyntaxContext context, CancellationToken cancellationToken)
         {
             return context.IsTypeDeclarationContext(validModifiers: SyntaxKindSet.AllTypeModifiers,
-                validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations, canBePartial: true, cancellationToken);
+                validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations, canBePartial: true, cancellationToken: cancellationToken);
         }
 
         private static bool IsStructAccessorContext(CSharpSyntaxContext context)

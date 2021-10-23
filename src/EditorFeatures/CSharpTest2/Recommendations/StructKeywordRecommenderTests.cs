@@ -350,5 +350,13 @@ $$");
         [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
         public async Task TestNotAfterStruct()
             => await VerifyAbsenceAsync(@"struct $$");
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterUnmanaged()
+            => await VerifyKeywordAsync(@"unmanaged $$");
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterUnmanagedRecord()
+            => await VerifyKeywordAsync(@"unmanaged record $$");
     }
 }

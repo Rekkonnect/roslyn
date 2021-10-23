@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery;
-using Microsoft.CodeAnalysis.CSharp.Utilities;
 
 namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
 {
@@ -31,19 +30,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
         protected override bool IsValidContext(int position, CSharpSyntaxContext context, CancellationToken cancellationToken)
         {
             return
-                context.IsGlobalStatementContext ||
+                IsValidContextForTypeDeclarationKind(s_validModifiers, context, cancellationToken: cancellationToken) ||
                 ValidTypeContext(context) ||
-                IsAfterAsyncKeywordInExpressionContext(context, cancellationToken) ||
-                context.IsTypeDeclarationContext(
-                    validModifiers: s_validModifiers,
-                    validTypeDeclarations: SyntaxKindSet.ClassInterfaceStructRecordTypeDeclarations,
-                    canBePartial: false,
-                    cancellationToken: cancellationToken);
+                IsAfterAsyncKeywordInExpressionContext(context, cancellationToken);
+        }
 
-            static bool ValidTypeContext(CSharpSyntaxContext context)
-                => (context.IsNonAttributeExpressionContext || context.IsTypeContext)
-                   && !context.IsConstantExpressionContext
-                   && !context.LeftToken.IsTopLevelOfUsingAliasDirective();
+        private static bool ValidTypeContext(CSharpSyntaxContext context)
+        {
+            return
+                (context.IsNonAttributeExpressionContext || context.IsTypeContext) &&
+                !context.IsConstantExpressionContext &&
+                !context.LeftToken.IsTopLevelOfUsingAliasDirective();
         }
 
         private static bool IsAfterAsyncKeywordInExpressionContext(CSharpSyntaxContext context, CancellationToken cancellationToken)

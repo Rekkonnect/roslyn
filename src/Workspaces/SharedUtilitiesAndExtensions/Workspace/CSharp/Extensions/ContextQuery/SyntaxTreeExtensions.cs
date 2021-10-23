@@ -531,6 +531,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             ISet<SyntaxKind>? validModifiers,
             ISet<SyntaxKind>? validTypeDeclarations,
             bool canBePartial,
+            bool canBeUnmanaged,
             CancellationToken cancellationToken)
         {
             // We only allow nested types inside a class, struct, or interface, not inside a
@@ -573,6 +574,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             // A type can also show up after certain types of modifiers
             if (canBePartial &&
                 token.IsKindOrHasMatchingText(SyntaxKind.PartialKeyword))
+            {
+                return true;
+            }
+            if (canBeUnmanaged &&
+                token.IsKindOrHasMatchingText(SyntaxKind.UnmanagedKeyword))
             {
                 return true;
             }
