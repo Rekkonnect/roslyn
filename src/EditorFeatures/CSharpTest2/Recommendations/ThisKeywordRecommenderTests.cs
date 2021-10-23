@@ -1292,5 +1292,26 @@ public static class Extensions
             await VerifyKeywordAsync(AddInsideMethod(
 @"ref int x = ref $$"));
         }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterTypeOf()
+        {
+            await VerifyKeywordAsync(AddInsideMethod(
+@"var type = typeof($$"));
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterSizeOf()
+        {
+            await VerifyKeywordAsync(AddInsideMethod(
+@"int size = sizeof($$"));
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAfterNameOf()
+        {
+            await VerifyKeywordAsync(AddInsideMethod(
+@"string name = nameof($$"));
+        }
     }
 }
