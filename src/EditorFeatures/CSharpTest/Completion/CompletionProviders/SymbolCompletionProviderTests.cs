@@ -11474,5 +11474,26 @@ class Test
             await VerifyItemExistsAsync(source, "P1");
             await VerifyItemExistsAsync(source, "E1");
         }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestYieldReturnMultiple()
+        {
+            var source = @"
+using System.Collections.Generic;
+
+class Test
+{
+    IEnumerable<int> Test()
+    {
+        int a = 1, b = 2, c = 3, d = 4;
+        yield return a, $$
+    }
+}
+";
+            await VerifyItemExistsAsync(source, "a");
+            await VerifyItemExistsAsync(source, "b");
+            await VerifyItemExistsAsync(source, "c");
+            await VerifyItemExistsAsync(source, "d");
+        }
     }
 }
