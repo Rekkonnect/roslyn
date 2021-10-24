@@ -847,6 +847,29 @@ class Class
 
         [WpfFact]
         [Trait(Traits.Feature, Traits.Features.SmartTokenFormatting)]
+        public async Task Block9()
+        {
+            var code = @"using System;
+class Class
+{
+    public new()
+        {
+   int a = 5;
+  }$$";
+
+            var expected = @"using System;
+class Class
+{
+    public new()
+    {
+        int a = 5;
+    }";
+
+            await AutoFormatOnCloseBraceAsync(code, expected, SyntaxKind.OpenBraceToken);
+        }
+
+        [WpfFact]
+        [Trait(Traits.Feature, Traits.Features.SmartTokenFormatting)]
         public async Task SwitchStatement1()
         {
             var code = @"using System;

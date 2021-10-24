@@ -663,6 +663,43 @@ int
                 expectedIndentation: 4);
         }
 
+        [WpfFact]
+        [Trait(Traits.Feature, Traits.Features.SmartIndent)]
+        public async Task SimpleConstructorBraces1()
+        {
+            var code = @"
+class Class1
+{
+    public new()
+    {
+}
+}
+";
+            await AssertIndentUsingSmartTokenFormatterAsync(
+                code,
+                '}',
+                indentationLine: 5,
+                expectedIndentation: 4);
+        }
+
+        [WpfFact]
+        [Trait(Traits.Feature, Traits.Features.SmartIndent)]
+        public async Task SimpleConstructorBraces2()
+        {
+            var code = @"
+class Class1
+{
+    public new()
+{ }
+}
+";
+            await AssertIndentUsingSmartTokenFormatterAsync(
+                code,
+                '{',
+                indentationLine: 4,
+                expectedIndentation: 4);
+        }
+
         [WorkItem(537795, "http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/537795")]
         [WpfFact]
         [Trait(Traits.Feature, Traits.Features.SmartIndent)]
