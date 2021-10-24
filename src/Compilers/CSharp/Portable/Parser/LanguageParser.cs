@@ -8563,9 +8563,8 @@ done:;
             {
                 expression = ParseIdentifierName();
             }
-            while (this.CurrentToken.Kind != SyntaxKind.SemicolonToken)
+            if (this.CurrentToken.Kind != SyntaxKind.SemicolonToken)
             {
-                // We should eat the extra expression tokens and report an error
                 WithAdditionalDiagnostics(this.CurrentToken, GetExpectedTokenError(SyntaxKind.SemicolonToken, this.CurrentToken.Kind));
                 this.EatToken();
             }

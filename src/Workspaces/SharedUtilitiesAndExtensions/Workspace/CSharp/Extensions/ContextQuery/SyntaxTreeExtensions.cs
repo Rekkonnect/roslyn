@@ -2079,19 +2079,43 @@ namespace Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery
             var gotoStatement = token.GetAncestor<GotoStatementSyntax>();
             if (gotoStatement != null)
             {
-                if (gotoStatement.GotoKeyword == token)
-                {
-                    return true;
-                }
+                return IsLabelContext(token, gotoStatement.GotoKeyword, gotoStatement, gotoStatement.Expression, position);
+            }
 
-                if (gotoStatement.Expression != null &&
-                    !gotoStatement.Expression.IsMissing &&
-                    gotoStatement.Expression is IdentifierNameSyntax &&
-                    ((IdentifierNameSyntax)gotoStatement.Expression).Identifier == token &&
-                    token.IntersectsWith(position))
-                {
-                    return true;
-                }
+            var breakStatement = token.GetAncestor<BreakStatementSyntax>();
+            if (breakStatement != null)
+            {
+                return IsLabelContext(token, breakStatement.BreakKeyword, breakStatement, breakStatement.Expression, position);
+            }
+
+            var continueStatement = token.GetAncestor<ContinueStatementSyntax>();
+            if (continueStatement != null)
+            {
+                return IsLabelContext(token, continueStatement.ContinueKeyword, continueStatement, continueStatement.Expression, position);
+            }
+
+            return false;
+        }
+
+        private static bool IsLabelContext(SyntaxToken token, SyntaxToken keyword, StatementSyntax statement, ExpressionSyntax? expression, int position)
+        {
+            if (statement is null)
+            {
+                return false;
+            }
+
+            if (keyword == token)
+            {
+                return true;
+            }
+
+            if (expression != null &&
+                !expression.IsMissing &&
+                expression is IdentifierNameSyntax &&
+                ((IdentifierNameSyntax)expression).Identifier == token &&
+                token.IntersectsWith(position))
+            {
+                return true;
             }
 
             return false;

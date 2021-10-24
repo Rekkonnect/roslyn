@@ -2718,6 +2718,38 @@ class Program
             await VerifyItemIsAbsentAsync(markup, "Goo");
         }
 
+        [Fact, Trait(Traits.Feature, Traits.Features.Completion)]
+        public async Task LoopLabelAfterBreak()
+        {
+            var markup = @"
+class Program
+{
+    static void Main()
+    {
+    Goo:
+        for (int i = 0; i < 1; i++)
+        {
+            break $$";
+
+            await VerifyItemExistsAsync(markup, "Goo");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Completion)]
+        public async Task LoopLabelAfterContinue()
+        {
+            var markup = @"
+class Program
+{
+    static void Main()
+    {
+    Goo:
+        for (int i = 0; i < 1; i++)
+        {
+            continue $$";
+
+            await VerifyItemExistsAsync(markup, "Goo");
+        }
+
         [WorkItem(542225, "http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/542225")]
         [Fact, Trait(Traits.Feature, Traits.Features.Completion)]
         public async Task AttributeName()
