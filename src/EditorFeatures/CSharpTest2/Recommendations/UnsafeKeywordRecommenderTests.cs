@@ -43,6 +43,13 @@ $$");
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
+        public async Task TestAtRoot()
+        {
+            await VerifyKeywordAsync(
+@"$$");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.KeywordRecommending)]
         public async Task TestNotInUsingAlias()
         {
             await VerifyAbsenceAsync(

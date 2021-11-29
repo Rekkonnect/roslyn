@@ -482,7 +482,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (node.Modifiers.Count > 0)
             {
-                diagnostics.Add(ErrorCode.ERR_BadModifiersOnNamespace, node.Modifiers[0].GetLocation());
+                foreach (var modifier in node.Modifiers)
+                {
+                    if (modifier.IsKind(SyntaxKind.UnsafeKeyword))
+                    {
+                        continue;
+                    }
+
+                    diagnostics.Add(ErrorCode.ERR_BadModifiersOnNamespace, modifier.GetLocation());
+                }
             }
 
             foreach (var directive in node.Usings)

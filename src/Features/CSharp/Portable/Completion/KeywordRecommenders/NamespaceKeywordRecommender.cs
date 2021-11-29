@@ -160,6 +160,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.KeywordRecommenders
                 return true;
             }
 
+            // unsafe |
+
+            if (token.Kind() == SyntaxKind.UnsafeKeyword)
+            {
+                // Currently, a stray unsafe results in having a parent incomplete member syntax node
+                // This workaround is good for the time being unless the behavior is undesirable
+                var unsafeParent = token.Parent;
+                if (unsafeParent.IsKind(SyntaxKind.IncompleteMember) && unsafeParent.IsParentKind(SyntaxKind.CompilationUnit))
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
     }

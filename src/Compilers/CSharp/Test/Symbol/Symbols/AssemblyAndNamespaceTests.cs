@@ -472,6 +472,24 @@ namespace N { }
                 Diagnostic(ErrorCode.ERR_BadModifiersOnNamespace, "[System.Obsolete]").WithLocation(1, 1));
         }
 
+        [Theory, MemberData(nameof(FileScopedOrBracedNamespace))]
+        public void UnsafeNamespace(string ob, string cb)
+        {
+            var test = @"
+unsafe namespace NS
+" + ob + @"
+    class Test
+    {
+        public static int Main()
+        {
+            return 1;
+        }
+    }
+" + cb + @"
+";
+            CreateCompilationWithMscorlib45(test, parseOptions: TestOptions.RegularWithFileScopedNamespaces, options: TestOptions.UnsafeReleaseExe).VerifyDiagnostics();
+        }
+
         [Fact]
         public void NamespaceWithSemicolon1()
         {
@@ -687,6 +705,42 @@ using System.Reflection;
             var comp = CreateCompilation(code);
             Assert.True(comp.Assembly.Identity.IsRetargetable);
             comp.VerifyEmitDiagnostics();
+        }
+
+        [Fact]
+        public void UnsafeFileScopedNamespace()
+        {
+            var code0 = @"
+unsafe namespace N;
+
+public class C
+{
+    public void M(void* ptr) { }
+}";
+
+            var code1 = @"
+namespace N
+{
+    public class D
+    {
+        public void M(void* ptr) { }
+    }
+}
+unsafe namespace N
+{
+    public class E
+    {
+        public void M(void* ptr) { }
+    }
+}";
+
+            var compilation0 = CreateCompilation(code0);
+            var compilation1 = CreateCompilation(code1);
+            var finalCompilation = compilation0.AddSyntaxTrees(compilation1.SyntaxTrees);
+            finalCompilation.VerifyDiagnostics(
+                // (6,23): error CS0214: Pointers and fixed size buffers may only be used in an unsafe context
+                //         public void M(void* ptr) { }
+                Diagnostic(ErrorCode.ERR_UnsafeNeeded, "void*").WithLocation(6, 23));
         }
     }
 }

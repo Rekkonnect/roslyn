@@ -694,6 +694,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 case SyntaxKind.ExternKeyword:
                 case SyntaxKind.UsingKeyword:
+                case SyntaxKind.UnsafeKeyword:
                 case SyntaxKind.NamespaceKeyword:
                     return true;
                 case SyntaxKind.IdentifierToken:
